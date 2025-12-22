@@ -160,7 +160,7 @@ export function PianoRollView({
     draw();
   }, [draw]);
 
-  // Scroll anticipado suave con interpolación (lerp)
+  // Scroll anticipado suave con interpolación (lerp) durante reproducción
   useEffect(() => {
     if (!isPlaying || !containerRef.current) return;
 
@@ -182,32 +182,115 @@ export function PianoRollView({
     }
   });
 
-  // Click handler - seek o loop
-  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  // Scroll animado al hacer seek (cuando NO está reproduciendo)
+  const lastSeekTimeRef = useRef(currentTime);
+  useEffect(() => {
+    // Detectar si hubo un salto grande en el tiempo (seek manual)
+    const timeDiff = Math.abs(currentTime - lastSeekTimeRef.current);
+    lastSeekTimeRef.current = currentTime;
+
+    // Si está reproduciendo, el otro efecto se encarga
+    // Solo activar si hay un salto > 0.5s (seek) y no estamos reproduciendo
+    if (isPlaying || timeDiff < 0.5) return;
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
+    const playheadX = currentTime * PIXELS_PER_SECOND + LEFT_MARGIN;
+    const containerWidth = container.clientWidth;
+
+    // Verificar si el playhead está fuera de la vista actual
+    const viewStart = container.scrollLeft;
+    const viewEnd = container.scrollLeft + containerWidth;
+    const isVisible = playheadX >= viewStart + 50 && playheadX <= viewEnd - 50;
+
+    if (!isVisible) {
+      // Scroll suave animado al centro de la vista
+      const targetScrollLeft = playheadX - containerWidth * 0.5;
+      container.scrollTo({
+        left: Math.max(0, targetScrollLeft),
+        behavior: 'smooth'
+      });
+    }
+  }, [currentTime, isPlaying]);
+
+  // Drag state for panning
+  const isDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const scrollStartRef = useRef(0);
+  const hasDraggedRef = useRef(false);
+
+  // Pointer down - start potential drag or seek
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+
+    // Capture pointer for tracking
+    canvas.setPointerCapture(e.pointerId);
+
+    // Store drag state
+    isDraggingRef.current = true;
+    hasDraggedRef.current = false;
+    dragStartXRef.current = e.clientX;
+    scrollStartRef.current = container.scrollLeft;
+
+    // Change cursor to grabbing
+    canvas.style.cursor = 'grabbing';
+  }, []);
+
+  // Pointer move - drag to scroll
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!isDraggingRef.current) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const deltaX = dragStartXRef.current - e.clientX;
+
+    // Only consider it a drag if moved more than 5px (avoid accidental drags on click)
+    if (Math.abs(deltaX) > 5) {
+      hasDraggedRef.current = true;
+    }
+
+    if (hasDraggedRef.current) {
+      // Pan the scroll position
+      container.scrollLeft = scrollStartRef.current + deltaX;
+    }
+  }, []);
+
+  // Pointer up - end drag or perform seek/loop action
+  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const scrollLeft = containerRef.current?.scrollLeft || 0;
-    const x = e.clientX - rect.left + scrollLeft;
-    const time = Math.max(0, (x - LEFT_MARGIN) / PIXELS_PER_SECOND);
+    // Release pointer capture
+    canvas.releasePointerCapture(e.pointerId);
+    canvas.style.cursor = 'grab';
+    isDraggingRef.current = false;
 
-    if (e.shiftKey) {
-      onSetLoopEnd(time);
-    } else if (e.altKey || e.ctrlKey) {
-      onSetLoopStart(time);
-    } else if (onSeek) {
-      // Click normal = seek a esa posición
-      onSeek(time);
+    // If we didn't drag, it's a click - perform seek or loop action
+    if (!hasDraggedRef.current) {
+      const rect = canvas.getBoundingClientRect();
+      const scrollLeft = containerRef.current?.scrollLeft || 0;
+      const x = e.clientX - rect.left + scrollLeft;
+      const time = Math.max(0, Math.min(duration, (x - LEFT_MARGIN) / PIXELS_PER_SECOND));
+
+      if (e.shiftKey) {
+        onSetLoopEnd(time);
+      } else if (e.altKey || e.ctrlKey) {
+        onSetLoopStart(time);
+      } else if (onSeek) {
+        onSeek(time);
+      }
     }
-  };
+  }, [duration, onSeek, onSetLoopStart, onSetLoopEnd]);
 
   return (
     <div className="piano-roll-container">
       <div className="piano-roll-header">
         <span>🎹 Piano Roll</span>
         <span className="piano-roll-hint">
-          Click: Ir a posición | Ctrl+Click: Loop A | Shift+Click: Loop B
+          Arrastrar: Desplazar | Click: Ir a posición | Ctrl+Click: Loop A | Shift+Click: Loop B
         </span>
       </div>
       <div
@@ -219,8 +302,11 @@ export function PianoRollView({
           ref={canvasRef}
           width={width}
           height={height}
-          onClick={handleClick}
-          style={{ cursor: 'pointer' }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          style={{ cursor: 'grab', touchAction: 'none' }}
         />
       </div>
     </div>

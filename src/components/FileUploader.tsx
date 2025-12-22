@@ -1,13 +1,14 @@
 import { useState, useCallback } from 'react';
-import { Upload, Music, FileAudio } from 'lucide-react';
+import { Upload, Music, FileAudio, FolderOpen } from 'lucide-react';
 import './FileUploader.css';
 
 interface FileUploaderProps {
   onFileSelect: (file: File) => void;
   isLoading?: boolean;
+  compact?: boolean;
 }
 
-export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
+export function FileUploader({ onFileSelect, isLoading, compact = false }: FileUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -51,6 +52,84 @@ export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
     [onFileSelect]
   );
 
+  // Compact mode for sidebar
+  if (compact) {
+    return (
+      <div
+        className={`file-uploader-compact ${isDragging ? 'dragging' : ''}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <input
+          id="midi-file-input-sidebar"
+          type="file"
+          accept=".mid,.midi"
+          onChange={handleFileInput}
+          style={{ display: 'none' }}
+        />
+        <button
+          className="compact-open-btn"
+          onClick={() => document.getElementById('midi-file-input-sidebar')?.click()}
+        >
+          <FolderOpen size={16} />
+          <span>Abrir archivo MIDI</span>
+        </button>
+        <div className={`compact-drop-zone ${isDragging ? 'active' : ''}`}>
+          <Upload size={14} />
+          <span>{isDragging ? 'Suéltalo!' : 'o arrastra aquí'}</span>
+        </div>
+
+        <style>{`
+          .file-uploader-compact {
+            padding: 8px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--color-border);
+          }
+          
+          .compact-open-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--color-accent-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 8px;
+          }
+          
+          .compact-open-btn:hover {
+            background: var(--color-accent-secondary);
+          }
+          
+          .compact-drop-zone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            font-size: 11px;
+            transition: all var(--transition-fast);
+          }
+          
+          .compact-drop-zone.active {
+            border-color: var(--color-accent-primary);
+            background: rgba(var(--color-accent-primary-rgb), 0.1);
+            color: var(--color-accent-primary);
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`file-uploader ${isDragging ? 'dragging' : ''} animate-fadeIn`}
@@ -93,3 +172,4 @@ export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
 }
 
 export default FileUploader;
+

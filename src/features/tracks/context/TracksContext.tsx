@@ -177,15 +177,22 @@ function analyzeTrack(track: MidiTrack): TrackAnalysis {
   };
 }
 
-// Detectar la pista de melodía
+// Detectar la pista de melodía - retorna el ÍNDICE DEL ARRAY (no track.index)
 export function detectMelodyTrack(tracks: MidiTrack[]): number {
   if (tracks.length === 0) return 0;
   if (tracks.length === 1) return 0;
 
-  const analyses = tracks.map(analyzeTrack);
+  // Analizar cada pista y guardar el índice del array
+  const analyses = tracks.map((track, arrayIndex) => ({
+    ...analyzeTrack(track),
+    arrayIndex, // Guardamos el índice del array
+  }));
+
+  // Ordenar por melodyScore
   const sorted = [...analyses].sort((a, b) => b.melodyScore - a.melodyScore);
 
-  return sorted[0].trackIndex;
+  // Retornar el índice del array, no track.index
+  return sorted[0].arrayIndex;
 }
 
 // Tipo del contexto

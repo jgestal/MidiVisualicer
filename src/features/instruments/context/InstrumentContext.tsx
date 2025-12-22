@@ -36,10 +36,37 @@ type InstrumentAction =
   | { type: 'DELETE_CUSTOM_INSTRUMENT'; payload: string }
   | { type: 'LOAD_CUSTOM_INSTRUMENTS'; payload: Record<string, InstrumentConfig> };
 
-// Estado inicial
+// Clave para localStorage de preferencias
+const PREFS_KEY = 'midi-visualizer-prefs';
+
+interface UserPrefs {
+  selectedInstrumentId?: string;
+  transpose?: number;
+}
+
+function loadPrefs(): UserPrefs {
+  try {
+    const saved = localStorage.getItem(PREFS_KEY);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+}
+
+function savePrefs(prefs: Partial<UserPrefs>): void {
+  try {
+    const current = loadPrefs();
+    localStorage.setItem(PREFS_KEY, JSON.stringify({ ...current, ...prefs }));
+  } catch (e) {
+    console.error('Error saving prefs:', e);
+  }
+}
+
+// Estado inicial (cargado desde localStorage)
+const savedPrefs = loadPrefs();
 const initialState: InstrumentState = {
-  selectedInstrumentId: 'guitar',
-  transpose: 0,
+  selectedInstrumentId: savedPrefs.selectedInstrumentId || 'guitar',
+  transpose: savedPrefs.transpose ?? 0,
   customInstruments: {},
 };
 
@@ -47,9 +74,11 @@ const initialState: InstrumentState = {
 function instrumentReducer(state: InstrumentState, action: InstrumentAction): InstrumentState {
   switch (action.type) {
     case 'SELECT_INSTRUMENT':
+      savePrefs({ selectedInstrumentId: action.payload });
       return { ...state, selectedInstrumentId: action.payload };
 
     case 'SET_TRANSPOSE':
+      savePrefs({ transpose: action.payload });
       return { ...state, transpose: action.payload };
 
     case 'ADD_CUSTOM_INSTRUMENT': {

@@ -286,6 +286,8 @@ export function BottomTracksPanel({
           gap: 2px;
           min-width: 0;
           flex: 1;
+          padding-right: 22px; /* Space for emoji */
+          max-width: calc(100% - 28px); /* Account for index + gap */
         }
 
         .bottom-track-name {
@@ -295,6 +297,8 @@ export function BottomTracksPanel({
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          max-width: 100%;
+          display: block;
         }
 
         .bottom-track-item.selected .bottom-track-name {

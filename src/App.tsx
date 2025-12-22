@@ -35,16 +35,17 @@ import { InstrumentSelector } from './components/InstrumentSelector';
 import { PianoRollView } from './components/PianoRollView';
 import { TablatureView } from './components/TablatureView';
 import { NotationView } from './components/NotationView';
+import { MidiInfoModal } from './components/MidiInfoModal';
 
 // Utils y config
 import { generateCifrado, generateTablatureText, downloadAsTextFile } from './utils/export';
 import { getAllInstruments } from './config/instruments';
-import { detectMelodyTrack } from './features/tracks/context/TracksContext';
+import { useMetronome } from './hooks/useMetronome';
 import type { MidiFile } from './types/midi';
 
 function App() {
   // ===== CONTEXTOS =====
-  const { state: midiState, loadMidiFile, loadMidiFromUrl } = useMidi();
+  const { state: midiState, loadMidiFile, loadMidiFromUrl, clearMidi } = useMidi();
   const {
     state: playbackState,
     play,
@@ -68,7 +69,14 @@ function App() {
   const [activeView, setActiveView] = useState<'tablature' | 'notation'>('tablature');
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [showInstrumentModal, setShowInstrumentModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
+
+  // ===== METRONOME =====
+  const { isMetronomeEnabled, toggleMetronome } = useMetronome({
+    bpm: midiState.parsedMidi?.bpm || 120,
+    isPlaying: playbackState.isPlaying,
+  });
 
   // ===== DERIVADOS =====
   const parsedMidi = midiState.parsedMidi;
@@ -94,11 +102,10 @@ function App() {
 
   // ===== EFECTOS =====
 
-  // Auto-seleccionar pista de melodía
+  // Siempre seleccionar la primera pista al cargar un MIDI
   useEffect(() => {
     if (parsedMidi && parsedMidi.tracks.length > 0) {
-      const melodyIndex = detectMelodyTrack(parsedMidi.tracks);
-      resetTracks(melodyIndex);
+      resetTracks(0); // Siempre pista 1 (índice 0)
     }
   }, [parsedMidi, resetTracks]);
 
@@ -120,8 +127,9 @@ function App() {
     const instMax = Math.max(...instrument.midiNotes) + (instrument.frets || 20);
     const instCenter = (instMin + instMax) / 2;
 
-    setTranspose(Math.round((instCenter - noteCenter) / 12) * 12);
-  }, [selectedTrack, selectedInstrumentId, selectedTrackNotes, setTranspose]);
+    const suggestedTranspose = Math.round((instCenter - noteCenter) / 12) * 12;
+    setTranspose(suggestedTranspose);
+  }, [selectedTrackNotes, selectedInstrumentId, setTranspose]);
 
   // Cerrar sidebar izquierdo al cargar MIDI
   useEffect(() => {
@@ -154,19 +162,51 @@ function App() {
     [toggleMute]
   );
 
-  const handleExportCifrado = useCallback(() => {
-    if (!parsedMidi) return;
-
-    const cifrado = generateCifrado(parsedMidi, selectedTrack);
-    downloadAsTextFile(cifrado, `${parsedMidi.name || 'midi'}_cifrado.txt`);
-  }, [parsedMidi, selectedTrack]);
+  // Handle close - volver a pantalla de carga
+  const handleClose = useCallback(() => {
+    stop();
+    clearMidi();
+  }, [stop, clearMidi]);
 
   const handleExportTablature = useCallback(() => {
     if (!parsedMidi) return;
 
     const track = parsedMidi.tracks[selectedTrack];
     const tablature = generateTablatureText(track, selectedInstrumentId);
-    downloadAsTextFile(tablature, `${parsedMidi.name || 'midi'}_tablatura.txt`);
+    downloadAsTextFile(tablature, `${parsedMidi.name || 'midi'}_tablatura.tab`);
+  }, [parsedMidi, selectedTrack, selectedInstrumentId]);
+
+  const handleExportTxt = useCallback(() => {
+    if (!parsedMidi) return;
+    const cifrado = generateCifrado(parsedMidi, selectedTrack);
+    downloadAsTextFile(cifrado, `${parsedMidi.name || 'midi'}.txt`);
+  }, [parsedMidi, selectedTrack]);
+
+  const handleExportPdf = useCallback(() => {
+    if (!parsedMidi) return;
+    // Usar la API de impresión del navegador para generar PDF
+    const track = parsedMidi.tracks[selectedTrack];
+    const tablature = generateTablatureText(track, selectedInstrumentId);
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>${parsedMidi.name || 'Tablatura'}</title>
+          <style>
+            body { font-family: 'Courier New', monospace; font-size: 12px; padding: 20px; }
+            pre { white-space: pre-wrap; word-wrap: break-word; }
+          </style>
+        </head>
+        <body>
+          <pre>${tablature}</pre>
+          <script>window.print(); window.close();</script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
   }, [parsedMidi, selectedTrack, selectedInstrumentId]);
 
   // ===== RENDER =====
@@ -183,16 +223,19 @@ function App() {
             ? `${parsedMidi.timeSignature.numerator}/${parsedMidi.timeSignature.denominator}`
             : undefined
         }
-        onToggleLeftSidebar={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
+        onClose={handleClose}
         selectedInstrumentName={selectedInstrumentName}
         onOpenInstrumentMenu={() => setShowInstrumentModal(true)}
         showToolbar={showToolbar}
         onToggleToolbar={() => setShowToolbar(!showToolbar)}
         showPianoRoll={showPianoRoll}
         onTogglePianoRoll={() => setShowPianoRoll(!showPianoRoll)}
-        onExportCifrado={handleExportCifrado}
-        onExportTablature={handleExportTablature}
-        onOpenFile={() => document.getElementById('midi-file-input')?.click()}
+        onExportTxt={handleExportTxt}
+        onExportTab={handleExportTablature}
+        onExportPdf={handleExportPdf}
+        onShowInfo={() => setShowInfoModal(true)}
+        isMetronomeEnabled={isMetronomeEnabled}
+        onToggleMetronome={toggleMetronome}
       />
 
       {/* TOOLBAR (conditional) */}
@@ -205,7 +248,7 @@ function App() {
           loopStart={playbackState.loopStart}
           loopEnd={playbackState.loopEnd}
           isLoopEnabled={playbackState.isLoopEnabled}
-          duration={playbackState.duration}
+          duration={parsedMidi?.duration || playbackState.duration}
           currentTime={playbackState.currentTime}
           onSetLoopStart={setLoopStart}
           onSetLoopEnd={setLoopEnd}
@@ -233,6 +276,14 @@ function App() {
           </button>
         </div>
         <div className="left-sidebar-content">
+          {/* File/Folder Open Zone */}
+          <div className="sidebar-open-zone">
+            <FileUploader
+              onFileSelect={handleFileUpload}
+              compact={true}
+            />
+          </div>
+
           <FileExplorer selectedFile={null} onSelectFile={handleFileFromExplorer} />
         </div>
       </aside>
@@ -249,7 +300,7 @@ function App() {
               <PianoRollView
                 notes={selectedTrackNotes}
                 currentTime={playbackState.currentTime}
-                duration={playbackState.duration}
+                duration={parsedMidi?.duration || playbackState.duration}
                 isPlaying={playbackState.isPlaying}
                 loopStart={playbackState.loopStart}
                 loopEnd={playbackState.loopEnd}
@@ -271,6 +322,7 @@ function App() {
                   transpose={transpose}
                   currentTime={playbackState.currentTime}
                   isPlaying={playbackState.isPlaying}
+                  onSeek={seekTo}
                 />
               ) : (
                 <NotationView
@@ -279,6 +331,7 @@ function App() {
                   isPlaying={playbackState.isPlaying}
                   bpm={parsedMidi?.header?.tempos?.[0]?.bpm || 120}
                   timeSignature={{ numerator: 4, denominator: 4 }}
+                  onSeek={seekTo}
                 />
               )}
             </MainPanel>
@@ -310,7 +363,7 @@ function App() {
           <Footer
             isPlaying={playbackState.isPlaying}
             currentTime={playbackState.currentTime}
-            duration={playbackState.duration}
+            duration={parsedMidi?.duration || playbackState.duration}
             speed={playbackState.speed}
             disabled={!hasMidi}
             onPlay={() => parsedMidi && play(parsedMidi, mutedTracks, trackVolumes)}
@@ -365,6 +418,14 @@ function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* MIDI INFO MODAL */}
+      {showInfoModal && parsedMidi && (
+        <MidiInfoModal
+          midi={parsedMidi}
+          onClose={() => setShowInfoModal(false)}
+        />
       )}
     </div>
   );

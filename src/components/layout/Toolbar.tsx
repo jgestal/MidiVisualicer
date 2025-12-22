@@ -1,7 +1,8 @@
 /**
- * Toolbar Component - Barra de herramientas con Transpose y Loop
+ * Toolbar Component - Barra de herramientas con Transpose, Loop y Metrónomo
  * Aparece debajo del header cuando está activada
  */
+import { Timer } from 'lucide-react';
 import TransposeControls from '../TransposeControls';
 import LoopControls from '../LoopControls';
 import type { MidiNote } from '../../types/midi';
@@ -23,6 +24,10 @@ interface ToolbarProps {
     onSetLoopEnd: (time: number | null) => void;
     onToggleLoop: () => void;
     onClearLoop: () => void;
+
+    // Metronome
+    isMetronomeEnabled?: boolean;
+    onToggleMetronome?: () => void;
 }
 
 export function Toolbar({
@@ -39,6 +44,8 @@ export function Toolbar({
     onSetLoopEnd,
     onToggleLoop,
     onClearLoop,
+    isMetronomeEnabled = false,
+    onToggleMetronome,
 }: ToolbarProps) {
     return (
         <div className="app-toolbar">
@@ -66,8 +73,74 @@ export function Toolbar({
                     onClearLoop={onClearLoop}
                 />
             </div>
+
+            {onToggleMetronome && (
+                <>
+                    <div className="toolbar-divider" />
+
+                    <div className="toolbar-section metronome-section">
+                        <button
+                            className={`metronome-btn ${isMetronomeEnabled ? 'active' : ''}`}
+                            onClick={onToggleMetronome}
+                            title={isMetronomeEnabled ? 'Desactivar metrónomo' : 'Activar metrónomo'}
+                        >
+                            <Timer size={16} />
+                            <span>Metrónomo</span>
+                            {isMetronomeEnabled && <span className="metronome-active-dot" />}
+                        </button>
+                    </div>
+
+                    <style>{`
+                        .metronome-section {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                        }
+
+                        .metronome-btn {
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                            padding: 6px 12px;
+                            background: var(--color-bg-tertiary);
+                            border: 1px solid var(--color-border);
+                            border-radius: var(--radius-md);
+                            color: var(--color-text-secondary);
+                            font-size: 12px;
+                            cursor: pointer;
+                            transition: all var(--transition-fast);
+                            position: relative;
+                        }
+
+                        .metronome-btn:hover {
+                            background: var(--color-bg-hover);
+                            color: var(--color-text-primary);
+                        }
+
+                        .metronome-btn.active {
+                            background: var(--color-accent-primary);
+                            color: white;
+                            border-color: var(--color-accent-primary);
+                        }
+                        
+                        .metronome-active-dot {
+                            width: 6px;
+                            height: 6px;
+                            background: #22c55e;
+                            border-radius: 50%;
+                            animation: metronomePulse 0.5s ease-in-out infinite;
+                        }
+                        
+                        @keyframes metronomePulse {
+                            0%, 100% { opacity: 1; transform: scale(1); }
+                            50% { opacity: 0.5; transform: scale(1.2); }
+                        }
+                    `}</style>
+                </>
+            )}
         </div>
     );
 }
 
 export default Toolbar;
+

@@ -4,6 +4,7 @@
  */
 import { ReactNode } from 'react';
 import { ThemeProvider } from '@/shared/context/ThemeContext';
+import { I18nProvider } from '@/shared/context/I18nContext';
 import { MidiProvider, LibraryProvider } from '@/features/library';
 import { PlaybackProvider } from '@/features/player/context/PlaybackContext';
 import { TracksProvider } from '@/features/tracks/context/TracksContext';
@@ -19,25 +20,28 @@ interface AppProvidersProps {
  * El orden importa: los providers más externos son los que
  * pueden ser usados por los más internos
  *
- * ThemeProvider va primero para que todos los componentes
- * puedan acceder al tema actual
+ * I18nProvider va primero para que todos los componentes
+ * puedan acceder a las traducciones
  */
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <ThemeProvider>
-      <LibraryProvider>
-        <MidiProvider>
-          <PlaybackProvider>
-            <TracksProvider>
-              <InstrumentProvider>
-                <VisualizationProvider>{children}</VisualizationProvider>
-              </InstrumentProvider>
-            </TracksProvider>
-          </PlaybackProvider>
-        </MidiProvider>
-      </LibraryProvider>
-    </ThemeProvider>
+    <I18nProvider>
+      <ThemeProvider>
+        <LibraryProvider>
+          <MidiProvider>
+            <PlaybackProvider>
+              <TracksProvider>
+                <InstrumentProvider>
+                  <VisualizationProvider>{children}</VisualizationProvider>
+                </InstrumentProvider>
+              </TracksProvider>
+            </PlaybackProvider>
+          </MidiProvider>
+        </LibraryProvider>
+      </ThemeProvider>
+    </I18nProvider>
   );
 }
 
 export default AppProviders;
+

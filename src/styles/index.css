@@ -93,6 +93,13 @@
 
   /* Theme-specific */
   --theme-transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+
+  /* Notation View - Dark mode: parchment-like dark */
+  --notation-bg: #1a1915;
+  --notation-line-bg: #252218;
+  --notation-line-active: rgba(99, 102, 241, 0.2);
+  --notation-paper: #2a2720;
+  --notation-border: rgba(255, 255, 255, 0.1);
 }
 
 /* Light Theme */
@@ -131,6 +138,13 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
   --shadow-glow: 0 0 30px var(--color-accent-glow);
+
+  /* Notation View - Light mode: cream/sepia */
+  --notation-bg: #f8f6f0;
+  --notation-line-bg: #f0ebe0;
+  --notation-line-active: rgba(99, 102, 241, 0.12);
+  --notation-paper: #fffdf5;
+  --notation-border: rgba(0, 0, 0, 0.1);
 }
 
 /* ============================================

@@ -257,11 +257,11 @@ export function TablatureView({
                               <span
                                 key={slot}
                                 className={`tab-cell ${isActive ? 'active' : ''} ${noteOnString ? 'has-note' : ''} ${onSeek ? 'clickable' : ''}`}
-                                onClick={() => noteOnString && handleNoteClick(noteOnString.time)}
+                                onClick={() => handleNoteClick(slot * TIME_QUANTUM)}
                                 title={
                                   noteOnString
                                     ? `${noteOnString.noteName} (${(slot * TIME_QUANTUM).toFixed(2)}s)`
-                                    : undefined
+                                    : `${(slot * TIME_QUANTUM).toFixed(2)}s`
                                 }
                               >
                                 {noteOnString ? String(noteOnString.fret).padStart(2, ' ') : '──'}

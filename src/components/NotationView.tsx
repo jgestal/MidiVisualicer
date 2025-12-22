@@ -16,6 +16,7 @@ interface NotationViewProps {
   isPlaying: boolean;
   bpm: number;
   timeSignature: { numerator: number; denominator: number };
+  onSeek?: (time: number) => void;
 }
 
 const STAVE_WIDTH = 180; // Reduced for better fit
@@ -77,6 +78,7 @@ export function NotationView({
   isPlaying,
   bpm,
   timeSignature,
+  onSeek,
 }: NotationViewProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -172,6 +174,8 @@ export function NotationView({
               lineStartMeasure={lineIndex * measuresPerLine}
               positionInMeasure={positionInMeasure}
               containerWidth={containerWidth}
+              bpm={bpm}
+              onSeek={onSeek}
             />
           ))
         )}
@@ -192,7 +196,7 @@ export function NotationView({
           overflow-y: auto;
           overflow-x: hidden;
           padding: var(--space-2);
-          background: #ffffff;
+          background: var(--notation-bg, #f8f6f0);
         }
 
         .notation-empty {
@@ -213,14 +217,14 @@ export function NotationView({
         .notation-line {
           margin-bottom: 8px;
           padding: 8px;
-          background: #fafafa;
+          background: var(--notation-line-bg, #f0ebe0);
           border-radius: var(--radius-md);
           transition: all var(--transition-fast);
           position: relative;
         }
 
         .notation-line.current {
-          background: rgba(99, 102, 241, 0.08);
+          background: var(--notation-line-active, rgba(99, 102, 241, 0.15));
           box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.3);
         }
 
@@ -232,10 +236,11 @@ export function NotationView({
         }
 
         .notation-line-content {
-          background: #ffffff;
+          background: var(--notation-paper, #fffdf5);
           border-radius: 4px;
           overflow: hidden;
           position: relative;
+          border: 1px solid var(--notation-border, rgba(0,0,0,0.1));
         }
 
         .notation-playhead {
@@ -266,6 +271,8 @@ interface NotationLineProps {
   lineStartMeasure: number;
   positionInMeasure: number;
   containerWidth: number;
+  bpm: number;
+  onSeek?: (time: number) => void;
 }
 
 function NotationLine({
@@ -279,8 +286,36 @@ function NotationLine({
   isCurrentLine,
   lineStartMeasure,
   positionInMeasure,
+  bpm,
+  onSeek,
 }: NotationLineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Calculate measure duration for click handling
+  const beatsPerMeasure = timeSignature.numerator;
+  const beatDuration = 60 / bpm;
+  const measureDuration = beatsPerMeasure * beatDuration;
+
+  // Handle click to seek
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!onSeek || !containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+
+    // Calculate which measure was clicked
+    const measureInLine = Math.floor((x - MARGIN) / STAVE_WIDTH);
+    if (measureInLine < 0 || measureInLine >= measures.length) return;
+
+    // Calculate position within measure
+    const posInMeasure = ((x - MARGIN) % STAVE_WIDTH) / STAVE_WIDTH;
+
+    // Calculate time
+    const globalMeasure = lineStartMeasure + measureInLine;
+    const time = globalMeasure * measureDuration + posInMeasure * measureDuration;
+
+    onSeek(Math.max(0, time));
+  };
 
   // Calculate playhead position within this line
   const playheadPosition = useMemo(() => {
@@ -395,9 +430,10 @@ function NotationLine({
         )}
         <div
           ref={containerRef}
+          onClick={handleClick}
           style={{
             minHeight: STAVE_HEIGHT,
-            background: '#ffffff',
+            cursor: onSeek ? 'pointer' : 'default',
           }}
         />
       </div>
