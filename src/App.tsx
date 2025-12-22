@@ -11,7 +11,7 @@ import {
   ChevronDown,
   ChevronRight,
   PanelLeftClose,
-  PanelLeft
+  PanelLeft,
 } from 'lucide-react';
 
 import {
@@ -24,7 +24,7 @@ import {
   FileExplorer,
   PianoRollView,
   LoopControls,
-  TransposeControls
+  TransposeControls,
 } from './components';
 
 import { useMidiLoader, useMidiPlayer } from './hooks';
@@ -53,7 +53,9 @@ function App() {
   const [showPianoRoll, setShowPianoRoll] = useState(true);
   const [showTablature, setShowTablature] = useState(true);
   const [showNotation, setShowNotation] = useState(false);
-  const [maximizedView, setMaximizedView] = useState<'pianoroll' | 'tablature' | 'notation' | null>(null);
+  const [maximizedView, setMaximizedView] = useState<'pianoroll' | 'tablature' | 'notation' | null>(
+    null
+  );
 
   // Transposición y loop
   const [transpose, setTranspose] = useState(0);
@@ -76,7 +78,7 @@ function App() {
     if (!instrument) return;
 
     // Calcular el centro de las notas
-    const midiNotes = selectedTrackNotes.map(n => n.midi);
+    const midiNotes = selectedTrackNotes.map((n) => n.midi);
     const minNote = Math.min(...midiNotes);
     const maxNote = Math.max(...midiNotes);
     const noteCenter = (minNote + maxNote) / 2;
@@ -92,26 +94,32 @@ function App() {
   }, [selectedTrack, selectedInstrument, selectedTrackNotes]);
 
   // Handlers
-  const handleFileSelect = useCallback(async (file: File) => {
-    await loadMidiFile(file);
-    setSelectedTrack(0);
-    setMutedTracks(new Set());
-    setLoopStart(null);
-    setLoopEnd(null);
-  }, [loadMidiFile]);
-
-  const handleFileFromExplorer = useCallback(async (file: MidiFile) => {
-    setSelectedFile(file);
-    try {
-      await loadMidiFromUrl(file.path);
+  const handleFileSelect = useCallback(
+    async (file: File) => {
+      await loadMidiFile(file);
       setSelectedTrack(0);
       setMutedTracks(new Set());
       setLoopStart(null);
       setLoopEnd(null);
-    } catch (err) {
-      console.error('Error cargando archivo:', err);
-    }
-  }, [loadMidiFromUrl]);
+    },
+    [loadMidiFile]
+  );
+
+  const handleFileFromExplorer = useCallback(
+    async (file: MidiFile) => {
+      setSelectedFile(file);
+      try {
+        await loadMidiFromUrl(file.path);
+        setSelectedTrack(0);
+        setMutedTracks(new Set());
+        setLoopStart(null);
+        setLoopEnd(null);
+      } catch (err) {
+        console.error('Error cargando archivo:', err);
+      }
+    },
+    [loadMidiFromUrl]
+  );
 
   const handlePlay = useCallback(() => {
     if (parsedMidi) {
@@ -120,7 +128,7 @@ function App() {
   }, [parsedMidi, selectedTrack, mutedTracks, play]);
 
   const handleToggleMute = useCallback((trackIndex: number) => {
-    setMutedTracks(prev => {
+    setMutedTracks((prev) => {
       const next = new Set(prev);
       if (next.has(trackIndex)) {
         next.delete(trackIndex);
@@ -182,10 +190,7 @@ function App() {
               </button>
               {filesExpanded && (
                 <div className="section-content no-padding">
-                  <FileExplorer
-                    selectedFile={selectedFile}
-                    onSelectFile={handleFileFromExplorer}
-                  />
+                  <FileExplorer selectedFile={selectedFile} onSelectFile={handleFileFromExplorer} />
                 </div>
               )}
             </div>
@@ -193,7 +198,10 @@ function App() {
             {/* Sección: Pistas */}
             {parsedMidi && (
               <div className="section">
-                <button className="section-header" onClick={() => setTracksExpanded(!tracksExpanded)}>
+                <button
+                  className="section-header"
+                  onClick={() => setTracksExpanded(!tracksExpanded)}
+                >
                   {tracksExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   <span>Pistas</span>
                   <span className="section-badge">{parsedMidi.tracks.length}</span>
@@ -211,8 +219,6 @@ function App() {
                 )}
               </div>
             )}
-
-
           </div>
         )}
       </aside>
@@ -225,8 +231,14 @@ function App() {
             <h1>{parsedMidi ? parsedMidi.name : 'MIDI Visualizer'}</h1>
             {parsedMidi && (
               <span className="header-meta">
-                {parsedMidi.bpm.toFixed(0)} BPM • {Math.floor(parsedMidi.duration / 60)}:{String(Math.floor(parsedMidi.duration % 60)).padStart(2, '0')}
-                {transpose !== 0 && <span className="transpose-badge">{transpose > 0 ? '+' : ''}{transpose}</span>}
+                {parsedMidi.bpm.toFixed(0)} BPM • {Math.floor(parsedMidi.duration / 60)}:
+                {String(Math.floor(parsedMidi.duration % 60)).padStart(2, '0')}
+                {transpose !== 0 && (
+                  <span className="transpose-badge">
+                    {transpose > 0 ? '+' : ''}
+                    {transpose}
+                  </span>
+                )}
               </span>
             )}
           </div>
@@ -249,14 +261,21 @@ function App() {
                     onClick={() => setShowInstrumentMenu(!showInstrumentMenu)}
                     title="Cambiar Instrumento"
                   >
-                    <span className="header-inst-icon">{getAllInstruments()[selectedInstrument]?.icon}</span>
-                    <span className="header-inst-name">{getAllInstruments()[selectedInstrument]?.nameEs}</span>
+                    <span className="header-inst-icon">
+                      {getAllInstruments()[selectedInstrument]?.icon}
+                    </span>
+                    <span className="header-inst-name">
+                      {getAllInstruments()[selectedInstrument]?.nameEs}
+                    </span>
                     <ChevronDown size={12} />
                   </button>
 
                   {showInstrumentMenu && (
                     <>
-                      <div className="popover-overlay" onClick={() => setShowInstrumentMenu(false)} />
+                      <div
+                        className="popover-overlay"
+                        onClick={() => setShowInstrumentMenu(false)}
+                      />
                       <div className="instrument-popover">
                         <div className="popover-header">
                           <span>Afinación e Instrumentos</span>
@@ -309,7 +328,10 @@ function App() {
               <div className="hero-section">
                 <div className="hero-icon">🎵</div>
                 <h1>Empieza a practicar</h1>
-                <p>Carga un archivo MIDI para visualizar su tablatura, piano roll o partitura interactiva.</p>
+                <p>
+                  Carga un archivo MIDI para visualizar su tablatura, piano roll o partitura
+                  interactiva.
+                </p>
               </div>
               <div className="uploader-center">
                 <FileUploader onFileSelect={handleFileSelect} isLoading={isLoading} />
@@ -321,82 +343,115 @@ function App() {
           ) : (
             <div className="visualizations">
               {/* Piano Roll */}
-              {(showPianoRoll || maximizedView === 'pianoroll') && maximizedView !== 'tablature' && maximizedView !== 'notation' && (
-                <div className={`viz-panel ${maximizedView === 'pianoroll' ? 'maximized' : ''}`}>
-                  <div className="viz-header">
-                    <span>🎹 Piano Roll</span>
-                    <div className="viz-actions">
-                      <button onClick={() => setMaximizedView(maximizedView === 'pianoroll' ? null : 'pianoroll')}>
-                        {maximizedView === 'pianoroll' ? '⊖' : '⊕'}
-                      </button>
-                      {!maximizedView && <button onClick={() => setShowPianoRoll(false)}>✕</button>}
+              {(showPianoRoll || maximizedView === 'pianoroll') &&
+                maximizedView !== 'tablature' &&
+                maximizedView !== 'notation' && (
+                  <div className={`viz-panel ${maximizedView === 'pianoroll' ? 'maximized' : ''}`}>
+                    <div className="viz-header">
+                      <span>🎹 Piano Roll</span>
+                      <div className="viz-actions">
+                        <button
+                          onClick={() =>
+                            setMaximizedView(maximizedView === 'pianoroll' ? null : 'pianoroll')
+                          }
+                        >
+                          {maximizedView === 'pianoroll' ? '⊖' : '⊕'}
+                        </button>
+                        {!maximizedView && (
+                          <button onClick={() => setShowPianoRoll(false)}>✕</button>
+                        )}
+                      </div>
                     </div>
+                    <PianoRollView
+                      notes={selectedTrackNotes}
+                      currentTime={playbackState.currentTime}
+                      isPlaying={playbackState.isPlaying}
+                      duration={parsedMidi.duration}
+                      loopStart={loopStart}
+                      loopEnd={loopEnd}
+                      onSetLoopStart={setLoopStart}
+                      onSetLoopEnd={setLoopEnd}
+                      onSeek={seekTo}
+                    />
                   </div>
-                  <PianoRollView
-                    notes={selectedTrackNotes}
-                    currentTime={playbackState.currentTime}
-                    isPlaying={playbackState.isPlaying}
-                    duration={parsedMidi.duration}
-                    loopStart={loopStart}
-                    loopEnd={loopEnd}
-                    onSetLoopStart={setLoopStart}
-                    onSetLoopEnd={setLoopEnd}
-                    onSeek={seekTo}
-                  />
-                </div>
-              )}
+                )}
 
               {/* Tablatura */}
-              {(showTablature || maximizedView === 'tablature') && maximizedView !== 'pianoroll' && maximizedView !== 'notation' && (
-                <div className={`viz-panel ${maximizedView === 'tablature' ? 'maximized' : ''}`}>
-                  <div className="viz-header">
-                    <span>{getAllInstruments()[selectedInstrument]?.icon} Tablatura - {getAllInstruments()[selectedInstrument]?.nameEs}</span>
-                    <div className="viz-actions">
-                      <button onClick={() => setMaximizedView(maximizedView === 'tablature' ? null : 'tablature')}>
-                        {maximizedView === 'tablature' ? '⊖' : '⊕'}
-                      </button>
-                      {!maximizedView && <button onClick={() => setShowTablature(false)}>✕</button>}
+              {(showTablature || maximizedView === 'tablature') &&
+                maximizedView !== 'pianoroll' &&
+                maximizedView !== 'notation' && (
+                  <div className={`viz-panel ${maximizedView === 'tablature' ? 'maximized' : ''}`}>
+                    <div className="viz-header">
+                      <span>
+                        {getAllInstruments()[selectedInstrument]?.icon} Tablatura -{' '}
+                        {getAllInstruments()[selectedInstrument]?.nameEs}
+                      </span>
+                      <div className="viz-actions">
+                        <button
+                          onClick={() =>
+                            setMaximizedView(maximizedView === 'tablature' ? null : 'tablature')
+                          }
+                        >
+                          {maximizedView === 'tablature' ? '⊖' : '⊕'}
+                        </button>
+                        {!maximizedView && (
+                          <button onClick={() => setShowTablature(false)}>✕</button>
+                        )}
+                      </div>
                     </div>
+                    <TablatureView
+                      notes={selectedTrackNotes}
+                      instrumentId={selectedInstrument}
+                      currentTime={playbackState.currentTime}
+                      isPlaying={playbackState.isPlaying}
+                      transpose={transpose}
+                      onSeek={seekTo}
+                    />
                   </div>
-                  <TablatureView
-                    notes={selectedTrackNotes}
-                    instrumentId={selectedInstrument}
-                    currentTime={playbackState.currentTime}
-                    isPlaying={playbackState.isPlaying}
-                    transpose={transpose}
-                    onSeek={seekTo}
-                  />
-                </div>
-              )}
+                )}
 
               {/* Partitura */}
-              {(showNotation || maximizedView === 'notation') && maximizedView !== 'pianoroll' && maximizedView !== 'tablature' && (
-                <div className={`viz-panel ${maximizedView === 'notation' ? 'maximized' : ''}`}>
-                  <div className="viz-header">
-                    <span>🎼 Partitura</span>
-                    <div className="viz-actions">
-                      <button onClick={() => setMaximizedView(maximizedView === 'notation' ? null : 'notation')}>
-                        {maximizedView === 'notation' ? '⊖' : '⊕'}
-                      </button>
-                      {!maximizedView && <button onClick={() => setShowNotation(false)}>✕</button>}
+              {(showNotation || maximizedView === 'notation') &&
+                maximizedView !== 'pianoroll' &&
+                maximizedView !== 'tablature' && (
+                  <div className={`viz-panel ${maximizedView === 'notation' ? 'maximized' : ''}`}>
+                    <div className="viz-header">
+                      <span>🎼 Partitura</span>
+                      <div className="viz-actions">
+                        <button
+                          onClick={() =>
+                            setMaximizedView(maximizedView === 'notation' ? null : 'notation')
+                          }
+                        >
+                          {maximizedView === 'notation' ? '⊖' : '⊕'}
+                        </button>
+                        {!maximizedView && (
+                          <button onClick={() => setShowNotation(false)}>✕</button>
+                        )}
+                      </div>
                     </div>
+                    <NotationView
+                      notes={selectedTrackNotes}
+                      currentTime={playbackState.currentTime}
+                      isPlaying={playbackState.isPlaying}
+                      bpm={parsedMidi.bpm}
+                      timeSignature={parsedMidi.timeSignature}
+                    />
                   </div>
-                  <NotationView
-                    notes={selectedTrackNotes}
-                    currentTime={playbackState.currentTime}
-                    isPlaying={playbackState.isPlaying}
-                    bpm={parsedMidi.bpm}
-                    timeSignature={parsedMidi.timeSignature}
-                  />
-                </div>
-              )}
+                )}
 
               {/* Botones para mostrar vistas ocultas */}
               {(!showPianoRoll || !showTablature || !showNotation) && !maximizedView && (
                 <div className="show-views">
-                  {!showPianoRoll && <button onClick={() => setShowPianoRoll(true)}>🎹 Piano Roll</button>}
-                  {!showTablature && <button onClick={() => setShowTablature(true)}>🎸 Tablatura</button>}
-                  {!showNotation && <button onClick={() => setShowNotation(true)}>🎼 Partitura</button>}
+                  {!showPianoRoll && (
+                    <button onClick={() => setShowPianoRoll(true)}>🎹 Piano Roll</button>
+                  )}
+                  {!showTablature && (
+                    <button onClick={() => setShowTablature(true)}>🎸 Tablatura</button>
+                  )}
+                  {!showNotation && (
+                    <button onClick={() => setShowNotation(true)}>🎼 Partitura</button>
+                  )}
                 </div>
               )}
             </div>

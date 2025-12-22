@@ -1,0 +1,135 @@
+# Workflow de Release y Deploy
+# Se ejecuta en push a main o creación de tags v*
+# Construye la app y la despliega a GitHub Pages
+
+name: 🚀 Release & Deploy
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      deploy_only:
+        description: 'Solo desplegar (sin crear release)'
+        required: false
+        default: false
+        type: boolean
+
+# Permisos necesarios para GitHub Pages y Releases
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Solo una ejecución a la vez para el deploy
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  # Job 1: Build y validación
+  build:
+    name: 🏗️ Build Production
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🎨 Check formatting
+        run: npm run format:check
+
+      - name: 🔍 Lint
+        run: npm run lint
+
+      - name: 📝 Type check
+        run: npm run type-check
+
+      - name: 🏗️ Build for production
+        run: npm run build
+        env:
+          # Asegurar que el base path es correcto para GitHub Pages
+          VITE_BASE_URL: /${{ github.event.repository.name }}/
+
+      - name: 📤 Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+      - name: 📤 Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  # Job 2: Deploy a GitHub Pages
+  deploy:
+    name: 🌐 Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Job 3: Crear Release (solo en tags)
+  release:
+    name: 📦 Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: 📦 Create ZIP of dist
+        run: |
+          cd dist
+          zip -r ../midi-visualizer-${{ github.ref_name }}.zip .
+          cd ..
+
+      - name: 🏷️ Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: MIDI Visualizer ${{ github.ref_name }}
+          body: |
+            ## 🎹 MIDI Visualizer ${{ github.ref_name }}
+            
+            ### 📥 Descargar
+            - **[midi-visualizer-${{ github.ref_name }}.zip](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/midi-visualizer-${{ github.ref_name }}.zip)** - Build de producción
+            
+            ### 🌐 Demo en Vivo
+            [Probar online](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)
+            
+            ### 📝 Changelog
+            Ver [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)
+          files: |
+            midi-visualizer-${{ github.ref_name }}.zip
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

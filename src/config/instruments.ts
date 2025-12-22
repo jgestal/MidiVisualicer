@@ -1,6 +1,6 @@
 /**
  * Sistema de Configuración Modular de Instrumentos
- * 
+ *
  * Incluye instrumentos predefinidos + soporte para instrumentos personalizados
  * guardados en localStorage
  */
@@ -9,24 +9,35 @@ export interface InstrumentConfig {
   id: string;
   name: string;
   nameEs: string;
-  strings: string[];           // Notas de las cuerdas (grave a agudo)
-  midiNotes: number[];         // Notas MIDI correspondientes
-  frets: number;               // Número de trastes
-  doubleStrings: boolean;      // Si tiene cuerdas dobles
-  icon: string;                // Emoji o icono
+  strings: string[]; // Notas de las cuerdas (grave a agudo)
+  midiNotes: number[]; // Notas MIDI correspondientes
+  frets: number; // Número de trastes
+  doubleStrings: boolean; // Si tiene cuerdas dobles
+  icon: string; // Emoji o icono
   description: string;
-  isCustom?: boolean;          // Si es un instrumento personalizado
+  isCustom?: boolean; // Si es un instrumento personalizado
 }
 
 // Función helper para convertir nota a número MIDI
 export function noteToMidi(note: string): number {
   const noteMap: Record<string, number> = {
-    'C': 0, 'C#': 1, 'Db': 1,
-    'D': 2, 'D#': 3, 'Eb': 3,
-    'E': 4, 'F': 5, 'F#': 6, 'Gb': 6,
-    'G': 7, 'G#': 8, 'Ab': 8,
-    'A': 9, 'A#': 10, 'Bb': 10,
-    'B': 11
+    C: 0,
+    'C#': 1,
+    Db: 1,
+    D: 2,
+    'D#': 3,
+    Eb: 3,
+    E: 4,
+    F: 5,
+    'F#': 6,
+    Gb: 6,
+    G: 7,
+    'G#': 8,
+    Ab: 8,
+    A: 9,
+    'A#': 10,
+    Bb: 10,
+    B: 11,
   };
 
   const match = note.match(/^([A-G][#b]?)(\d+)$/);
@@ -64,7 +75,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 19,
     doubleStrings: false,
     icon: '🎸',
-    description: 'Guitarra clásica/española estándar'
+    description: 'Guitarra clásica/española estándar',
   },
 
   guitarAcoustic: {
@@ -76,7 +87,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 20,
     doubleStrings: false,
     icon: '🎸',
-    description: 'Guitarra acústica folk/western'
+    description: 'Guitarra acústica folk/western',
   },
 
   guitarElectric: {
@@ -88,7 +99,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 24,
     doubleStrings: false,
     icon: '🎸',
-    description: 'Guitarra eléctrica estándar (24 trastes)'
+    description: 'Guitarra eléctrica estándar (24 trastes)',
   },
 
   bass4: {
@@ -100,7 +111,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 24,
     doubleStrings: false,
     icon: '🎸',
-    description: 'Bajo eléctrico de 4 cuerdas'
+    description: 'Bajo eléctrico de 4 cuerdas',
   },
 
   bass5: {
@@ -112,7 +123,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 24,
     doubleStrings: false,
     icon: '🎸',
-    description: 'Bajo eléctrico de 5 cuerdas'
+    description: 'Bajo eléctrico de 5 cuerdas',
   },
 
   // INSTRUMENTOS TRADICIONALES ESPAÑOLES
@@ -125,7 +136,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 17,
     doubleStrings: true,
     icon: '🪕',
-    description: 'Instrumento tradicional español de 12 cuerdas (6 pares)'
+    description: 'Instrumento tradicional español de 12 cuerdas (6 pares)',
   },
 
   laud: {
@@ -137,7 +148,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 17,
     doubleStrings: true,
     icon: '🪕',
-    description: 'Laúd español de 12 cuerdas (6 pares)'
+    description: 'Laúd español de 12 cuerdas (6 pares)',
   },
 
   // MANDOLINAS
@@ -150,7 +161,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 17,
     doubleStrings: true,
     icon: '🎻',
-    description: 'Mandolina estándar de 8 cuerdas (4 pares)'
+    description: 'Mandolina estándar de 8 cuerdas (4 pares)',
   },
 
   mandola: {
@@ -162,7 +173,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 17,
     doubleStrings: true,
     icon: '🎻',
-    description: 'Mandola - versión más grave de la mandolina'
+    description: 'Mandola - versión más grave de la mandolina',
   },
 
   // BANJOS
@@ -175,7 +186,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 22,
     doubleStrings: false,
     icon: '🪕',
-    description: 'Banjo de 5 cuerdas estilo bluegrass'
+    description: 'Banjo de 5 cuerdas estilo bluegrass',
   },
 
   banjo4: {
@@ -187,7 +198,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 19,
     doubleStrings: false,
     icon: '🪕',
-    description: 'Banjo tenor de 4 cuerdas (afinación de viola)'
+    description: 'Banjo tenor de 4 cuerdas (afinación de viola)',
   },
 
   // UKELELES
@@ -200,7 +211,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 15,
     doubleStrings: false,
     icon: '🪕',
-    description: 'Ukelele soprano o concierto (afinación estándar)'
+    description: 'Ukelele soprano o concierto (afinación estándar)',
   },
 
   ukuleleTenor: {
@@ -212,7 +223,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 18,
     doubleStrings: false,
     icon: '🪕',
-    description: 'Ukelele tenor (cuerda G grave)'
+    description: 'Ukelele tenor (cuerda G grave)',
   },
 
   ukuleleBaritone: {
@@ -224,7 +235,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 19,
     doubleStrings: false,
     icon: '🪕',
-    description: 'Ukelele barítono (afinación de guitarra)'
+    description: 'Ukelele barítono (afinación de guitarra)',
   },
 
   // OTROS
@@ -237,7 +248,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 0, // Sin trastes - usamos posiciones relativas
     doubleStrings: false,
     icon: '🎻',
-    description: 'Violín (sin trastes - posiciones aproximadas)'
+    description: 'Violín (sin trastes - posiciones aproximadas)',
   },
 
   viola: {
@@ -249,7 +260,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 0,
     doubleStrings: false,
     icon: '🎻',
-    description: 'Viola (sin trastes - posiciones aproximadas)'
+    description: 'Viola (sin trastes - posiciones aproximadas)',
   },
 
   cello: {
@@ -261,7 +272,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 0,
     doubleStrings: false,
     icon: '🎻',
-    description: 'Violonchelo (sin trastes - posiciones aproximadas)'
+    description: 'Violonchelo (sin trastes - posiciones aproximadas)',
   },
 
   charango: {
@@ -273,7 +284,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 15,
     doubleStrings: true,
     icon: '🪕',
-    description: 'Charango andino (10 cuerdas, 5 pares)'
+    description: 'Charango andino (10 cuerdas, 5 pares)',
   },
 
   cavaquinho: {
@@ -285,7 +296,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 17,
     doubleStrings: false,
     icon: '🪕',
-    description: 'Cavaquinho brasileño'
+    description: 'Cavaquinho brasileño',
   },
 
   bouzouki: {
@@ -297,7 +308,7 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 24,
     doubleStrings: true,
     icon: '🪕',
-    description: 'Bouzouki irlandés (8 cuerdas, 4 pares)'
+    description: 'Bouzouki irlandés (8 cuerdas, 4 pares)',
   },
 
   dulcimer: {
@@ -309,8 +320,8 @@ export const DEFAULT_INSTRUMENTS: Record<string, InstrumentConfig> = {
     frets: 15,
     doubleStrings: false,
     icon: '🪕',
-    description: 'Dulcimer de los Apalaches'
-  }
+    description: 'Dulcimer de los Apalaches',
+  },
 };
 
 /**
@@ -357,7 +368,7 @@ export function deleteCustomInstrument(id: string): void {
 export function getAllInstruments(): Record<string, InstrumentConfig> {
   return {
     ...DEFAULT_INSTRUMENTS,
-    ...loadCustomInstruments()
+    ...loadCustomInstruments(),
   };
 }
 
@@ -385,7 +396,7 @@ export function createInstrumentFromTuning(
     doubleStrings,
     icon,
     description: `Instrumento personalizado: ${tuning.join(', ')}`,
-    isCustom: true
+    isCustom: true,
   };
 }
 
@@ -407,7 +418,7 @@ export function calculateFretPositions(
     if (fret >= 0 && fret <= maxFret) {
       positions.push({
         string: stringIndex + 1,
-        fret
+        fret,
       });
     }
   });
@@ -428,7 +439,7 @@ export function getOptimalPosition(
   if (positions.length === 0) return null;
 
   if (preferredString) {
-    const preferred = positions.find(p => p.string === preferredString);
+    const preferred = positions.find((p) => p.string === preferredString);
     if (preferred) return preferred;
   }
 

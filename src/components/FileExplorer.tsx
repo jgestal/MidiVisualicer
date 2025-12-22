@@ -18,11 +18,15 @@ const FALLBACK_DATA: MidiFolder[] = [
     name: 'midi',
     path: '/midi',
     files: [],
-    subfolders: []
-  }
+    subfolders: [],
+  },
 ];
 
-export function FileExplorer({ folders: propFolders, selectedFile, onSelectFile }: FileExplorerProps) {
+export function FileExplorer({
+  folders: propFolders,
+  selectedFile,
+  onSelectFile,
+}: FileExplorerProps) {
   const [folders, setFolders] = useState<MidiFolder[]>(propFolders || FALLBACK_DATA);
   const [loading, setLoading] = useState(!propFolders);
   const [searchTerm, setSearchTerm] = useState('');
@@ -72,14 +76,16 @@ export function FileExplorer({ folders: propFolders, selectedFile, onSelectFile 
     if (!searchTerm.trim()) return null;
 
     const term = searchTerm.toLowerCase();
-    return allFiles.filter(file =>
-      file.name.toLowerCase().includes(term) ||
-      file.folder?.toLowerCase().includes(term)
-    ).slice(0, 20); // Limitar resultados
+    return allFiles
+      .filter(
+        (file) =>
+          file.name.toLowerCase().includes(term) || file.folder?.toLowerCase().includes(term)
+      )
+      .slice(0, 20); // Limitar resultados
   }, [searchTerm, allFiles]);
 
   const toggleFolder = (path: string) => {
-    setExpandedFolders(prev => {
+    setExpandedFolders((prev) => {
       const next = new Set(prev);
       if (next.has(path)) {
         next.delete(path);
@@ -102,7 +108,13 @@ export function FileExplorer({ folders: propFolders, selectedFile, onSelectFile 
           style={{ paddingLeft: `${level * 12 + 8}px` }}
         >
           <span className="folder-icon">
-            {hasContent ? (isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />) : null}
+            {hasContent ? (
+              isExpanded ? (
+                <ChevronDown size={14} />
+              ) : (
+                <ChevronRight size={14} />
+              )
+            ) : null}
           </span>
           <Folder size={14} />
           <span className="folder-name">{folder.name}</span>
@@ -111,8 +123,8 @@ export function FileExplorer({ folders: propFolders, selectedFile, onSelectFile 
 
         {isExpanded && (
           <div className="folder-content">
-            {folder.subfolders.map(sf => renderFolder(sf, level + 1))}
-            {folder.files.map(file => (
+            {folder.subfolders.map((sf) => renderFolder(sf, level + 1))}
+            {folder.files.map((file) => (
               <div
                 key={file.path}
                 className={`file-item ${selectedFile?.path === file.path ? 'selected' : ''}`}
@@ -143,14 +155,10 @@ export function FileExplorer({ folders: propFolders, selectedFile, onSelectFile 
           type="text"
           placeholder="Buscar MIDI..."
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
         {!propFolders && (
-          <button
-            className="refresh-btn"
-            onClick={loadMidiFiles}
-            title="Recargar lista"
-          >
+          <button className="refresh-btn" onClick={loadMidiFiles} title="Recargar lista">
             <RefreshCw size={14} className={loading ? 'spinning' : ''} />
           </button>
         )}
@@ -166,7 +174,7 @@ export function FileExplorer({ folders: propFolders, selectedFile, onSelectFile 
           {searchResults.length === 0 ? (
             <div className="no-results">No se encontraron archivos</div>
           ) : (
-            searchResults.map(file => (
+            searchResults.map((file) => (
               <div
                 key={file.path}
                 className={`file-item ${selectedFile?.path === file.path ? 'selected' : ''}`}
@@ -190,15 +198,13 @@ export function FileExplorer({ folders: propFolders, selectedFile, onSelectFile 
           {loading ? (
             <div className="loading">Cargando...</div>
           ) : (
-            folders.map(folder => renderFolder(folder))
+            folders.map((folder) => renderFolder(folder))
           )}
         </div>
       )}
 
       {/* Contador */}
-      <div className="file-counter">
-        {allFiles.length} archivos
-      </div>
+      <div className="file-counter">{allFiles.length} archivos</div>
     </div>
   );
 }

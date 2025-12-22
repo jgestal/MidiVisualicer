@@ -3,24 +3,47 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "description": "Aplicación web interactiva para visualizar archivos MIDI con tablaturas, piano roll y partituras",
+  "author": "Portal FP",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jgestal/MidiVisualicer.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
+    "type-check": "tsc --noEmit",
+    "validate": "npm run type-check && npm run lint && npm run format:check"
   },
   "dependencies": {
     "@tonejs/midi": "^2.0.28",
+    "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tone": "^14.7.77",
-    "vexflow": "^4.2.3",
-    "lucide-react": "^0.263.1"
+    "vexflow": "^4.2.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
     "typescript": "^5.2.2",
+    "typescript-eslint": "^8.18.1",
     "vite": "^4.4.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

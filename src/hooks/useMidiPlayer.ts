@@ -11,7 +11,7 @@ export function useMidiPlayer() {
     isPaused: false,
     currentTime: 0,
     duration: 0,
-    speed: 1.0
+    speed: 1.0,
   });
 
   const [currentNoteIndex, setCurrentNoteIndex] = useState(-1);
@@ -35,7 +35,7 @@ export function useMidiPlayer() {
   // Crear sintetizadores para las pistas
   const createSynths = useCallback((trackCount: number) => {
     // Limpiar sintetizadores anteriores
-    synthsRef.current.forEach(synth => synth.dispose());
+    synthsRef.current.forEach((synth) => synth.dispose());
 
     // Crear nuevos sintetizadores
     synthsRef.current = Array.from({ length: trackCount }, () => {
@@ -45,8 +45,8 @@ export function useMidiPlayer() {
           attack: 0.02,
           decay: 0.1,
           sustain: 0.3,
-          release: 0.8
-        }
+          release: 0.8,
+        },
       }).toDestination();
 
       synth.volume.value = -8; // Reducir volumen
@@ -55,99 +55,95 @@ export function useMidiPlayer() {
   }, []);
 
   // Programar eventos MIDI
-  const scheduleTrack = useCallback((
-    track: MidiTrack,
-    synthIndex: number,
-    speed: number,
-    isMuted: boolean = false
-  ) => {
-    if (isMuted) return;
+  const scheduleTrack = useCallback(
+    (track: MidiTrack, synthIndex: number, speed: number, isMuted: boolean = false) => {
+      if (isMuted) return;
 
-    const synth = synthsRef.current[synthIndex];
-    if (!synth) return;
+      const synth = synthsRef.current[synthIndex];
+      if (!synth) return;
 
-    track.notes.forEach((note, noteIndex) => {
-      const adjustedTime = note.time / speed;
-      const adjustedDuration = Math.max(note.duration / speed, 0.05);
+      track.notes.forEach((note, noteIndex) => {
+        const adjustedTime = note.time / speed;
+        const adjustedDuration = Math.max(note.duration / speed, 0.05);
 
-      const eventId = Tone.Transport.schedule((time) => {
-        synth.triggerAttackRelease(
-          note.name,
-          adjustedDuration,
-          time,
-          note.velocity
-        );
-        setCurrentNoteIndex(noteIndex);
-      }, adjustedTime);
+        const eventId = Tone.Transport.schedule((time) => {
+          synth.triggerAttackRelease(note.name, adjustedDuration, time, note.velocity);
+          setCurrentNoteIndex(noteIndex);
+        }, adjustedTime);
 
-      scheduledEventsRef.current.push(eventId);
-    });
-  }, []);
+        scheduledEventsRef.current.push(eventId);
+      });
+    },
+    []
+  );
 
   // Reproducir MIDI
-  const play = useCallback(async (
-    midi: ParsedMidi,
-    selectedTrackIndex: number = 0,
-    mutedTracks: Set<number> = new Set()
-  ) => {
-    await initialize();
+  const play = useCallback(
+    async (
+      midi: ParsedMidi,
+      _selectedTrackIndex: number = 0,
+      mutedTracks: Set<number> = new Set()
+    ) => {
+      await initialize();
 
-    // Limpiar eventos anteriores
-    scheduledEventsRef.current.forEach(id => Tone.Transport.clear(id));
-    scheduledEventsRef.current = [];
+      // Limpiar eventos anteriores
+      scheduledEventsRef.current.forEach((id) => Tone.Transport.clear(id));
+      scheduledEventsRef.current = [];
 
-    createSynths(midi.tracks.length);
+      createSynths(midi.tracks.length);
 
-    const speed = playbackState.speed;
-    const adjustedDuration = midi.duration / speed;
+      const speed = playbackState.speed;
+      const adjustedDuration = midi.duration / speed;
 
-    // Programar todas las pistas
-    midi.tracks.forEach((track, index) => {
-      scheduleTrack(track, index, speed, mutedTracks.has(index));
-    });
+      // Programar todas las pistas
+      midi.tracks.forEach((track, index) => {
+        scheduleTrack(track, index, speed, mutedTracks.has(index));
+      });
 
-    // Configurar transporte
-    Tone.Transport.bpm.value = midi.bpm * speed;
+      // Configurar transporte
+      Tone.Transport.bpm.value = midi.bpm * speed;
 
-    // Si estaba pausado, continuar desde donde se quedó
-    if (playbackState.isPaused && pauseTimeRef.current > 0) {
-      Tone.Transport.seconds = pauseTimeRef.current / speed;
-    } else {
-      Tone.Transport.seconds = 0;
-    }
-
-    Tone.Transport.start();
-    startTimeRef.current = Tone.now();
-
-    setPlaybackState(prev => ({
-      ...prev,
-      isPlaying: true,
-      isPaused: false,
-      duration: adjustedDuration
-    }));
-
-    // Actualizar tiempo actual
-    const updateTime = () => {
-      if (Tone.Transport.state === 'started') {
-        const currentTime = Tone.Transport.seconds * playbackState.speed;
-        setPlaybackState(prev => ({ ...prev, currentTime }));
-
-        if (currentTime >= midi.duration) {
-          stop();
-          return;
-        }
-
-        animationFrameRef.current = requestAnimationFrame(updateTime);
+      // Si estaba pausado, continuar desde donde se quedó
+      if (playbackState.isPaused && pauseTimeRef.current > 0) {
+        Tone.Transport.seconds = pauseTimeRef.current / speed;
+      } else {
+        Tone.Transport.seconds = 0;
       }
-    };
 
-    animationFrameRef.current = requestAnimationFrame(updateTime);
+      Tone.Transport.start();
+      startTimeRef.current = Tone.now();
 
-    // Programar parada al final
-    Tone.Transport.schedule(() => {
-      stop();
-    }, adjustedDuration);
-  }, [initialize, createSynths, scheduleTrack, playbackState.speed, playbackState.isPaused]);
+      setPlaybackState((prev) => ({
+        ...prev,
+        isPlaying: true,
+        isPaused: false,
+        duration: adjustedDuration,
+      }));
+
+      // Actualizar tiempo actual
+      const updateTime = () => {
+        if (Tone.Transport.state === 'started') {
+          const currentTime = Tone.Transport.seconds * playbackState.speed;
+          setPlaybackState((prev) => ({ ...prev, currentTime }));
+
+          if (currentTime >= midi.duration) {
+            stop();
+            return;
+          }
+
+          animationFrameRef.current = requestAnimationFrame(updateTime);
+        }
+      };
+
+      animationFrameRef.current = requestAnimationFrame(updateTime);
+
+      // Programar parada al final
+      Tone.Transport.schedule(() => {
+        stop();
+      }, adjustedDuration);
+    },
+    [initialize, createSynths, scheduleTrack, playbackState.speed, playbackState.isPaused]
+  );
 
   // Pausar reproducción
   const pause = useCallback(() => {
@@ -159,11 +155,11 @@ export function useMidiPlayer() {
         cancelAnimationFrame(animationFrameRef.current);
       }
 
-      setPlaybackState(prev => ({
+      setPlaybackState((prev) => ({
         ...prev,
         isPlaying: false,
         isPaused: true,
-        currentTime: pauseTimeRef.current
+        currentTime: pauseTimeRef.current,
       }));
     }
   }, [playbackState.isPlaying, playbackState.speed]);
@@ -173,7 +169,7 @@ export function useMidiPlayer() {
     Tone.Transport.stop();
     Tone.Transport.cancel();
 
-    scheduledEventsRef.current.forEach(id => Tone.Transport.clear(id));
+    scheduledEventsRef.current.forEach((id) => Tone.Transport.clear(id));
     scheduledEventsRef.current = [];
 
     if (animationFrameRef.current) {
@@ -183,37 +179,43 @@ export function useMidiPlayer() {
     pauseTimeRef.current = 0;
     setCurrentNoteIndex(-1);
 
-    setPlaybackState(prev => ({
+    setPlaybackState((prev) => ({
       ...prev,
       isPlaying: false,
       isPaused: false,
-      currentTime: 0
+      currentTime: 0,
     }));
   }, []);
 
   // Cambiar velocidad
-  const setSpeed = useCallback((speed: PlaybackSpeed) => {
-    setPlaybackState(prev => ({ ...prev, speed }));
+  const setSpeed = useCallback(
+    (speed: PlaybackSpeed) => {
+      setPlaybackState((prev) => ({ ...prev, speed }));
 
-    if (playbackState.isPlaying) {
-      Tone.Transport.bpm.value = (Tone.Transport.bpm.value / playbackState.speed) * speed;
-    }
-  }, [playbackState.isPlaying, playbackState.speed]);
+      if (playbackState.isPlaying) {
+        Tone.Transport.bpm.value = (Tone.Transport.bpm.value / playbackState.speed) * speed;
+      }
+    },
+    [playbackState.isPlaying, playbackState.speed]
+  );
 
   // Ir a tiempo específico
-  const seekTo = useCallback((time: number) => {
-    const adjustedTime = time / playbackState.speed;
-    Tone.Transport.seconds = adjustedTime;
-    pauseTimeRef.current = time;
+  const seekTo = useCallback(
+    (time: number) => {
+      const adjustedTime = time / playbackState.speed;
+      Tone.Transport.seconds = adjustedTime;
+      pauseTimeRef.current = time;
 
-    setPlaybackState(prev => ({ ...prev, currentTime: time }));
-  }, [playbackState.speed]);
+      setPlaybackState((prev) => ({ ...prev, currentTime: time }));
+    },
+    [playbackState.speed]
+  );
 
   // Limpiar al desmontar
   useEffect(() => {
     return () => {
       stop();
-      synthsRef.current.forEach(synth => synth.dispose());
+      synthsRef.current.forEach((synth) => synth.dispose());
     };
   }, [stop]);
 
@@ -226,7 +228,7 @@ export function useMidiPlayer() {
     stop,
     setSpeed,
     seekTo,
-    initialize
+    initialize,
   };
 }
 

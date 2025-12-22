@@ -17,7 +17,7 @@ export function TransposeControls({
   instrumentId,
   notes,
   transpose,
-  onTransposeChange
+  onTransposeChange,
 }: TransposeControlsProps) {
   const instrument = INSTRUMENTS[instrumentId];
 
@@ -30,9 +30,10 @@ export function TransposeControls({
     const instMax = Math.max(...instrument.midiNotes) + instrument.frets;
 
     let inRange = 0;
-    let minNote = 127, maxNote = 0;
+    let minNote = 127,
+      maxNote = 0;
 
-    notes.forEach(note => {
+    notes.forEach((note) => {
       const midi = note.midi + transpose;
       minNote = Math.min(minNote, midi);
       maxNote = Math.max(maxNote, midi);
@@ -45,13 +46,14 @@ export function TransposeControls({
 
     return {
       inRangePercent: Math.round((inRange / notes.length) * 100),
-      suggestedTranspose: suggested
+      suggestedTranspose: suggested,
     };
   }, [instrument, notes, transpose]);
 
   if (!instrument) return null;
 
-  const rangeColor = inRangePercent >= 90 ? '#22c55e' : inRangePercent >= 70 ? '#f59e0b' : '#ef4444';
+  const rangeColor =
+    inRangePercent >= 90 ? '#22c55e' : inRangePercent >= 70 ? '#f59e0b' : '#ef4444';
 
   return (
     <div className="transpose-compact">
@@ -62,19 +64,22 @@ export function TransposeControls({
 
       <div className="transpose-controls">
         <button onClick={() => onTransposeChange(transpose - 12)} title="-8va">
-          <ArrowDown size={12} />-8va
+          <ArrowDown size={12} />
+          -8va
         </button>
         <button onClick={() => onTransposeChange(transpose - 1)} title="-1">
           -1
         </button>
         <span className="transpose-value" style={{ color: rangeColor }}>
-          {transpose > 0 ? '+' : ''}{transpose}
+          {transpose > 0 ? '+' : ''}
+          {transpose}
         </span>
         <button onClick={() => onTransposeChange(transpose + 1)} title="+1">
           +1
         </button>
         <button onClick={() => onTransposeChange(transpose + 12)} title="+8va">
-          +8va<ArrowUp size={12} />
+          +8va
+          <ArrowUp size={12} />
         </button>
       </div>
 
@@ -86,19 +91,20 @@ export function TransposeControls({
         >
           Auto
         </button>
-        <button
-          onClick={() => onTransposeChange(0)}
-          disabled={transpose === 0}
-          title="Reset"
-        >
+        <button onClick={() => onTransposeChange(0)} disabled={transpose === 0} title="Reset">
           <RotateCcw size={12} />
         </button>
       </div>
 
       <div className="transpose-bar">
-        <div className="transpose-fill" style={{ width: `${inRangePercent}%`, background: rangeColor }} />
+        <div
+          className="transpose-fill"
+          style={{ width: `${inRangePercent}%`, background: rangeColor }}
+        />
       </div>
-      <span className="transpose-percent" style={{ color: rangeColor }}>{inRangePercent}%</span>
+      <span className="transpose-percent" style={{ color: rangeColor }}>
+        {inRangePercent}%
+      </span>
     </div>
   );
 }

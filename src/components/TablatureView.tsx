@@ -1,5 +1,5 @@
 /**
- * Componente de visualización de tablatura 
+ * Componente de visualización de tablatura
  * Scroll anticipado al 30%, click interactivo
  */
 import { useMemo, useRef, useEffect, useCallback } from 'react';
@@ -34,21 +34,22 @@ export function TablatureView({
   currentTime,
   isPlaying,
   transpose = 0,
-  onSeek
+  onSeek,
 }: TablatureViewProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const instrument = useMemo(() => getAllInstruments()[instrumentId], [instrumentId]);
 
-  if (!instrument) {
-    return <div className="tab-error">Instrumento no encontrado</div>;
-  }
-
   // Convertir notas MIDI a posiciones de tablatura
+  // Manejar caso de instrumento no encontrado devolviendo arrays vacíos
   const { tabNotes, timeSlots } = useMemo(() => {
+    if (!instrument) {
+      return { tabNotes: [] as TabNote[], timeSlots: new Map<number, TabNote[]>() };
+    }
+
     const processed: TabNote[] = [];
     const slots: Map<number, TabNote[]> = new Map();
 
-    notes.forEach(note => {
+    notes.forEach((note) => {
       const transposedMidi = note.midi + transpose;
       const position = getOptimalPosition(transposedMidi, instrument);
 
@@ -61,22 +62,25 @@ export function TablatureView({
           duration: note.duration,
           midiNote: transposedMidi,
           noteName: midiToNoteName(transposedMidi),
-          slotIndex
+          slotIndex,
         };
         processed.push(tabNote);
 
         if (!slots.has(slotIndex)) {
           slots.set(slotIndex, []);
         }
-        slots.get(slotIndex)!.push(tabNote);
+        const slotNotes = slots.get(slotIndex);
+        if (slotNotes) {
+          slotNotes.push(tabNote);
+        }
       }
     });
 
     return { tabNotes: processed, timeSlots: slots };
   }, [notes, instrument, transpose]);
 
-  const sortedSlots = useMemo(() =>
-    Array.from(timeSlots.keys()).sort((a, b) => a - b),
+  const sortedSlots = useMemo(
+    () => Array.from(timeSlots.keys()).sort((a, b) => a - b),
     [timeSlots]
   );
 
@@ -84,7 +88,7 @@ export function TablatureView({
 
   // Encontrar el índice del slot actual en el array ordenado
   const currentSlotArrayIndex = useMemo(() => {
-    return sortedSlots.findIndex(slot => slot >= currentSlotIndex);
+    return sortedSlots.findIndex((slot) => slot >= currentSlotIndex);
   }, [sortedSlots, currentSlotIndex]);
 
   // Scroll anticipado suave - usar requestAnimationFrame para suavidad
@@ -99,7 +103,7 @@ export function TablatureView({
     const currentNoteX = currentSlotArrayIndex * CELL_WIDTH + 26;
 
     // Queremos la nota actual al 30% desde la izquierda
-    const targetScrollLeft = currentNoteX - (containerWidth * 0.3);
+    const targetScrollLeft = currentNoteX - containerWidth * 0.3;
 
     // Animar suavemente
     const currentScroll = container.scrollLeft;
@@ -113,17 +117,25 @@ export function TablatureView({
     }
   });
 
+  const handleNoteClick = useCallback(
+    (time: number) => {
+      if (onSeek) {
+        onSeek(time);
+      }
+    },
+    [onSeek]
+  );
+
+  // Early return DESPUÉS de todos los hooks
+  if (!instrument) {
+    return <div className="tab-error">Instrumento no encontrado</div>;
+  }
+
   const stringCount = instrument.strings.length;
   const stringLabels = [...instrument.strings].reverse();
 
   const notesInRange = tabNotes.length;
   const notesOutOfRange = notes.length - notesInRange;
-
-  const handleNoteClick = useCallback((time: number) => {
-    if (onSeek) {
-      onSeek(time);
-    }
-  }, [onSeek]);
 
   return (
     <div className="tab-container">
@@ -148,16 +160,22 @@ export function TablatureView({
                   ) : (
                     sortedSlots.map((slot, slotArrayIdx) => {
                       const slotNotes = timeSlots.get(slot) || [];
-                      const noteOnString = slotNotes.find(n => n.string === stringNum);
-                      const isActive = slot === currentSlotIndex ||
-                        (slot < currentSlotIndex && sortedSlots[slotArrayIdx + 1] > currentSlotIndex);
+                      const noteOnString = slotNotes.find((n) => n.string === stringNum);
+                      const isActive =
+                        slot === currentSlotIndex ||
+                        (slot < currentSlotIndex &&
+                          sortedSlots[slotArrayIdx + 1] > currentSlotIndex);
 
                       return (
                         <span
                           key={slot}
                           className={`tab-cell ${isActive ? 'active' : ''} ${noteOnString ? 'has-note' : ''} ${onSeek ? 'clickable' : ''}`}
                           onClick={() => noteOnString && handleNoteClick(noteOnString.time)}
-                          title={noteOnString ? `${noteOnString.noteName} (${(slot * TIME_QUANTUM).toFixed(2)}s)` : undefined}
+                          title={
+                            noteOnString
+                              ? `${noteOnString.noteName} (${(slot * TIME_QUANTUM).toFixed(2)}s)`
+                              : undefined
+                          }
                         >
                           {noteOnString ? String(noteOnString.fret).padStart(2, ' ') : '──'}
                         </span>
@@ -172,9 +190,7 @@ export function TablatureView({
       </div>
 
       {notesOutOfRange > 0 && (
-        <div className="tab-footer">
-          ⚠️ {notesOutOfRange} notas fuera del rango del instrumento
-        </div>
+        <div className="tab-footer">⚠️ {notesOutOfRange} notas fuera del rango del instrumento</div>
       )}
     </div>
   );

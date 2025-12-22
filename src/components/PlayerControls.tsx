@@ -29,7 +29,7 @@ export function PlayerControls({
   onStop,
   onSeek,
   onSpeedChange,
-  disabled = false
+  disabled = false,
 }: PlayerControlsProps) {
   const { isPlaying, currentTime, duration, speed } = playbackState;
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -56,12 +56,7 @@ export function PlayerControls({
         </button>
 
         {isPlaying ? (
-          <button
-            className="player-btn-main"
-            onClick={onPause}
-            disabled={disabled}
-            title="Pausar"
-          >
+          <button className="player-btn-main" onClick={onPause} disabled={disabled} title="Pausar">
             <Pause size={28} />
           </button>
         ) : (
@@ -97,14 +92,8 @@ export function PlayerControls({
       {/* Progress Bar */}
       <div className="progress-container">
         <span className="progress-time">{formatTime(currentTime)}</span>
-        <div
-          className="progress-bar"
-          onClick={handleProgressClick}
-        >
-          <div
-            className="progress-bar-fill"
-            style={{ width: `${progress}%` }}
-          />
+        <div className="progress-bar" onClick={handleProgressClick}>
+          <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
         </div>
         <span className="progress-time">{formatTime(duration)}</span>
       </div>

@@ -22,22 +22,28 @@ export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
 
-    const file = e.dataTransfer.files[0];
-    if (file && (file.name.endsWith('.mid') || file.name.endsWith('.midi'))) {
-      onFileSelect(file);
-    }
-  }, [onFileSelect]);
+      const file = e.dataTransfer.files[0];
+      if (file && (file.name.endsWith('.mid') || file.name.endsWith('.midi'))) {
+        onFileSelect(file);
+      }
+    },
+    [onFileSelect]
+  );
 
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      onFileSelect(file);
-    }
-  }, [onFileSelect]);
+  const handleFileInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        onFileSelect(file);
+      }
+    },
+    [onFileSelect]
+  );
 
   return (
     <div
@@ -65,12 +71,9 @@ export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
           <div className="drop-zone-text">
             {isDragging
               ? 'Suelta el archivo aquí'
-              : 'Arrastra un archivo MIDI o haz clic para seleccionar'
-            }
+              : 'Arrastra un archivo MIDI o haz clic para seleccionar'}
           </div>
-          <div className="drop-zone-hint">
-            Formatos soportados: .mid, .midi
-          </div>
+          <div className="drop-zone-hint">Formatos soportados: .mid, .midi</div>
         </>
       )}
     </div>

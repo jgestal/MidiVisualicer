@@ -2,7 +2,7 @@
  * Utilidades para exportar la música a diferentes formatos
  */
 import type { MidiNote, ParsedMidi, MidiTrack } from '../types/midi';
-import { midiToNote, midiToNoteName, INSTRUMENTS, getOptimalPosition } from '../config/instruments';
+import { midiToNote, INSTRUMENTS, getOptimalPosition } from '../config/instruments';
 
 /**
  * Detectar acordes a partir de notas simultáneas
@@ -10,24 +10,13 @@ import { midiToNote, midiToNoteName, INSTRUMENTS, getOptimalPosition } from '../
 function detectChord(notes: string[]): string {
   if (notes.length < 2) return notes[0] || '';
 
-  // Acordes básicos más comunes
-  const chordPatterns: Record<string, string[]> = {
-    'major': ['P1', 'M3', 'P5'],
-    'minor': ['P1', 'm3', 'P5'],
-    'dim': ['P1', 'm3', 'd5'],
-    'aug': ['P1', 'M3', 'A5'],
-    '7': ['P1', 'M3', 'P5', 'm7'],
-    'maj7': ['P1', 'M3', 'P5', 'M7'],
-    'm7': ['P1', 'm3', 'P5', 'm7'],
-  };
-
   // Simplificación: usar la nota más baja como raíz
   const sortedNotes = [...notes].sort();
   const root = sortedNotes[0].replace(/[0-9]/g, '');
 
   // Si hay 3+ notas, intentar identificar el tipo
+  // TODO: Implementar detección de patrones de acordes (major, minor, dim, aug, 7, maj7, m7)
   if (notes.length >= 3) {
-    // Heurística simple basada en cantidad de notas
     return `${root} (acorde)`;
   }
 
@@ -56,7 +45,7 @@ export function generateCifrado(midi: ParsedMidi, trackIndex: number): string {
   const timeGroups: Map<number, MidiNote[]> = new Map();
   const timeQuantum = 0.05; // 50ms de tolerancia
 
-  track.notes.forEach(note => {
+  track.notes.forEach((note) => {
     const quantizedTime = Math.round(note.time / timeQuantum) * timeQuantum;
     if (!timeGroups.has(quantizedTime)) {
       timeGroups.set(quantizedTime, []);
@@ -72,9 +61,9 @@ export function generateCifrado(midi: ParsedMidi, trackIndex: number): string {
   output += `| Tiempo   | Notas                    | Duración   |\n`;
   output += `${'─'.repeat(64)}\n`;
 
-  sortedTimes.forEach(time => {
+  sortedTimes.forEach((time) => {
     const notes = timeGroups.get(time)!;
-    const noteNames = notes.map(n => midiToNote(n.midi));
+    const noteNames = notes.map((n) => midiToNote(n.midi));
     const avgDuration = notes.reduce((sum, n) => sum + n.duration, 0) / notes.length;
 
     const chord = detectChord(noteNames);
@@ -91,10 +80,10 @@ export function generateCifrado(midi: ParsedMidi, trackIndex: number): string {
   output += `ESTADÍSTICAS:\n`;
   output += `${'─'.repeat(32)}\n`;
   output += `Total de notas: ${track.noteCount}\n`;
-  output += `Notas únicas: ${new Set(track.notes.map(n => n.midi)).size}\n`;
+  output += `Notas únicas: ${new Set(track.notes.map((n) => n.midi)).size}\n`;
   output += `Duración total: ${formatTimeCode(midi.duration)}\n`;
-  output += `Nota más grave: ${midiToNote(Math.min(...track.notes.map(n => n.midi)))}\n`;
-  output += `Nota más aguda: ${midiToNote(Math.max(...track.notes.map(n => n.midi)))}\n`;
+  output += `Nota más grave: ${midiToNote(Math.min(...track.notes.map((n) => n.midi)))}\n`;
+  output += `Nota más aguda: ${midiToNote(Math.max(...track.notes.map((n) => n.midi)))}\n`;
 
   return output;
 }
@@ -103,10 +92,7 @@ export function generateCifrado(midi: ParsedMidi, trackIndex: number): string {
  * Genera tablatura en formato texto con múltiples líneas
  * Dividida en secciones para mejor legibilidad
  */
-export function generateTablatureText(
-  track: MidiTrack,
-  instrumentId: string
-): string {
+export function generateTablatureText(track: MidiTrack, instrumentId: string): string {
   const instrument = INSTRUMENTS[instrumentId];
   if (!instrument) return 'Instrumento no encontrado';
 
@@ -123,7 +109,7 @@ export function generateTablatureText(
   const timeQuantum = 0.15;
   const timeSlots: Map<number, Array<{ string: number; fret: number; time: number }>> = new Map();
 
-  track.notes.forEach(note => {
+  track.notes.forEach((note) => {
     const position = getOptimalPosition(note.midi, instrument);
     if (position && position.fret >= 0 && position.fret <= instrument.frets) {
       const slot = Math.floor(note.time / timeQuantum);
@@ -136,7 +122,7 @@ export function generateTablatureText(
 
   const sortedSlots = Array.from(timeSlots.keys()).sort((a, b) => a - b);
   const stringCount = instrument.strings.length;
-  const stringLabels = [...instrument.strings].reverse().map(s => s.replace(/\d/, '').padEnd(2));
+  const stringLabels = [...instrument.strings].reverse().map((s) => s.replace(/\d/, '').padEnd(2));
 
   // Dividir en secciones de ~20 columnas cada una
   const NOTES_PER_LINE = 20;
@@ -146,7 +132,6 @@ export function generateTablatureText(
     sections.push(sortedSlots.slice(i, i + NOTES_PER_LINE));
   }
 
-  let measureNum = 1;
   sections.forEach((sectionSlots, sectionIdx) => {
     // Número de compás aproximado
     const startTime = sectionSlots[0] * timeQuantum;
@@ -159,9 +144,9 @@ export function generateTablatureText(
       const stringNum = stringCount - stringIdx;
       let line = stringLabels[stringIdx] + '│';
 
-      sectionSlots.forEach(slot => {
+      sectionSlots.forEach((slot) => {
         const positions = timeSlots.get(slot) || [];
-        const pos = positions.find(p => p.string === stringNum);
+        const pos = positions.find((p) => p.string === stringNum);
 
         if (pos) {
           line += pos.fret.toString().padStart(2, ' ') + '─';

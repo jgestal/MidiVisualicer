@@ -9,7 +9,7 @@ import {
   saveCustomInstrument,
   deleteCustomInstrument,
   createInstrumentFromTuning,
-  type InstrumentConfig
+  type InstrumentConfig,
 } from '../config/instruments';
 
 interface InstrumentSelectorProps {
@@ -19,7 +19,7 @@ interface InstrumentSelectorProps {
 
 export function InstrumentSelector({
   selectedInstrument,
-  onSelectInstrument
+  onSelectInstrument,
 }: InstrumentSelectorProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newName, setNewName] = useState('');
@@ -35,14 +35,14 @@ export function InstrumentSelector({
     if (!newName) return;
 
     try {
-      const tuningArray = newTuning.split(',').map(s => s.trim());
+      const tuningArray = newTuning.split(',').map((s) => s.trim());
       const newInst = createInstrumentFromTuning(newName, tuningArray, newFrets);
       saveCustomInstrument(newInst);
 
       // Limpiar y cerrar
       setNewName('');
       setShowAddForm(false);
-      setRefreshTrigger(prev => prev + 1);
+      setRefreshTrigger((prev) => prev + 1);
       onSelectInstrument(newInst.id);
     } catch (e) {
       alert('Error en el formato de afinación. Usa: E2, A2, D3...');
@@ -56,7 +56,7 @@ export function InstrumentSelector({
       if (selectedInstrument === id) {
         onSelectInstrument('guitar');
       }
-      setRefreshTrigger(prev => prev + 1);
+      setRefreshTrigger((prev) => prev + 1);
     }
   };
 
@@ -85,10 +85,7 @@ export function InstrumentSelector({
           </div>
         ))}
 
-        <button
-          className="btn-add-instrument"
-          onClick={() => setShowAddForm(true)}
-        >
+        <button className="btn-add-instrument" onClick={() => setShowAddForm(true)}>
           <Plus size={16} />
           <span>Personalizado</span>
         </button>
@@ -109,7 +106,7 @@ export function InstrumentSelector({
               type="text"
               placeholder="Ej: Mi Bajo"
               value={newName}
-              onChange={e => setNewName(e.target.value)}
+              onChange={(e) => setNewName(e.target.value)}
             />
           </div>
 
@@ -119,7 +116,7 @@ export function InstrumentSelector({
               type="text"
               placeholder="E2, A2, D3..."
               value={newTuning}
-              onChange={e => setNewTuning(e.target.value)}
+              onChange={(e) => setNewTuning(e.target.value)}
             />
             <small>Usa comas para separar las cuerdas</small>
           </div>
@@ -130,7 +127,7 @@ export function InstrumentSelector({
               <input
                 type="number"
                 value={newFrets}
-                onChange={e => setNewFrets(parseInt(e.target.value))}
+                onChange={(e) => setNewFrets(parseInt(e.target.value))}
               />
             </div>
             <button className="btn-save" onClick={handleAddCustom}>

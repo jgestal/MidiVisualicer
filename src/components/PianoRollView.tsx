@@ -31,7 +31,7 @@ export function PianoRollView({
   loopEnd,
   onSetLoopStart,
   onSetLoopEnd,
-  onSeek
+  onSeek,
 }: PianoRollViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -39,10 +39,10 @@ export function PianoRollView({
   // Calcular rango de notas
   const noteRange = useMemo(() => {
     if (notes.length === 0) return { min: 48, max: 84 };
-    const midiNotes = notes.map(n => n.midi);
+    const midiNotes = notes.map((n) => n.midi);
     return {
       min: Math.min(...midiNotes) - 2,
-      max: Math.max(...midiNotes) + 2
+      max: Math.max(...midiNotes) + 2,
     };
   }, [notes]);
 
@@ -113,7 +113,7 @@ export function PianoRollView({
     }
 
     // Dibujar notas
-    notes.forEach(note => {
+    notes.forEach((note) => {
       const x = note.time * PIXELS_PER_SECOND + LEFT_MARGIN;
       const y = (noteRange.max - note.midi) * NOTE_HEIGHT + 15;
       const noteWidth = Math.max(3, note.duration * PIXELS_PER_SECOND);
@@ -127,9 +127,7 @@ export function PianoRollView({
         ctx.shadowBlur = 8;
       }
 
-      ctx.fillStyle = isActive
-        ? `hsl(${hue}, 80%, 65%)`
-        : `hsl(${hue}, 50%, 40%)`;
+      ctx.fillStyle = isActive ? `hsl(${hue}, 80%, 65%)` : `hsl(${hue}, 50%, 40%)`;
 
       ctx.beginPath();
       ctx.roundRect(x, y + 1, noteWidth, NOTE_HEIGHT - 2, 2);
@@ -171,7 +169,7 @@ export function PianoRollView({
     const containerWidth = container.clientWidth;
 
     // Queremos el playhead al 30% desde la izquierda
-    const targetScrollLeft = playheadX - (containerWidth * 0.3);
+    const targetScrollLeft = playheadX - containerWidth * 0.3;
 
     // Interpolar suavemente (lerp) - movimiento continuo sin saltos
     const currentScroll = container.scrollLeft;

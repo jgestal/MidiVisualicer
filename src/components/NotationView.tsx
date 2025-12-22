@@ -26,7 +26,7 @@ function midiToVexFlow(midi: number): { key: string; accidental?: string } {
 
   return {
     key,
-    accidental: sharp ? '#' : undefined
+    accidental: sharp ? '#' : undefined,
   };
 }
 
@@ -44,7 +44,7 @@ function groupNotesIntoMeasures(
   let currentMeasure: MidiNote[] = [];
   let measureStartTime = 0;
 
-  notes.forEach(note => {
+  notes.forEach((note) => {
     while (note.time >= measureStartTime + measureDuration) {
       if (currentMeasure.length > 0) {
         measures.push(currentMeasure);
@@ -67,7 +67,7 @@ export function NotationView({
   currentTime,
   isPlaying,
   bpm,
-  timeSignature
+  timeSignature,
 }: NotationViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
@@ -117,16 +117,15 @@ export function NotationView({
 
       // Crear notas del compás
       if (measureNotes.length > 0) {
-        const staveNotes = measureNotes.slice(0, 8).map(note => {
+        const staveNotes = measureNotes.slice(0, 8).map((note) => {
           const vexNote = midiToVexFlow(note.midi);
-          const duration = note.duration < 0.25 ? '16' :
-            note.duration < 0.5 ? '8' :
-              note.duration < 1 ? 'q' : 'h';
+          const duration =
+            note.duration < 0.25 ? '16' : note.duration < 0.5 ? '8' : note.duration < 1 ? 'q' : 'h';
 
           const staveNote = new StaveNote({
             keys: [vexNote.key],
             duration: duration,
-            auto_stem: true
+            auto_stem: true,
           });
 
           if (vexNote.accidental) {
@@ -134,7 +133,8 @@ export function NotationView({
           }
 
           // Resaltar nota actual
-          const isCurrentNote = measureIdx === currentMeasureIndex &&
+          const isCurrentNote =
+            measureIdx === currentMeasureIndex &&
             note.time <= currentTime &&
             note.time + note.duration >= currentTime;
 
@@ -148,14 +148,12 @@ export function NotationView({
         try {
           const voice = new Voice({
             num_beats: timeSignature.numerator,
-            beat_value: timeSignature.denominator
+            beat_value: timeSignature.denominator,
           }).setStrict(false);
 
           voice.addTickables(staveNotes);
 
-          new Formatter()
-            .joinVoices([voice])
-            .format([voice], staveWidth - 50);
+          new Formatter().joinVoices([voice]).format([voice], staveWidth - 50);
 
           voice.draw(context, stave);
         } catch {
@@ -166,7 +164,6 @@ export function NotationView({
 
       xOffset += staveWidth;
     });
-
   }, [measures, currentTime, isPlaying, currentMeasureIndex, timeSignature, notes.length]);
 
   // Auto-scroll al compás actual
@@ -178,7 +175,7 @@ export function NotationView({
         const targetScroll = currentMeasureIndex * staveWidth - container.clientWidth / 2;
         container.scrollTo({
           left: Math.max(0, targetScroll),
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
     }
@@ -199,16 +196,18 @@ export function NotationView({
           overflowX: 'auto',
           overflowY: 'hidden',
           background: '#ffffff',
-          borderRadius: '8px'
+          borderRadius: '8px',
         }}
       >
         {notes.length === 0 ? (
-          <div style={{
-            padding: '40px',
-            textAlign: 'center',
-            color: '#666',
-            background: '#ffffff'
-          }}>
+          <div
+            style={{
+              padding: '40px',
+              textAlign: 'center',
+              color: '#666',
+              background: '#ffffff',
+            }}
+          >
             <span style={{ fontSize: '32px', opacity: 0.3 }}>🎵</span>
             <p style={{ margin: '8px 0 0 0' }}>Selecciona una pista para ver la partitura</p>
           </div>
@@ -218,7 +217,7 @@ export function NotationView({
             style={{
               minHeight: 220,
               background: '#ffffff',
-              padding: '8px'
+              padding: '8px',
             }}
           />
         )}

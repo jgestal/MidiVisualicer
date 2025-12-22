@@ -27,7 +27,7 @@ export function LoopControls({
   onSetLoopEnd,
   onToggleLoop,
   onClearLoop,
-  currentTime
+  currentTime,
 }: LoopControlsProps) {
   const hasLoop = loopStart !== null && loopEnd !== null;
 
@@ -62,12 +62,7 @@ export function LoopControls({
         <Repeat size={14} />
       </button>
 
-      <button
-        className="loop-clear"
-        onClick={onClearLoop}
-        disabled={!hasLoop}
-        title="Borrar loop"
-      >
+      <button className="loop-clear" onClick={onClearLoop} disabled={!hasLoop} title="Borrar loop">
         <X size={14} />
       </button>
     </div>
