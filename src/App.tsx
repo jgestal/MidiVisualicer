@@ -56,6 +56,8 @@ function App() {
     setLoopEnd,
     toggleLoop,
     clearLoop,
+    setTrackVolume,
+    setTrackMuted,
   } = usePlayback();
   const { state: tracksState, toggleMute, resetTracks } = useTracks();
   const { state: instrumentState, selectInstrument, setTranspose } = useInstrument();
@@ -290,13 +292,21 @@ function App() {
               mutedTracks={mutedTracks}
               trackVolumes={trackVolumes}
               onSelectTrack={(idx) => resetTracks(idx)}
-              onToggleMute={handleToggleMute}
+              onToggleMute={(idx) => {
+                handleToggleMute(idx);
+                // Also update synth mute state in real-time
+                const wasMuted = mutedTracks.has(idx);
+                setTrackMuted(idx, !wasMuted);
+              }}
               onVolumeChange={(idx, vol) => {
+                // Update local state
                 setTrackVolumes(prev => {
                   const newMap = new Map(prev);
                   newMap.set(idx, vol);
                   return newMap;
                 });
+                // Update synth volume in real-time
+                setTrackVolume(idx, vol);
               }}
             />
           </div>
@@ -308,7 +318,7 @@ function App() {
             duration={playbackState.duration}
             speed={playbackState.speed}
             disabled={!hasMidi}
-            onPlay={() => parsedMidi && play(parsedMidi, mutedTracks)}
+            onPlay={() => parsedMidi && play(parsedMidi, mutedTracks, trackVolumes)}
             onPause={pause}
             onStop={stop}
             onSeek={seekTo}

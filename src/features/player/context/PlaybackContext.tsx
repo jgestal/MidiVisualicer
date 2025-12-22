@@ -1,6 +1,6 @@
 /**
  * Contexto para la gestión de la reproducción de MIDI
- * Maneja play, pause, stop, velocidad, loops y tiempo actual
+ * Maneja play, pause, stop, velocidad, loops, tiempo actual y volúmenes por pista
  */
 import {
   createContext,
@@ -94,7 +94,7 @@ function playbackReducer(state: PlaybackState, action: PlaybackAction): Playback
 // Tipo del contexto
 interface PlaybackContextType {
   state: PlaybackState;
-  play: (midi: ParsedMidi, mutedTracks?: Set<number>) => Promise<void>;
+  play: (midi: ParsedMidi, mutedTracks?: Set<number>, trackVolumes?: Map<number, number>) => Promise<void>;
   pause: () => void;
   stop: () => void;
   seekTo: (time: number) => void;
@@ -103,10 +103,19 @@ interface PlaybackContextType {
   setLoopEnd: (time: number | null) => void;
   toggleLoop: () => void;
   clearLoop: () => void;
+  setTrackVolume: (trackIndex: number, volume: number) => void;
+  setTrackMuted: (trackIndex: number, muted: boolean) => void;
 }
 
 // Contexto
 const PlaybackContext = createContext<PlaybackContextType | null>(null);
+
+// Convert percentage (0-100) to dB for Tone.js (-Infinity to 0)
+function volumeToDb(volume: number): number {
+  if (volume <= 0) return -Infinity;
+  // Map 0-100 to -40dB to 0dB (with some headroom)
+  return (volume / 100) * 40 - 40;
+}
 
 // Provider
 export function PlaybackProvider({ children }: { children: ReactNode }) {
@@ -118,6 +127,8 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const pauseTimeRef = useRef<number>(0);
   const isInitializedRef = useRef(false);
   const currentMidiRef = useRef<ParsedMidi | null>(null);
+  const trackVolumesRef = useRef<Map<number, number>>(new Map());
+  const mutedTracksRef = useRef<Set<number>>(new Set());
 
   // Inicializar Tone.js
   const initialize = useCallback(async () => {
@@ -129,7 +140,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   // Crear sintetizadores
   const createSynths = useCallback((trackCount: number) => {
     synthsRef.current.forEach((synth) => synth.dispose());
-    synthsRef.current = Array.from({ length: trackCount }, () => {
+    synthsRef.current = Array.from({ length: trackCount }, (_, index) => {
       const synth = new Tone.PolySynth(Tone.Synth, {
         oscillator: { type: 'triangle' },
         envelope: {
@@ -139,7 +150,11 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
           release: 0.8,
         },
       }).toDestination();
-      synth.volume.value = -8;
+
+      // Apply initial volume from trackVolumes or default
+      const volume = trackVolumesRef.current.get(index) ?? 100;
+      synth.volume.value = volumeToDb(volume);
+
       return synth;
     });
   }, []);
@@ -167,8 +182,16 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 
   // Reproducir
   const play = useCallback(
-    async (midi: ParsedMidi, mutedTracks: Set<number> = new Set()) => {
+    async (
+      midi: ParsedMidi,
+      mutedTracks: Set<number> = new Set(),
+      trackVolumes: Map<number, number> = new Map()
+    ) => {
       await initialize();
+
+      // Store refs for later use
+      trackVolumesRef.current = trackVolumes;
+      mutedTracksRef.current = mutedTracks;
 
       // Limpiar eventos anteriores
       scheduledEventsRef.current.forEach((id) => Tone.Transport.clear(id));
@@ -179,6 +202,15 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 
       const speed = state.speed;
       const adjustedDuration = midi.duration / speed;
+
+      // Apply volumes to synths
+      midi.tracks.forEach((_, index) => {
+        const synth = synthsRef.current[index];
+        if (synth) {
+          const volume = trackVolumes.get(index) ?? 100;
+          synth.volume.value = volumeToDb(volume);
+        }
+      });
 
       // Programar todas las pistas
       midi.tracks.forEach((track, index) => {
@@ -293,6 +325,35 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'CLEAR_LOOP' });
   }, []);
 
+  // Set track volume in real-time
+  const setTrackVolume = useCallback((trackIndex: number, volume: number) => {
+    trackVolumesRef.current.set(trackIndex, volume);
+    const synth = synthsRef.current[trackIndex];
+    if (synth) {
+      synth.volume.value = volumeToDb(volume);
+    }
+  }, []);
+
+  // Set track muted in real-time
+  const setTrackMuted = useCallback((trackIndex: number, muted: boolean) => {
+    if (muted) {
+      mutedTracksRef.current.add(trackIndex);
+    } else {
+      mutedTracksRef.current.delete(trackIndex);
+    }
+    const synth = synthsRef.current[trackIndex];
+    if (synth) {
+      // When muted, set volume to -Infinity (silent)
+      // When unmuted, restore the actual volume
+      if (muted) {
+        synth.volume.value = -Infinity;
+      } else {
+        const volume = trackVolumesRef.current.get(trackIndex) ?? 100;
+        synth.volume.value = volumeToDb(volume);
+      }
+    }
+  }, []);
+
   // Limpiar al desmontar
   useEffect(() => {
     return () => {
@@ -312,6 +373,8 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     setLoopEnd,
     toggleLoop,
     clearLoop,
+    setTrackVolume,
+    setTrackMuted,
   };
 
   return <PlaybackContext.Provider value={value}>{children}</PlaybackContext.Provider>;
