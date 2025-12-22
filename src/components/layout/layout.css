@@ -496,7 +496,8 @@
     font-size: 11px;
     font-family: var(--font-mono);
     color: var(--color-text-muted);
-    min-width: 40px;
+    min-width: 45px;
+    flex-shrink: 0;
 }
 
 .footer-progress-bar {

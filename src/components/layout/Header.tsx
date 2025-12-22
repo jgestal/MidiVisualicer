@@ -82,7 +82,6 @@ export function Header({
                     <span className="header-title">Midi Tab Pro</span>
                 </div>
 
-                {/* Info del archivo (solo si hay MIDI) */}
                 {hasMidi && fileName && (
                     <div className="header-file-info">
                         <span className="header-filename">{fileName}</span>
@@ -90,19 +89,19 @@ export function Header({
                         {timeSignature && <span className="header-time-sig">{timeSignature}</span>}
                     </div>
                 )}
-            </div>
 
-            {/* Center Section - Open File button (only if MIDI loaded) */}
-            {hasMidi && onOpenFile && (
-                <button
-                    className="header-btn header-open-btn"
-                    onClick={onOpenFile}
-                    title="Abrir otro archivo MIDI"
-                >
-                    <FolderOpen size={16} />
-                    <span>Abrir</span>
-                </button>
-            )}
+                {/* Open File button (next to file info) */}
+                {hasMidi && onOpenFile && (
+                    <button
+                        className="header-btn header-open-btn"
+                        onClick={onOpenFile}
+                        title="Abrir otro archivo MIDI"
+                    >
+                        <FolderOpen size={16} />
+                        <span>Abrir</span>
+                    </button>
+                )}
+            </div>
 
             {/* Right Section (solo si hay MIDI cargado) */}
             {hasMidi && (

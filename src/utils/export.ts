@@ -140,11 +140,14 @@ export function generateTablatureText(track: MidiTrack, instrumentId: string): s
     output += `── Sección ${sectionIdx + 1} ─ ${timeStr} ${'─'.repeat(40)}\n\n`;
 
     // Generar líneas para esta sección
+    // Añadir separadores de compás cada 4 notas
+    const NOTES_PER_BAR = 4;
+
     for (let stringIdx = 0; stringIdx < stringCount; stringIdx++) {
       const stringNum = stringCount - stringIdx;
       let line = stringLabels[stringIdx] + '│';
 
-      sectionSlots.forEach((slot) => {
+      sectionSlots.forEach((slot, noteIdx) => {
         const positions = timeSlots.get(slot) || [];
         const pos = positions.find((p) => p.string === stringNum);
 
@@ -152,6 +155,11 @@ export function generateTablatureText(track: MidiTrack, instrumentId: string): s
           line += pos.fret.toString().padStart(2, ' ') + '─';
         } else {
           line += '───';
+        }
+
+        // Añadir separador de compás cada NOTES_PER_BAR notas
+        if ((noteIdx + 1) % NOTES_PER_BAR === 0 && noteIdx < sectionSlots.length - 1) {
+          line += '│';
         }
       });
 

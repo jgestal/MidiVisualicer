@@ -129,6 +129,9 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const currentMidiRef = useRef<ParsedMidi | null>(null);
   const trackVolumesRef = useRef<Map<number, number>>(new Map());
   const mutedTracksRef = useRef<Set<number>>(new Set());
+  const loopStartRef = useRef<number | null>(null);
+  const loopEndRef = useRef<number | null>(null);
+  const isLoopEnabledRef = useRef(false);
 
   // Inicializar Tone.js
   const initialize = useCallback(async () => {
@@ -237,6 +240,19 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
           const currentTime = Tone.Transport.seconds * speed;
           dispatch({ type: 'SET_TIME', payload: currentTime });
 
+          // Check for loop end
+          if (isLoopEnabledRef.current && loopEndRef.current !== null && loopStartRef.current !== null) {
+            if (currentTime >= loopEndRef.current) {
+              // Seek back to loop start
+              const loopStartTime = loopStartRef.current;
+              Tone.Transport.seconds = loopStartTime / speed;
+              pauseTimeRef.current = loopStartTime;
+              dispatch({ type: 'SET_TIME', payload: loopStartTime });
+              animationFrameRef.current = requestAnimationFrame(updateTime);
+              return;
+            }
+          }
+
           if (currentTime >= midi.duration) {
             stop();
             return;
@@ -310,18 +326,24 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 
   // Loop controls
   const setLoopStart = useCallback((time: number | null) => {
+    loopStartRef.current = time;
     dispatch({ type: 'SET_LOOP_START', payload: time });
   }, []);
 
   const setLoopEnd = useCallback((time: number | null) => {
+    loopEndRef.current = time;
     dispatch({ type: 'SET_LOOP_END', payload: time });
   }, []);
 
   const toggleLoop = useCallback(() => {
+    isLoopEnabledRef.current = !isLoopEnabledRef.current;
     dispatch({ type: 'TOGGLE_LOOP' });
   }, []);
 
   const clearLoop = useCallback(() => {
+    loopStartRef.current = null;
+    loopEndRef.current = null;
+    isLoopEnabledRef.current = false;
     dispatch({ type: 'CLEAR_LOOP' });
   }, []);
 

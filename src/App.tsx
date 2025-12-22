@@ -24,7 +24,7 @@ import { useInstrument } from './features/instruments/context/InstrumentContext'
 import { Header } from './components/layout/Header';
 import { Toolbar } from './components/layout/Toolbar';
 import { Footer } from './components/layout/Footer';
-import { RightSidebar } from './components/layout/RightSidebar';
+import { BottomTracksPanel } from './components/layout/BottomTracksPanel';
 import { MainPanel } from './components/layout/MainPanel';
 import './components/layout/layout.css';
 
@@ -67,7 +67,6 @@ function App() {
   const [showPianoRoll, setShowPianoRoll] = useState(true);
   const [activeView, setActiveView] = useState<'tablature' | 'notation'>('tablature');
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
-  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [showInstrumentModal, setShowInstrumentModal] = useState(false);
   const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
 
@@ -283,34 +282,29 @@ function App() {
                 />
               )}
             </MainPanel>
-
-            {/* Right Sidebar - Track List */}
-            <RightSidebar
-              isOpen={isRightSidebarOpen}
-              onToggle={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-              tracks={parsedMidi.tracks}
-              selectedTrack={selectedTrack}
-              mutedTracks={mutedTracks}
-              trackVolumes={trackVolumes}
-              onSelectTrack={(idx) => resetTracks(idx)}
-              onToggleMute={(idx) => {
-                handleToggleMute(idx);
-                // Also update synth mute state in real-time
-                const wasMuted = mutedTracks.has(idx);
-                setTrackMuted(idx, !wasMuted);
-              }}
-              onVolumeChange={(idx, vol) => {
-                // Update local state
-                setTrackVolumes(prev => {
-                  const newMap = new Map(prev);
-                  newMap.set(idx, vol);
-                  return newMap;
-                });
-                // Update synth volume in real-time
-                setTrackVolume(idx, vol);
-              }}
-            />
           </div>
+
+          {/* BOTTOM TRACKS PANEL */}
+          <BottomTracksPanel
+            tracks={parsedMidi.tracks}
+            selectedTrack={selectedTrack}
+            mutedTracks={mutedTracks}
+            trackVolumes={trackVolumes}
+            onSelectTrack={(idx) => resetTracks(idx)}
+            onToggleMute={(idx) => {
+              handleToggleMute(idx);
+              const wasMuted = mutedTracks.has(idx);
+              setTrackMuted(idx, !wasMuted);
+            }}
+            onVolumeChange={(idx, vol) => {
+              setTrackVolumes(prev => {
+                const newMap = new Map(prev);
+                newMap.set(idx, vol);
+                return newMap;
+              });
+              setTrackVolume(idx, vol);
+            }}
+          />
 
           {/* FOOTER - Player Controls */}
           <Footer

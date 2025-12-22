@@ -1,8 +1,8 @@
 /**
- * Controles de Transposición - VERSIÓN COMPACTA
+ * Controles de Transposición - VERSIÓN COMPACTA CON HISTORIAL
  */
-import { useMemo } from 'react';
-import { ArrowUp, ArrowDown, RotateCcw, Wand2 } from 'lucide-react';
+import { useMemo, useState, useCallback } from 'react';
+import { ArrowUp, ArrowDown, RotateCcw, Wand2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { INSTRUMENTS } from '../config/instruments';
 import type { MidiNote } from '../types/midi';
 
@@ -20,6 +20,42 @@ export function TransposeControls({
   onTransposeChange,
 }: TransposeControlsProps) {
   const instrument = INSTRUMENTS[instrumentId];
+
+  // Historial de transposiciones
+  const [history, setHistory] = useState<number[]>([0]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+
+  // Agregar al historial cuando cambia la transposición
+  const handleTransposeChange = useCallback((newTranspose: number) => {
+    setHistory(prev => {
+      // Truncar el historial si estamos en el medio
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(newTranspose);
+      return newHistory;
+    });
+    setHistoryIndex(prev => prev + 1);
+    onTransposeChange(newTranspose);
+  }, [historyIndex, onTransposeChange]);
+
+  // Undo
+  const canUndo = historyIndex > 0;
+  const handleUndo = useCallback(() => {
+    if (canUndo) {
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      onTransposeChange(history[newIndex]);
+    }
+  }, [canUndo, historyIndex, history, onTransposeChange]);
+
+  // Redo
+  const canRedo = historyIndex < history.length - 1;
+  const handleRedo = useCallback(() => {
+    if (canRedo) {
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      onTransposeChange(history[newIndex]);
+    }
+  }, [canRedo, historyIndex, history, onTransposeChange]);
 
   const { inRangePercent, suggestedTranspose } = useMemo(() => {
     if (!instrument || notes.length === 0) {
@@ -62,22 +98,32 @@ export function TransposeControls({
         <span>Transponer</span>
       </div>
 
+      {/* Historial Undo/Redo */}
+      <div className="transpose-history">
+        <button onClick={handleUndo} disabled={!canUndo} title="Deshacer transposición">
+          <ChevronLeft size={14} />
+        </button>
+        <button onClick={handleRedo} disabled={!canRedo} title="Rehacer transposición">
+          <ChevronRight size={14} />
+        </button>
+      </div>
+
       <div className="transpose-controls">
-        <button onClick={() => onTransposeChange(transpose - 12)} title="-8va">
+        <button onClick={() => handleTransposeChange(transpose - 12)} title="-8va">
           <ArrowDown size={12} />
           -8va
         </button>
-        <button onClick={() => onTransposeChange(transpose - 1)} title="-1">
+        <button onClick={() => handleTransposeChange(transpose - 1)} title="-1">
           -1
         </button>
         <span className="transpose-value" style={{ color: rangeColor }}>
           {transpose > 0 ? '+' : ''}
           {transpose}
         </span>
-        <button onClick={() => onTransposeChange(transpose + 1)} title="+1">
+        <button onClick={() => handleTransposeChange(transpose + 1)} title="+1">
           +1
         </button>
-        <button onClick={() => onTransposeChange(transpose + 12)} title="+8va">
+        <button onClick={() => handleTransposeChange(transpose + 12)} title="+8va">
           +8va
           <ArrowUp size={12} />
         </button>
@@ -86,12 +132,12 @@ export function TransposeControls({
       <div className="transpose-actions">
         <button
           className="btn-auto"
-          onClick={() => onTransposeChange(suggestedTranspose)}
+          onClick={() => handleTransposeChange(suggestedTranspose)}
           title="Auto-adaptar al instrumento"
         >
           Auto
         </button>
-        <button onClick={() => onTransposeChange(0)} disabled={transpose === 0} title="Reset">
+        <button onClick={() => handleTransposeChange(0)} disabled={transpose === 0} title="Reset">
           <RotateCcw size={12} />
         </button>
       </div>
@@ -208,6 +254,34 @@ const styles = `
   font-size: 10px;
   font-weight: 600;
   min-width: 28px;
+}
+
+.transpose-history {
+  display: flex;
+  gap: 2px;
+}
+
+.transpose-history button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.transpose-history button:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.transpose-history button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 `;
 
