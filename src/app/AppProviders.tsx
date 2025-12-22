@@ -3,7 +3,7 @@
  * Envuelve la app con todos los providers necesarios
  */
 import { ReactNode } from 'react';
-import { MidiProvider } from '@/features/library/context/MidiContext';
+import { MidiProvider, LibraryProvider } from '@/features/library';
 import { PlaybackProvider } from '@/features/player/context/PlaybackContext';
 import { TracksProvider } from '@/features/tracks/context/TracksContext';
 import { InstrumentProvider } from '@/features/instruments/context/InstrumentContext';
@@ -20,15 +20,17 @@ interface AppProvidersProps {
  */
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <MidiProvider>
-      <PlaybackProvider>
-        <TracksProvider>
-          <InstrumentProvider>
-            <VisualizationProvider>{children}</VisualizationProvider>
-          </InstrumentProvider>
-        </TracksProvider>
-      </PlaybackProvider>
-    </MidiProvider>
+    <LibraryProvider>
+      <MidiProvider>
+        <PlaybackProvider>
+          <TracksProvider>
+            <InstrumentProvider>
+              <VisualizationProvider>{children}</VisualizationProvider>
+            </InstrumentProvider>
+          </TracksProvider>
+        </PlaybackProvider>
+      </MidiProvider>
+    </LibraryProvider>
   );
 }
 
