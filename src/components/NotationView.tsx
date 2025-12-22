@@ -1,7 +1,8 @@
 /**
  * Componente de visualización de partitura usando VexFlow - MULTI-LÍNEA
  * - Sin scroll horizontal, solo vertical
- * - Cada línea contiene un número de compases que caben en el ancho
+ * - Cada línea contiene compases que caben en el ancho
+ * - Cursor/playhead que indica la posición actual
  * - Auto-scroll al compás actual durante reproducción
  */
 import { useEffect, useRef, useMemo, useState } from 'react';
@@ -17,9 +18,10 @@ interface NotationViewProps {
   timeSignature: { numerator: number; denominator: number };
 }
 
-const STAVE_WIDTH = 200;
-const STAVE_HEIGHT = 120;
-const MARGIN = 20;
+const STAVE_WIDTH = 180; // Reduced for better fit
+const STAVE_HEIGHT = 130;
+const MARGIN = 30;
+const RIGHT_PADDING = 40; // Extra padding on right
 
 // Convertir nota MIDI a formato VexFlow
 function midiToVexFlow(midi: number): { key: string; accidental?: string } {
@@ -96,10 +98,12 @@ export function NotationView({
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Calculate how many measures per line
+  // Calculate how many measures per line - with extra padding consideration
   const measuresPerLine = useMemo(() => {
-    const availableWidth = containerWidth - MARGIN * 2;
-    return Math.max(1, Math.floor(availableWidth / STAVE_WIDTH));
+    const availableWidth = containerWidth - MARGIN - RIGHT_PADDING;
+    const count = Math.max(1, Math.floor(availableWidth / STAVE_WIDTH));
+    // Reduce by 1 if it's too tight
+    return count > 1 ? count : 1;
   }, [containerWidth]);
 
   // Group notes into measures
@@ -119,12 +123,13 @@ export function NotationView({
     return result;
   }, [measures, measuresPerLine]);
 
-  // Calculate current measure index
+  // Calculate current measure index and position within measure
   const beatsPerMeasure = timeSignature.numerator;
   const beatDuration = 60 / bpm;
   const measureDuration = beatsPerMeasure * beatDuration;
   const currentMeasureIndex = Math.floor(currentTime / measureDuration);
   const currentLineIndex = Math.floor(currentMeasureIndex / measuresPerLine);
+  const positionInMeasure = (currentTime % measureDuration) / measureDuration;
 
   // Auto-scroll to current line
   useEffect(() => {
@@ -163,6 +168,8 @@ export function NotationView({
               isPlaying={isPlaying}
               isCurrentLine={lineIndex === currentLineIndex}
               lineStartMeasure={lineIndex * measuresPerLine}
+              positionInMeasure={positionInMeasure}
+              containerWidth={containerWidth}
             />
           ))
         )}
@@ -207,6 +214,7 @@ export function NotationView({
           background: #fafafa;
           border-radius: var(--radius-md);
           transition: all var(--transition-fast);
+          position: relative;
         }
 
         .notation-line.current {
@@ -225,6 +233,18 @@ export function NotationView({
           background: #ffffff;
           border-radius: 4px;
           overflow: hidden;
+          position: relative;
+        }
+
+        .notation-playhead {
+          position: absolute;
+          top: 10px;
+          bottom: 10px;
+          width: 2px;
+          background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+          box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+          z-index: 10;
+          transition: left 0.05s linear;
         }
       `}</style>
     </div>
@@ -242,6 +262,8 @@ interface NotationLineProps {
   isPlaying: boolean;
   isCurrentLine: boolean;
   lineStartMeasure: number;
+  positionInMeasure: number;
+  containerWidth: number;
 }
 
 function NotationLine({
@@ -254,8 +276,21 @@ function NotationLine({
   isPlaying,
   isCurrentLine,
   lineStartMeasure,
+  positionInMeasure,
 }: NotationLineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Calculate playhead position within this line
+  const playheadPosition = useMemo(() => {
+    if (!isCurrentLine) return null;
+
+    const measureInLine = currentMeasureIndex - lineStartMeasure;
+    if (measureInLine < 0 || measureInLine >= measures.length) return null;
+
+    // X position = margin + (measure index * stave width) + (position within measure * stave width)
+    const xPos = MARGIN + (measureInLine * STAVE_WIDTH) + (positionInMeasure * STAVE_WIDTH);
+    return xPos;
+  }, [isCurrentLine, currentMeasureIndex, lineStartMeasure, measures.length, positionInMeasure]);
 
   useEffect(() => {
     if (!containerRef.current || measures.length === 0) return;
@@ -263,12 +298,13 @@ function NotationLine({
     const container = containerRef.current;
     container.innerHTML = '';
 
-    const width = measuresPerLine * STAVE_WIDTH + MARGIN;
+    // Use actual number of measures in this line, not max per line
+    const lineWidth = measures.length * STAVE_WIDTH + MARGIN + RIGHT_PADDING;
     const height = STAVE_HEIGHT;
 
     // Create renderer
     const renderer = new Renderer(container, Renderer.Backends.SVG);
-    renderer.resize(width, height);
+    renderer.resize(lineWidth, height);
 
     const context = renderer.getContext();
     context.setFont('Arial', 10);
@@ -279,8 +315,9 @@ function NotationLine({
     measures.forEach((measureNotes, measureOffsetInLine) => {
       const globalMeasureIndex = lineStartMeasure + measureOffsetInLine;
 
-      // Create stave
-      const stave = new Stave(xOffset, 10, STAVE_WIDTH - 10);
+      // Create stave - use slightly smaller width to avoid cutoff
+      const staveDrawWidth = STAVE_WIDTH - 15;
+      const stave = new Stave(xOffset, 20, staveDrawWidth);
 
       // Add clef only for first measure of first line
       if (lineIndex === 0 && measureOffsetInLine === 0) {
@@ -328,7 +365,7 @@ function NotationLine({
 
           voice.addTickables(staveNotes);
 
-          new Formatter().joinVoices([voice]).format([voice], STAVE_WIDTH - 60);
+          new Formatter().joinVoices([voice]).format([voice], staveDrawWidth - 50);
 
           voice.draw(context, stave);
         } catch {
@@ -347,6 +384,13 @@ function NotationLine({
         Compás {lineStartMeasure + 1} - {lineStartMeasure + measures.length}
       </div>
       <div className="notation-line-content">
+        {/* Playhead cursor */}
+        {playheadPosition !== null && isPlaying && (
+          <div
+            className="notation-playhead"
+            style={{ left: `${playheadPosition}px` }}
+          />
+        )}
         <div
           ref={containerRef}
           style={{
