@@ -194,6 +194,7 @@ interface TracksContextType {
   selectTrack: (index: number) => void;
   toggleMute: (index: number) => void;
   setSolo: (index: number | null) => void;
+  toggleSolo: (index: number) => void;
   resetTracks: (melodyTrackIndex?: number) => void;
   setAutoSelectMelody: (enabled: boolean) => void;
   getEffectiveMutedTracks: (trackCount: number) => Set<number>;
@@ -217,6 +218,11 @@ export function TracksProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setSolo = useCallback((index: number | null) => {
+    dispatch({ type: 'SET_SOLO', payload: index });
+  }, []);
+
+  // Toggle solo: si ya está en solo, quitarlo; si no, activarlo
+  const toggleSolo = useCallback((index: number) => {
     dispatch({ type: 'SET_SOLO', payload: index });
   }, []);
 
@@ -251,6 +257,7 @@ export function TracksProvider({ children }: { children: ReactNode }) {
     selectTrack,
     toggleMute,
     setSolo,
+    toggleSolo,
     resetTracks,
     setAutoSelectMelody,
     getEffectiveMutedTracks,

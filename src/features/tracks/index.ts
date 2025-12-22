@@ -10,3 +10,7 @@ export {
   useIsTrackMuted,
   detectMelodyTrack,
 } from './context/TracksContext';
+
+// Components
+export { TrackManager } from './components';
+export type { TrackManagerProps } from './components';
