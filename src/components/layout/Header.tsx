@@ -74,7 +74,7 @@ export function Header({
 
                 <div className="header-brand">
                     <Music size={20} className="header-logo" />
-                    <span className="header-title">MIDI Visualizer</span>
+                    <span className="header-title">Midi Tab Pro</span>
                 </div>
 
                 {/* Info del archivo (solo si hay MIDI) */}

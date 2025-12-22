@@ -67,6 +67,7 @@ function App() {
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [showInstrumentModal, setShowInstrumentModal] = useState(false);
+  const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
 
   // ===== DERIVADOS =====
   const parsedMidi = midiState.parsedMidi;
@@ -287,8 +288,16 @@ function App() {
               tracks={parsedMidi.tracks}
               selectedTrack={selectedTrack}
               mutedTracks={mutedTracks}
+              trackVolumes={trackVolumes}
               onSelectTrack={(idx) => resetTracks(idx)}
               onToggleMute={handleToggleMute}
+              onVolumeChange={(idx, vol) => {
+                setTrackVolumes(prev => {
+                  const newMap = new Map(prev);
+                  newMap.set(idx, vol);
+                  return newMap;
+                });
+              }}
             />
           </div>
 

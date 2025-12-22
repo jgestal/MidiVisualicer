@@ -2,7 +2,7 @@
  * Footer Component - Controles del reproductor
  * Barra fija en la parte inferior con play/pause, progreso y velocidad
  */
-import { Play, Pause, Square, SkipBack, SkipForward } from 'lucide-react';
+import { Play, Pause, Square, SkipBack, SkipForward, RotateCcw } from 'lucide-react';
 import type { PlaybackSpeed } from '../../types/midi';
 
 interface FooterProps {
@@ -53,6 +53,16 @@ export function Footer({
         <footer className="app-footer">
             {/* Transport Controls */}
             <div className="footer-transport">
+                {/* Restart Button */}
+                <button
+                    className="footer-btn"
+                    onClick={() => onSeek(0)}
+                    disabled={disabled}
+                    title="Reiniciar"
+                >
+                    <RotateCcw size={16} />
+                </button>
+
                 <button
                     className="footer-btn"
                     onClick={() => onSeek(Math.max(0, currentTime - 5))}

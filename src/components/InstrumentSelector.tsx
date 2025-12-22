@@ -23,7 +23,13 @@ export function InstrumentSelector({
   const instrumentsMap = useAllInstruments();
   const { addCustomInstrument, deleteCustomInstrument } = useInstrument();
 
-  const instruments = useMemo(() => Object.values(instrumentsMap), [instrumentsMap]);
+  // Sort instruments: custom first, then predefined
+  const sortedInstruments = useMemo(() => {
+    const all = Object.values(instrumentsMap);
+    const custom = all.filter((i: InstrumentConfig) => i.isCustom);
+    const predefined = all.filter((i: InstrumentConfig) => !i.isCustom);
+    return [...custom, ...predefined];
+  }, [instrumentsMap]);
 
   const handleDelete = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -54,7 +60,14 @@ export function InstrumentSelector({
   return (
     <div className="instrument-selector-wrapper">
       <div className="instrument-grid">
-        {instruments.map((instrument: InstrumentConfig) => (
+        {/* Custom button FIRST */}
+        <button className="btn-add-instrument" onClick={handleCreate}>
+          <Plus size={16} />
+          <span>+ Crear Instrumento Personalizado</span>
+        </button>
+
+        {/* Then list instruments: custom first, then predefined */}
+        {sortedInstruments.map((instrument: InstrumentConfig) => (
           <div
             key={instrument.id}
             className={`instrument-item ${selectedInstrument === instrument.id ? 'active' : ''}`}
@@ -85,11 +98,6 @@ export function InstrumentSelector({
             )}
           </div>
         ))}
-
-        <button className="btn-add-instrument" onClick={handleCreate}>
-          <Plus size={16} />
-          <span>Personalizado</span>
-        </button>
       </div>
 
       <InstrumentEditor
@@ -100,9 +108,9 @@ export function InstrumentSelector({
         onDelete={
           editingInstrument
             ? (id) => {
-                deleteCustomInstrument(id);
-                if (selectedInstrument === id) onSelectInstrument('guitar');
-              }
+              deleteCustomInstrument(id);
+              if (selectedInstrument === id) onSelectInstrument('guitar');
+            }
             : undefined
         }
       />
