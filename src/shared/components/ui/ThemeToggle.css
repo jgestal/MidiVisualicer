@@ -1,0 +1,137 @@
+/**
+ * Estilos para ThemeToggle
+ */
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3px;
+  position: relative;
+  gap: 0;
+}
+
+.theme-toggle-sm {
+  padding: 2px;
+  border-radius: var(--radius-md);
+}
+
+.theme-toggle-lg {
+  padding: 4px;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: calc(var(--radius-lg) - 2px);
+  transition: all var(--transition-fast);
+  position: relative;
+  z-index: 1;
+  font-size: var(--font-size-sm);
+}
+
+.theme-toggle-sm .theme-toggle-btn {
+  padding: 6px 10px;
+}
+
+.theme-toggle-lg .theme-toggle-btn {
+  padding: 10px 16px;
+}
+
+.theme-toggle-btn:hover:not(.active) {
+  color: var(--color-text-primary);
+}
+
+.theme-toggle-btn.active {
+  color: var(--color-text-primary);
+}
+
+.theme-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle-label {
+  font-weight: 500;
+}
+
+/* Indicador animado */
+.theme-toggle-indicator {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(33.33% - 2px);
+  height: calc(100% - 6px);
+  background: var(--color-accent-primary);
+  border-radius: calc(var(--radius-lg) - 4px);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.theme-toggle-sm .theme-toggle-indicator {
+  top: 2px;
+  left: 2px;
+  width: calc(33.33% - 1.33px);
+  height: calc(100% - 4px);
+  border-radius: calc(var(--radius-md) - 3px);
+}
+
+/* Quick Toggle */
+.theme-quick-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.theme-quick-toggle:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+}
+
+.theme-quick-toggle:active {
+  transform: scale(0.95);
+}
+
+.theme-quick-toggle-icon {
+  display: flex;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-quick-toggle:hover .theme-quick-toggle-icon {
+  transform: rotate(15deg);
+}
+
+/* Animación del icono al hacer hover */
+@keyframes sunPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.theme-quick-toggle:hover .theme-quick-toggle-icon svg {
+  animation: sunPulse 0.5s ease;
+}

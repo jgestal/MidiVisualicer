@@ -36,6 +36,9 @@ import { usePlayback } from '@/features/player';
 import { useTracks, detectMelodyTrack } from '@/features/tracks';
 import { useInstrument } from '@/features/instruments';
 
+// UI compartido
+import { ThemeQuickToggle } from '@/shared/components/ui';
+
 // Utils y config
 import { generateCifrado, generateTablatureText, downloadAsTextFile } from './utils/export';
 import { getAllInstruments } from './config/instruments';
@@ -262,6 +265,8 @@ function App() {
           </div>
 
           <div className="header-actions">
+            {/* Theme Toggle - siempre visible */}
+            <ThemeQuickToggle />
             {parsedMidi && (
               <>
                 <TransposeControls
