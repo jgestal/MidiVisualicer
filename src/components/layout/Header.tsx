@@ -16,6 +16,7 @@ import {
     Wand2,
     Repeat,
     ChevronDown,
+    FolderOpen,
 } from 'lucide-react';
 import { useTheme } from '../../shared/context/ThemeContext';
 
@@ -41,6 +42,9 @@ interface HeaderProps {
     // Exportar
     onExportCifrado: () => void;
     onExportTablature: () => void;
+
+    // Abrir archivo
+    onOpenFile?: () => void;
 }
 
 export function Header({
@@ -57,6 +61,7 @@ export function Header({
     onTogglePianoRoll,
     onExportCifrado,
     onExportTablature,
+    onOpenFile,
 }: HeaderProps) {
     const { theme, toggleTheme } = useTheme();
 
@@ -86,6 +91,18 @@ export function Header({
                     </div>
                 )}
             </div>
+
+            {/* Center Section - Open File button (only if MIDI loaded) */}
+            {hasMidi && onOpenFile && (
+                <button
+                    className="header-btn header-open-btn"
+                    onClick={onOpenFile}
+                    title="Abrir otro archivo MIDI"
+                >
+                    <FolderOpen size={16} />
+                    <span>Abrir</span>
+                </button>
+            )}
 
             {/* Right Section (solo si hay MIDI cargado) */}
             {hasMidi && (

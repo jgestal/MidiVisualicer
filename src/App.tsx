@@ -193,6 +193,7 @@ function App() {
         onTogglePianoRoll={() => setShowPianoRoll(!showPianoRoll)}
         onExportCifrado={handleExportCifrado}
         onExportTablature={handleExportTablature}
+        onOpenFile={() => document.getElementById('midi-file-input')?.click()}
       />
 
       {/* TOOLBAR (conditional) */}

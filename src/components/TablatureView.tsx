@@ -111,18 +111,40 @@ export function TablatureView({
     [timeSlots]
   );
 
-  // Split slots into lines/rows based on cellsPerLine
+  // Detect gaps between consecutive slots (gaps > 3 slots = 0.45s indicate significant pause)
+  const PAUSE_THRESHOLD = 3; // gaps larger than this many slots get a pause marker
+
+  type SlotItem = { type: 'note'; slot: number } | { type: 'pause'; afterSlot: number };
+
+  // Build display items with pause markers
+  const displayItems = useMemo(() => {
+    const items: SlotItem[] = [];
+    for (let i = 0; i < sortedSlots.length; i++) {
+      items.push({ type: 'note', slot: sortedSlots[i] });
+      // Check for gap before next slot
+      if (i < sortedSlots.length - 1) {
+        const currentSlot = sortedSlots[i];
+        const nextSlot = sortedSlots[i + 1];
+        if (nextSlot - currentSlot > PAUSE_THRESHOLD) {
+          items.push({ type: 'pause', afterSlot: currentSlot });
+        }
+      }
+    }
+    return items;
+  }, [sortedSlots]);
+
+  // Split items into lines/rows based on cellsPerLine
   const lines = useMemo(() => {
-    const result: number[][] = [];
-    for (let i = 0; i < sortedSlots.length; i += cellsPerLine) {
-      result.push(sortedSlots.slice(i, i + cellsPerLine));
+    const result: SlotItem[][] = [];
+    for (let i = 0; i < displayItems.length; i += cellsPerLine) {
+      result.push(displayItems.slice(i, i + cellsPerLine));
     }
     // Ensure at least one empty line for empty state
     if (result.length === 0) {
       result.push([]);
     }
     return result;
-  }, [sortedSlots, cellsPerLine]);
+  }, [displayItems, cellsPerLine]);
 
   const currentSlotIndex = Math.floor(currentTime / TIME_QUANTUM);
 
@@ -130,7 +152,7 @@ export function TablatureView({
   const currentLineIndex = useMemo(() => {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (line.some((slot) => slot >= currentSlotIndex)) {
+      if (line.some((item) => item.type === 'note' && item.slot >= currentSlotIndex)) {
         return i;
       }
     }
@@ -179,8 +201,9 @@ export function TablatureView({
   return (
     <div className="tab-container-multiline" ref={containerRef}>
       <div className="tab-scroll-vertical" ref={scrollContainerRef}>
-        {lines.map((lineSlots, lineIndex) => {
-          const lineStartSlot = lineSlots[0] ?? lineIndex * cellsPerLine;
+        {lines.map((lineItems, lineIndex) => {
+          const firstNoteItem = lineItems.find(item => item.type === 'note');
+          const lineStartSlot = firstNoteItem ? firstNoteItem.slot : lineIndex * cellsPerLine;
           const lineStartTime = (lineStartSlot * TIME_QUANTUM).toFixed(1);
 
           return (
@@ -205,15 +228,30 @@ export function TablatureView({
 
                     return (
                       <div key={stringIdx} className="tab-string-row">
-                        {lineSlots.length === 0 ? (
+                        {lineItems.length === 0 ? (
                           <span className="tab-empty">{'─'.repeat(Math.min(40, cellsPerLine))}</span>
                         ) : (
-                          lineSlots.map((slot) => {
+                          lineItems.map((item, itemIdx) => {
+                            if (item.type === 'pause') {
+                              // Render pause marker (vertical bar)
+                              return (
+                                <span
+                                  key={`pause-${item.afterSlot}`}
+                                  className="tab-cell tab-pause"
+                                  title="Pausa"
+                                >
+                                  │
+                                </span>
+                              );
+                            }
+
+                            // It's a note slot
+                            const slot = item.slot;
                             const slotNotes = timeSlots.get(slot) || [];
                             const noteOnString = slotNotes.find((n) => n.string === stringNum);
-                            const isActive = slot <= currentSlotIndex &&
-                              (lineSlots.indexOf(slot) === lineSlots.length - 1 ||
-                                (lineSlots[lineSlots.indexOf(slot) + 1] ?? Infinity) > currentSlotIndex);
+                            const nextNoteItem = lineItems.slice(itemIdx + 1).find(i => i.type === 'note');
+                            const nextSlot = nextNoteItem ? nextNoteItem.slot : Infinity;
+                            const isActive = slot <= currentSlotIndex && nextSlot > currentSlotIndex;
 
                             return (
                               <span
