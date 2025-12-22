@@ -1,0 +1,90 @@
+/**
+ * Estilos para Piano Roll
+ */
+
+.piano-roll {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.piano-roll-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.piano-roll-title {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.piano-roll-hint {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.piano-roll-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-bg-hover) transparent;
+}
+
+.piano-roll-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.piano-roll-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.piano-roll-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-bg-hover);
+  border-radius: 4px;
+}
+
+.piano-roll-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+.piano-roll-canvas {
+  display: block;
+  cursor: pointer;
+}
+
+/* Variante compacta */
+.piano-roll.compact .piano-roll-header {
+  padding: var(--space-1) var(--space-2);
+}
+
+.piano-roll.compact .piano-roll-title {
+  font-size: var(--font-size-xs);
+}
+
+.piano-roll.compact .piano-roll-hint {
+  display: none;
+}
+
+/* Animación de carga */
+.piano-roll.loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}

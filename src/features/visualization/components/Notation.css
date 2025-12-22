@@ -1,0 +1,96 @@
+/**
+ * Estilos para Notation
+ */
+
+.notation {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.notation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.notation-title {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.notation-info {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.notation-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: #ffffff;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.notation-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.notation-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+.notation-scroll::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.notation-scroll::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+.notation-content {
+  min-height: 220px;
+  background: #ffffff;
+  padding: var(--space-2);
+}
+
+.notation-content svg {
+  display: block;
+}
+
+.notation-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: var(--space-8);
+  text-align: center;
+  background: #ffffff;
+}
+
+.notation-empty-icon {
+  font-size: 32px;
+  opacity: 0.3;
+  margin-bottom: var(--space-2);
+}
+
+.notation-empty p {
+  margin: 0;
+  color: #666;
+  font-size: var(--font-size-sm);
+}
+
+/* Tema oscuro para el scroll */
+[data-theme='dark'] .notation-scroll {
+  background: #ffffff;
+}
+
+/* Compás actual highlight */
+.notation-current-measure {
+  fill: rgba(99, 102, 241, 0.1);
+}
