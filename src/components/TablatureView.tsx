@@ -137,20 +137,21 @@ export function TablatureView({
     return lines.length - 1;
   }, [lines, currentSlotIndex]);
 
-  // Auto-scroll to current line
+  // Auto-scroll to current line - faster scroll to keep current in view
   useEffect(() => {
     if (!isPlaying || !scrollContainerRef.current) return;
 
     const container = scrollContainerRef.current;
-    const lineHeight = instrument ? (instrument.strings.length * 22 + 24) : 150;
-    const targetScrollTop = currentLineIndex * lineHeight - container.clientHeight * 0.3;
+    const lineHeight = instrument ? (instrument.strings.length * 22 + 40) : 150;
+    // Position current line near the top (20% from top)
+    const targetScrollTop = currentLineIndex * lineHeight - container.clientHeight * 0.2;
 
-    // Smooth scroll
+    // Fast scroll - 0.5 lerp factor
     const currentScroll = container.scrollTop;
     const diff = targetScrollTop - currentScroll;
 
-    if (Math.abs(diff) > 20) {
-      const newScroll = currentScroll + diff * 0.1;
+    if (Math.abs(diff) > 10) {
+      const newScroll = currentScroll + diff * 0.5;
       container.scrollTop = Math.max(0, newScroll);
     }
   });

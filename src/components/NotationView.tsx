@@ -19,7 +19,7 @@ interface NotationViewProps {
 }
 
 const STAVE_WIDTH = 180; // Reduced for better fit
-const STAVE_HEIGHT = 130;
+const STAVE_HEIGHT = 200; // Increased for low notes
 const MARGIN = 30;
 const RIGHT_PADDING = 40; // Extra padding on right
 
@@ -131,18 +131,20 @@ export function NotationView({
   const currentLineIndex = Math.floor(currentMeasureIndex / measuresPerLine);
   const positionInMeasure = (currentTime % measureDuration) / measureDuration;
 
-  // Auto-scroll to current line
+  // Auto-scroll to current line - faster scroll
   useEffect(() => {
     if (!isPlaying || !scrollContainerRef.current) return;
 
     const container = scrollContainerRef.current;
-    const targetScrollTop = currentLineIndex * STAVE_HEIGHT - container.clientHeight * 0.3;
+    // Position current line near the top (20% from top)
+    const targetScrollTop = currentLineIndex * STAVE_HEIGHT - container.clientHeight * 0.2;
 
+    // Fast scroll - 0.5 lerp factor
     const currentScroll = container.scrollTop;
     const diff = targetScrollTop - currentScroll;
 
-    if (Math.abs(diff) > 20) {
-      const newScroll = currentScroll + diff * 0.1;
+    if (Math.abs(diff) > 10) {
+      const newScroll = currentScroll + diff * 0.5;
       container.scrollTop = Math.max(0, newScroll);
     }
   });
