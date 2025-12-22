@@ -1,7 +1,6 @@
 /**
  * MIDI Visualizer - App Principal
- * Layout reorganizado: sidebar izquierdo con secciones colapsables
- * Auto-transposición al seleccionar pista
+ * Refactorizado para usar React Context para el estado global
  */
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import {
@@ -14,6 +13,10 @@ import {
   PanelLeft,
 } from 'lucide-react';
 
+// Importar estilos
+import './app/App.css';
+
+// Componentes
 import {
   PlayerControls,
   TrackSelector,
@@ -27,27 +30,41 @@ import {
   TransposeControls,
 } from './components';
 
-import { useMidiLoader, useMidiPlayer } from './hooks';
+// Contextos
+import { useMidi } from '@/features/library';
+import { usePlayback } from '@/features/player';
+import { useTracks, detectMelodyTrack } from '@/features/tracks';
+import { useInstrument } from '@/features/instruments';
+
+// Utils y config
 import { generateCifrado, generateTablatureText, downloadAsTextFile } from './utils/export';
 import { getAllInstruments } from './config/instruments';
 import type { MidiFile } from './types/midi';
 
 function App() {
-  // Estado del sidebar
+  // ===== CONTEXTOS =====
+  const { state: midiState, loadMidiFile, loadMidiFromUrl } = useMidi();
+  const {
+    state: playbackState,
+    play,
+    pause,
+    stop,
+    seekTo,
+    setSpeed,
+    setLoopStart,
+    setLoopEnd,
+    toggleLoop,
+    clearLoop,
+  } = usePlayback();
+  const { state: tracksState, selectTrack, toggleMute, resetTracks } = useTracks();
+  const { state: instrumentState, selectInstrument, setTranspose } = useInstrument();
+
+  // ===== ESTADO LOCAL (UI) =====
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [filesExpanded, setFilesExpanded] = useState(true);
   const [tracksExpanded, setTracksExpanded] = useState(true);
   const [showInstrumentMenu, setShowInstrumentMenu] = useState(false);
-
-  // Estado del MIDI
-  const { isLoading, error, parsedMidi, loadMidiFile, loadMidiFromUrl } = useMidiLoader();
-  const { playbackState, play, pause, stop, setSpeed, seekTo } = useMidiPlayer();
-
-  // Estado de selección
   const [selectedFile, setSelectedFile] = useState<MidiFile | null>(null);
-  const [selectedTrack, setSelectedTrack] = useState(0);
-  const [selectedInstrument, setSelectedInstrument] = useState('guitar');
-  const [mutedTracks, setMutedTracks] = useState<Set<number>>(new Set());
 
   // Visualización
   const [showPianoRoll, setShowPianoRoll] = useState(true);
@@ -57,17 +74,30 @@ function App() {
     null
   );
 
-  // Transposición y loop
-  const [transpose, setTranspose] = useState(0);
-  const [loopStart, setLoopStart] = useState<number | null>(null);
-  const [loopEnd, setLoopEnd] = useState<number | null>(null);
-  const [isLoopEnabled, setIsLoopEnabled] = useState(false);
+  // ===== DERIVADOS =====
+  const parsedMidi = midiState.parsedMidi;
+  const isLoading = midiState.isLoading;
+  const error = midiState.error;
+  const selectedTrack = tracksState.selectedTrackIndex;
+  const mutedTracks = tracksState.mutedTracks;
+  const selectedInstrument = instrumentState.selectedInstrumentId;
+  const transpose = instrumentState.transpose;
 
   // Notas de la pista seleccionada
   const selectedTrackNotes = useMemo(() => {
     if (!parsedMidi || !parsedMidi.tracks[selectedTrack]) return [];
     return parsedMidi.tracks[selectedTrack].notes;
   }, [parsedMidi, selectedTrack]);
+
+  // ===== EFECTOS =====
+
+  // Auto-seleccionar pista de melodía cuando se carga un nuevo MIDI
+  useEffect(() => {
+    if (parsedMidi && parsedMidi.tracks.length > 0) {
+      const melodyIndex = detectMelodyTrack(parsedMidi.tracks);
+      resetTracks(melodyIndex);
+    }
+  }, [parsedMidi, resetTracks]);
 
   // Auto-transposición cuando cambia la pista o el instrumento
   useEffect(() => {
@@ -77,67 +107,53 @@ function App() {
     const instrument = allInstruments[selectedInstrument];
     if (!instrument) return;
 
-    // Calcular el centro de las notas
     const midiNotes = selectedTrackNotes.map((n) => n.midi);
     const minNote = Math.min(...midiNotes);
     const maxNote = Math.max(...midiNotes);
     const noteCenter = (minNote + maxNote) / 2;
 
-    // Calcular el centro del instrumento
     const instMin = Math.min(...instrument.midiNotes);
     const instMax = Math.max(...instrument.midiNotes) + (instrument.frets || 20);
     const instCenter = (instMin + instMax) / 2;
 
-    // Calcular transposición óptima (en octavas)
     const suggestedTranspose = Math.round((instCenter - noteCenter) / 12) * 12;
     setTranspose(suggestedTranspose);
-  }, [selectedTrack, selectedInstrument, selectedTrackNotes]);
+  }, [selectedTrack, selectedInstrument, selectedTrackNotes, setTranspose]);
 
-  // Handlers
+  // ===== HANDLERS =====
   const handleFileSelect = useCallback(
     async (file: File) => {
       await loadMidiFile(file);
-      setSelectedTrack(0);
-      setMutedTracks(new Set());
-      setLoopStart(null);
-      setLoopEnd(null);
+      clearLoop();
     },
-    [loadMidiFile]
+    [loadMidiFile, clearLoop]
   );
 
   const handleFileFromExplorer = useCallback(
     async (file: MidiFile) => {
       setSelectedFile(file);
       try {
-        await loadMidiFromUrl(file.path);
-        setSelectedTrack(0);
-        setMutedTracks(new Set());
-        setLoopStart(null);
-        setLoopEnd(null);
+        await loadMidiFromUrl(file.path, file);
+        clearLoop();
       } catch (err) {
         console.error('Error cargando archivo:', err);
       }
     },
-    [loadMidiFromUrl]
+    [loadMidiFromUrl, clearLoop]
   );
 
   const handlePlay = useCallback(() => {
     if (parsedMidi) {
-      play(parsedMidi, selectedTrack, mutedTracks);
+      play(parsedMidi, mutedTracks);
     }
-  }, [parsedMidi, selectedTrack, mutedTracks, play]);
+  }, [parsedMidi, mutedTracks, play]);
 
-  const handleToggleMute = useCallback((trackIndex: number) => {
-    setMutedTracks((prev) => {
-      const next = new Set(prev);
-      if (next.has(trackIndex)) {
-        next.delete(trackIndex);
-      } else {
-        next.add(trackIndex);
-      }
-      return next;
-    });
-  }, []);
+  const handleToggleMute = useCallback(
+    (trackIndex: number) => {
+      toggleMute(trackIndex);
+    },
+    [toggleMute]
+  );
 
   const handleExportCifrado = useCallback(() => {
     if (!parsedMidi) return;
@@ -153,15 +169,18 @@ function App() {
     downloadAsTextFile(tablature, `${parsedMidi.name}_tablatura.txt`);
   }, [parsedMidi, selectedTrack, selectedInstrument]);
 
-  const handleClearLoop = useCallback(() => {
-    setLoopStart(null);
-    setLoopEnd(null);
-    setIsLoopEnabled(false);
-  }, []);
+  const handleSelectInstrument = useCallback(
+    (id: string) => {
+      selectInstrument(id);
+      setShowInstrumentMenu(false);
+    },
+    [selectInstrument]
+  );
 
+  // ===== RENDER =====
   return (
     <div className="app-layout">
-      {/* Sidebar Izquierdo con secciones colapsables */}
+      {/* Sidebar Izquierdo */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
         <div className="sidebar-header">
           {sidebarOpen ? (
@@ -195,7 +214,6 @@ function App() {
               )}
             </div>
 
-            {/* Sección: Pistas */}
             {parsedMidi && (
               <div className="section">
                 <button
@@ -212,7 +230,7 @@ function App() {
                       tracks={parsedMidi.tracks}
                       selectedTrack={selectedTrack}
                       mutedTracks={mutedTracks}
-                      onSelectTrack={setSelectedTrack}
+                      onSelectTrack={selectTrack}
                       onToggleMute={handleToggleMute}
                     />
                   </div>
@@ -284,10 +302,7 @@ function App() {
                         <div className="popover-content">
                           <InstrumentSelector
                             selectedInstrument={selectedInstrument}
-                            onSelectInstrument={(id) => {
-                              setSelectedInstrument(id);
-                              setShowInstrumentMenu(false);
-                            }}
+                            onSelectInstrument={handleSelectInstrument}
                           />
                         </div>
                       </div>
@@ -297,15 +312,15 @@ function App() {
 
                 <div className="divider" />
                 <LoopControls
-                  loopStart={loopStart}
-                  loopEnd={loopEnd}
-                  isLoopEnabled={isLoopEnabled}
+                  loopStart={playbackState.loopStart}
+                  loopEnd={playbackState.loopEnd}
+                  isLoopEnabled={playbackState.isLoopEnabled}
                   duration={parsedMidi.duration}
                   currentTime={playbackState.currentTime}
                   onSetLoopStart={setLoopStart}
                   onSetLoopEnd={setLoopEnd}
-                  onToggleLoop={() => setIsLoopEnabled(!isLoopEnabled)}
-                  onClearLoop={handleClearLoop}
+                  onToggleLoop={toggleLoop}
+                  onClearLoop={clearLoop}
                 />
                 <div className="divider" />
                 <button className="btn-sm" onClick={handleExportCifrado}>
@@ -367,8 +382,8 @@ function App() {
                       currentTime={playbackState.currentTime}
                       isPlaying={playbackState.isPlaying}
                       duration={parsedMidi.duration}
-                      loopStart={loopStart}
-                      loopEnd={loopEnd}
+                      loopStart={playbackState.loopStart}
+                      loopEnd={playbackState.loopEnd}
                       onSetLoopStart={setLoopStart}
                       onSetLoopEnd={setLoopEnd}
                       onSeek={seekTo}
@@ -474,471 +489,6 @@ function App() {
       </main>
     </div>
   );
-}
-
-// Estilos
-const styles = `
-.app-layout {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--color-bg-primary);
-}
-
-/* Sidebar */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  background: var(--color-bg-secondary);
-  border-right: 1px solid var(--color-border);
-  transition: width 0.2s ease;
-  overflow: hidden;
-}
-
-.sidebar.open { width: 280px; }
-.sidebar.collapsed { width: 48px; }
-
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px;
-  background: var(--color-bg-tertiary);
-  border-bottom: 1px solid var(--color-border);
-  min-height: 48px;
-}
-
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.btn-icon-sm {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.btn-icon-sm:hover {
-  background: var(--color-bg-hover);
-  color: var(--color-text-primary);
-}
-
-.sidebar-sections {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.section-content.no-padding {
-  padding: 0;
-}
-
-/* Secciones colapsables */
-.section {
-  border-bottom: 1px solid var(--color-border);
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  padding: 10px 12px;
-  background: var(--color-bg-tertiary);
-  border: none;
-  color: var(--color-text-primary);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: left;
-}
-
-.section-header:hover {
-  background: var(--color-bg-hover);
-}
-
-.section-badge {
-  margin-left: auto;
-  background: var(--color-accent-primary);
-  color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 10px;
-}
-
-.section-value {
-  margin-left: auto;
-  font-size: 16px;
-}
-
-.section-content {
-  padding: 8px;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-/* Header Instrument Selector */
-.instrument-dropdown-container {
-  position: relative;
-}
-
-.btn-header-inst {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.btn-header-inst:hover, .btn-header-inst.active {
-  background: var(--color-bg-hover);
-  border-color: var(--color-accent-primary);
-}
-
-.header-inst-icon {
-  font-size: 16px;
-}
-
-.header-inst-name {
-  max-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.instrument-popover {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 320px;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-accent-primary);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  z-index: 1000;
-  animation: popoverFade 0.2s ease-out;
-}
-
-@keyframes popoverFade {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.popover-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--color-border);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-accent-primary);
-}
-
-.popover-header button {
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.popover-content {
-  padding: 8px;
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-.popover-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 999;
-}
-
-/* Empty State Modern */
-.empty-state-container {
-  display: flex;
-  flex-direction: column;
-  items-align: center;
-  justify-content: center;
-  min-height: 80vh;
-  max-width: 600px;
-  margin: 0 auto;
-  text-align: center;
-  gap: 32px;
-  padding: 40px 20px;
-}
-
-.hero-section {
-  animation: fadeInDown 0.8s ease;
-}
-
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.hero-icon {
-  font-size: 80px;
-  margin-bottom: 16px;
-}
-
-.hero-section h1 {
-  font-size: 36px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #fff 30%, var(--color-accent-primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 12px;
-}
-
-.hero-section p {
-  color: var(--color-text-muted);
-  font-size: 18px;
-  line-height: 1.5;
-}
-
-.uploader-center {
-  background: var(--color-bg-secondary);
-  border: 2px dashed var(--color-border);
-  border-radius: 24px;
-  padding: 40px;
-  transition: all 0.3s;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-.uploader-center:hover {
-  border-color: var(--color-accent-primary);
-  background: rgba(99, 102, 241, 0.05);
-  transform: translateY(-2px);
-}
-
-.quick-info {
-  font-size: 14px;
-  color: var(--color-text-muted);
-  opacity: 0.8;
-  padding: 12px;
-  background: var(--color-bg-tertiary);
-  border-radius: 10px;
-}
-
-/* Main */
-.main {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.main-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
-  background: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.header-info h1 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.header-meta {
-  font-size: 11px;
-  color: var(--color-text-muted);
-}
-
-.transpose-badge {
-  margin-left: 8px;
-  background: var(--color-accent-primary);
-  color: white;
-  padding: 1px 6px;
-  border-radius: 8px;
-  font-size: 10px;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.divider {
-  width: 1px;
-  height: 24px;
-  background: var(--color-border);
-}
-
-.btn-sm {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  color: var(--color-text-muted);
-  cursor: pointer;
-}
-
-.btn-sm:hover {
-  background: var(--color-bg-hover);
-  color: var(--color-text-primary);
-}
-
-/* Content */
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-}
-
-.error-banner {
-  padding: 12px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid var(--color-error);
-  border-radius: 8px;
-  color: var(--color-error);
-  margin-bottom: 12px;
-}
-
-/* Visualizations */
-.visualizations {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.viz-panel {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.viz-panel.maximized {
-  flex: 1;
-  min-height: 400px;
-}
-
-.viz-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  background: var(--color-bg-tertiary);
-  border-bottom: 1px solid var(--color-border);
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.viz-actions {
-  display: flex;
-  gap: 4px;
-}
-
-.viz-actions button {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.viz-actions button:hover {
-  background: var(--color-bg-hover);
-  color: var(--color-text-primary);
-}
-
-.show-views {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.show-views button {
-  padding: 8px 12px;
-  background: var(--color-bg-tertiary);
-  border: 1px dashed var(--color-border);
-  border-radius: 6px;
-  color: var(--color-text-muted);
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.show-views button:hover {
-  background: var(--color-bg-hover);
-  border-style: solid;
-}
-
-/* Player */
-.player-bar {
-  padding: 8px 16px;
-  background: var(--color-bg-secondary);
-  border-top: 1px solid var(--color-border);
-}
-
-.player-bar .player-controls {
-  padding: 4px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .app-layout { grid-template-columns: 1fr; }
-  .sidebar { 
-    position: fixed; 
-    left: 0; 
-    top: 0; 
-    bottom: 0; 
-    z-index: 100;
-    transform: translateX(-100%);
-  }
-  .sidebar.open { transform: translateX(0); }
-  .header-actions { display: none; }
-}
-
-`;
-
-if (typeof document !== 'undefined') {
-  const id = 'app-styles-v2';
-  if (!document.getElementById(id)) {
-    const s = document.createElement('style');
-    s.id = id;
-    s.textContent = styles;
-    document.head.appendChild(s);
-  }
 }
 
 export default App;
