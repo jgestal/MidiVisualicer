@@ -1,0 +1,149 @@
+/**
+ * Estilos para el nuevo Layout Page View (Fase 9)
+ */
+
+/* Contenedor principal sin scroll en body */
+.app-fullscreen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+/* Header Fijo */
+.app-header-fixed {
+  flex: 0 0 auto;
+  height: 60px;
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+  z-index: 50;
+  /* Por debajo de modales */
+}
+
+/* Piano Roll Docked (Fijo arriba) */
+.piano-roll-docked {
+  flex: 0 0 auto;
+  height: 240px;
+  /* Altura fija para el PR */
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+  transition: height 0.3s ease;
+  z-index: 40;
+}
+
+.piano-roll-docked.hidden {
+  height: 0;
+  overflow: hidden;
+  border-bottom: none;
+}
+
+/* Área Principal con Scroll */
+.main-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+  padding: var(--space-6);
+  /* Patrón de fondo sutil para sensación de "mesa de trabajo" */
+  background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Tabs Container */
+.view-tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: var(--space-4) 0;
+  background: linear-gradient(to bottom, var(--color-bg-primary) 80%, transparent);
+}
+
+.view-tab {
+  padding: var(--space-2) var(--space-6);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.view-tab:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.view-tab.active {
+  background: var(--color-accent-primary);
+  color: white;
+  border-color: var(--color-accent-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Contenedor de Página (Partitura/Tablatura) */
+.page-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  padding: var(--space-8);
+  min-height: 800px;
+  /* Altura mínima de página A4 aprox */
+  position: relative;
+}
+
+/* Cursor de Reproducción Vertical (Barra que recorre la línea) */
+.page-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 60px;
+  /* Se ajustará dinámicamente */
+  background: var(--color-accent-warning);
+  box-shadow: 0 0 10px var(--color-accent-warning);
+  pointer-events: none;
+  z-index: 10;
+  transition:
+    transform 0.1s linear,
+    top 0.2s ease;
+}
+
+/* Footer Player Fijo */
+.player-docked {
+  flex: 0 0 auto;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-2) var(--space-6);
+  z-index: 60;
+}
+
+/* Ajustes de Z-Index específicos para Modales */
+.instrument-editor-overlay,
+.settings-modal-overlay {
+  z-index: var(--z-modal) !important;
+}
+
+.instrument-popover {
+  z-index: var(--z-dropdown) !important;
+}

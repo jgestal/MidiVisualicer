@@ -6,6 +6,8 @@
   background: var(--color-bg-secondary);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  height: 100%;
+  /* For page mode */
 }
 
 .tablature-empty {
@@ -36,6 +38,7 @@
   color: var(--color-text-muted);
 }
 
+/* Modo Scroll (Clásico) */
 .tablature-scroll {
   overflow-x: auto;
   overflow-y: hidden;
@@ -56,18 +59,48 @@
   border-radius: 4px;
 }
 
+/* Modo Página (Nuevo) */
+.tablature-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  /* Espacio entre sistemas */
+  padding: 20px;
+  max-width: 100%;
+}
+
+.tablature-system {
+  display: flex;
+  background: var(--color-bg-secondary);
+  /* Sombra sutil para distinguir sistemas */
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.tablature-system.active {
+  ring: 2px solid var(--color-accent-primary);
+  background: rgba(var(--color-accent-primary-rgb), 0.02);
+}
+
+/* Grid compartido */
 .tablature-grid {
   display: flex;
   gap: 0;
 }
 
+/* Labels */
 .tablature-labels {
   display: flex;
   flex-direction: column;
-  position: sticky;
-  left: 0;
+  flex-shrink: 0;
   z-index: 10;
   background: var(--color-bg-secondary);
+  border-right: 2px solid var(--color-border);
+  /* Separador más fuerte */
+  margin-right: 4px;
 }
 
 .tablature-label {
@@ -80,7 +113,8 @@
   font-weight: 600;
   color: var(--color-accent-primary);
   background: var(--color-bg-tertiary);
-  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid transparent;
+  /* Align with cells */
 }
 
 .tablature-content {
@@ -90,10 +124,40 @@
 .tablature-column {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .tablature-column.current {
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* Playhead visual para modo página */
+.tablature-column.current::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  /* Arriba del sistema */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid var(--color-warning);
+  z-index: 20;
+}
+
+/* Línea vertical roja */
+.tablature-column.current::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--color-warning);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .tablature-cell {
@@ -106,6 +170,7 @@
   font-family: 'Courier New', monospace;
   border-bottom: 1px solid var(--color-border);
   transition: all 0.1s;
+  position: relative;
 }
 
 .tablature-cell.clickable {
@@ -119,34 +184,39 @@
 .tablature-cell.has-note {
   color: var(--color-text-primary);
   font-weight: 600;
+  z-index: 2;
 }
 
 .tablature-cell.active {
-  background: linear-gradient(180deg, rgba(99, 102, 241, 0.4) 0%, rgba(139, 92, 246, 0.4) 100%);
+  background: var(--color-accent-primary);
   color: #fff;
+  border-radius: 2px;
   font-weight: 700;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+  z-index: 5;
+  transform: scale(1.1);
 }
 
 .tablature-fret {
   color: inherit;
+  background: var(--color-bg-secondary);
+  /* Tapar la línea */
+  padding: 0 2px;
+}
+
+.tablature-cell.active .tablature-fret {
+  background: transparent;
 }
 
 .tablature-line {
   color: var(--color-text-muted);
-  opacity: 0.3;
-}
-
-/* Playhead indicator */
-.tablature-column.current::before {
-  content: '';
+  opacity: 0.2;
   position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid var(--color-accent-primary);
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: currentColor;
+  transform: translateY(-50%);
+  z-index: 1;
 }

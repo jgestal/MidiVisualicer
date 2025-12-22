@@ -12,6 +12,7 @@ export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
   }, []);
 
@@ -23,11 +24,18 @@ export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
+      e.stopPropagation();
       setIsDragging(false);
 
       const file = e.dataTransfer.files[0];
-      if (file && (file.name.endsWith('.mid') || file.name.endsWith('.midi'))) {
-        onFileSelect(file);
+      if (file) {
+        const fileName = file.name.toLowerCase();
+        if (fileName.endsWith('.mid') || fileName.endsWith('.midi')) {
+          onFileSelect(file);
+        } else {
+          console.warn('Archivo rechazado: formato no soportado', fileName);
+          alert('Por favor, selecciona un archivo .mid o .midi');
+        }
       }
     },
     [onFileSelect]

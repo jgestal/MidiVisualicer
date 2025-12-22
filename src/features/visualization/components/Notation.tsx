@@ -1,6 +1,6 @@
 /**
  * Notation View - Componente refactorizado
- * Visualización de partitura musical usando VexFlow
+ * Visualización de partitura musical responsiva con VexFlow
  */
 import { useEffect, useRef, useMemo, useCallback } from 'react';
 import { Renderer, Stave, StaveNote, Voice, Formatter, Accidental } from 'vexflow';
@@ -16,15 +16,18 @@ export interface NotationProps {
   timeSignature: { numerator: number; denominator: number };
   showHeader?: boolean;
   maxMeasures?: number;
+  mode?: 'scroll' | 'page';
+  containerWidth?: number;
 }
 
 // Configuración
 const CONFIG = {
-  STAVE_WIDTH: 220,
-  STAVE_HEIGHT: 200,
-  START_X: 20,
-  START_Y: 40,
+  STAVE_WIDTH: 220, // Ancho base del compás
+  STAVE_HEIGHT: 150,
+  START_X: 10,
+  START_Y: 20,
   MAX_NOTES_PER_MEASURE: 8,
+  DEFAULT_WIDTH: 800,
 };
 
 /**
@@ -33,16 +36,9 @@ const CONFIG = {
 function midiToVexFlow(midi: number): { key: string; accidental?: string } {
   const note = midiToNote(midi);
   const match = note.match(/^([A-G])(#?)(\d+)$/);
-
   if (!match) return { key: 'c/4' };
-
   const [, noteLetter, sharp, octave] = match;
-  const key = `${noteLetter.toLowerCase()}/${octave}`;
-
-  return {
-    key,
-    accidental: sharp ? '#' : undefined,
-  };
+  return { key: `${noteLetter.toLowerCase()}/${octave}`, accidental: sharp ? '#' : undefined };
 }
 
 /**
@@ -75,18 +71,14 @@ function useMeasures(
 
     notes.forEach((note) => {
       while (note.time >= measureStartTime + measureDuration) {
-        if (currentMeasure.length > 0) {
-          measures.push(currentMeasure);
-        }
+        if (currentMeasure.length > 0) measures.push(currentMeasure);
         currentMeasure = [];
         measureStartTime += measureDuration;
       }
       currentMeasure.push(note);
     });
 
-    if (currentMeasure.length > 0) {
-      measures.push(currentMeasure);
-    }
+    if (currentMeasure.length > 0) measures.push(currentMeasure);
 
     return { measures, measureDuration };
   }, [notes, bpm, timeSignature]);
@@ -99,11 +91,14 @@ export function Notation({
   bpm,
   timeSignature,
   showHeader = false,
-  maxMeasures = 20,
+  maxMeasures = 500,
+  mode = 'scroll',
+  containerWidth = CONFIG.DEFAULT_WIDTH,
 }: NotationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
+  const measurePositions = useRef<{ x: number; y: number }[]>([]);
 
   const { measures, measureDuration } = useMeasures(notes, bpm, timeSignature);
   const currentMeasureIndex = Math.floor(currentTime / measureDuration);
@@ -115,31 +110,62 @@ export function Notation({
     const container = containerRef.current;
     container.innerHTML = '';
 
-    const displayMeasures = measures.slice(0, maxMeasures);
-    const width = Math.max(800, displayMeasures.length * CONFIG.STAVE_WIDTH + 50);
+    const displayMeasures = mode === 'page' ? measures : measures.slice(0, maxMeasures);
 
-    // Crear renderer
+    // Ancho real disponible (asegurar mínimo)
+    const availableWidth = Math.max(containerWidth, 400);
+
+    // Si estamos en modo página, ajustamos el ancho del compás para llenar la línea
+    // Calculamos cuantos compases caben por defecto
+    const itemsPerRow = Math.floor((availableWidth - 20) / CONFIG.STAVE_WIDTH);
+    const dynamicStaveWidth =
+      mode === 'page'
+        ? Math.floor((availableWidth - 40) / Math.max(1, itemsPerRow))
+        : CONFIG.STAVE_WIDTH;
+
+    // Calcular ancho total de canvas
+    const canvasWidth =
+      mode === 'page'
+        ? availableWidth
+        : Math.max(800, displayMeasures.length * CONFIG.STAVE_WIDTH + 50);
+
+    // Iniciar Renderer
     rendererRef.current = new Renderer(container, Renderer.Backends.SVG);
     const renderer = rendererRef.current;
-    renderer.resize(width, CONFIG.STAVE_HEIGHT);
 
     const context = renderer.getContext();
     context.setFont('Arial', 10);
 
-    let xOffset = CONFIG.START_X;
+    let x = CONFIG.START_X;
+    let y = CONFIG.START_Y;
+
+    measurePositions.current = [];
 
     displayMeasures.forEach((measureNotes, measureIdx) => {
-      // Crear pentagrama
-      const stave = new Stave(xOffset, CONFIG.START_Y, CONFIG.STAVE_WIDTH);
+      // Wrapping para Page Mode
+      if (mode === 'page') {
+        if (x + dynamicStaveWidth > canvasWidth) {
+          x = CONFIG.START_X;
+          y += CONFIG.STAVE_HEIGHT;
+        }
+      }
 
-      if (measureIdx === 0) {
+      measurePositions.current[measureIdx] = { x, y };
+
+      const stave = new Stave(x, y, dynamicStaveWidth);
+
+      // Clef & TimeSignature
+      const isStartOfSystem = mode === 'page' && x === CONFIG.START_X;
+      if (measureIdx === 0 || isStartOfSystem) {
         stave.addClef('treble');
-        stave.addTimeSignature(`${timeSignature.numerator}/${timeSignature.denominator}`);
+        if (measureIdx === 0) {
+          stave.addTimeSignature(`${timeSignature.numerator}/${timeSignature.denominator}`);
+        }
       }
 
       stave.setContext(context).draw();
 
-      // Crear notas del compás
+      // Dibujar notas
       if (measureNotes.length > 0) {
         const staveNotes = measureNotes.slice(0, CONFIG.MAX_NOTES_PER_MEASURE).map((note) => {
           const vexNote = midiToVexFlow(note.midi);
@@ -155,7 +181,7 @@ export function Notation({
             staveNote.addModifier(new Accidental(vexNote.accidental));
           }
 
-          // Resaltar nota actual
+          // Estilo para nota sonando
           const isCurrentNote =
             measureIdx === currentMeasureIndex &&
             note.time <= currentTime &&
@@ -178,15 +204,18 @@ export function Notation({
           }).setStrict(false);
 
           voice.addTickables(staveNotes);
-          new Formatter().joinVoices([voice]).format([voice], CONFIG.STAVE_WIDTH - 50);
+          new Formatter().joinVoices([voice]).format([voice], dynamicStaveWidth - 50);
           voice.draw(context, stave);
-        } catch {
-          // Error al formatear, ignorar este compás
+        } catch (e) {
+          // console.warn('Error formatting measure', measureIdx, e);
         }
       }
 
-      xOffset += CONFIG.STAVE_WIDTH;
+      x += dynamicStaveWidth;
     });
+
+    // Dimensionar SVG
+    renderer.resize(canvasWidth, y + CONFIG.STAVE_HEIGHT + 20);
   }, [
     measures,
     currentTime,
@@ -195,27 +224,52 @@ export function Notation({
     timeSignature,
     notes.length,
     maxMeasures,
+    mode,
+    containerWidth,
   ]);
 
-  // Renderizar cuando cambien los datos
+  // Render trigger
   useEffect(() => {
-    renderNotation();
+    // Pequeño delay para estabilizar resize
+    const timer = setTimeout(renderNotation, 10);
+    return () => clearTimeout(timer);
   }, [renderNotation]);
 
-  // Auto-scroll al compás actual
+  // Auto-scroll
   useEffect(() => {
-    if (isPlaying && scrollRef.current) {
-      const targetScroll =
-        currentMeasureIndex * CONFIG.STAVE_WIDTH - scrollRef.current.clientWidth / 2;
-      scrollRef.current.scrollTo({
-        left: Math.max(0, targetScroll),
-        behavior: 'smooth',
-      });
+    if (
+      isPlaying &&
+      (containerRef.current || scrollRef.current) &&
+      measurePositions.current[currentMeasureIndex]
+    ) {
+      const pos = measurePositions.current[currentMeasureIndex];
+
+      if (mode === 'page') {
+        // Scroll vertical del elemento padre (que es el que tiene overflow-y)
+        // El padre debería ser pasado como ref o accedido via DOM traversing.
+        // En App.tsx, el contenedor con scroll es main-scroll-area o el elemento superior.
+        // Pero aquí intentamos mover el elemento dentro de la vista si es posible.
+
+        const element = containerRef.current;
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          // Esto podría ser brusco si el elemento es todo el SVG.
+          // Mejor approach: scrollIntoView del sistema actual no es fácil en SVG único.
+          // Usaremos window scroll o parent scroll si podemos acceder.
+          // Workaround simple: Scroll al padre directo del componente si tiene scroll.
+          element.parentElement?.scrollTo({ top: pos.y - 100, behavior: 'smooth' });
+        }
+      } else {
+        if (scrollRef.current) {
+          const targetLeft = pos.x - scrollRef.current.clientWidth / 2;
+          scrollRef.current.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+        }
+      }
     }
-  }, [currentMeasureIndex, isPlaying]);
+  }, [currentMeasureIndex, isPlaying, mode]);
 
   return (
-    <div className="notation">
+    <div className={`notation ${mode === 'page' ? 'notation-page' : ''}`} style={{ width: '100%' }}>
       {showHeader && (
         <div className="notation-header">
           <span className="notation-title">🎼 Partitura</span>
@@ -225,7 +279,10 @@ export function Notation({
         </div>
       )}
 
-      <div ref={scrollRef} className="notation-scroll">
+      <div
+        ref={scrollRef}
+        className={`notation-scroll ${mode === 'page' ? 'overflow-visible' : ''}`}
+      >
         {notes.length === 0 ? (
           <div className="notation-empty">
             <span className="notation-empty-icon">🎵</span>

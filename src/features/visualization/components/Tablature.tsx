@@ -1,6 +1,6 @@
 /**
  * Tablature View - Componente refactorizado
- * Visualización de tablatura para instrumentos de cuerda
+ * Visualización de tablatura responsiva (Page View Real)
  */
 import { useMemo, useRef, useEffect, useCallback } from 'react';
 import { getAllInstruments, getOptimalPosition, midiToNoteName } from '@/config/instruments';
@@ -13,6 +13,8 @@ const CONFIG = {
   CELL_WIDTH: 28,
   LOOKAHEAD_FACTOR: 0.3,
   LERP_FACTOR: 0.12,
+  DEFAULT_PAGE_WIDTH: 800,
+  LABEL_WIDTH: 40,
 };
 
 export interface TablatureProps {
@@ -23,6 +25,8 @@ export interface TablatureProps {
   transpose?: number;
   onSeek?: (time: number) => void;
   showHeader?: boolean;
+  mode?: 'scroll' | 'page';
+  containerWidth?: number; // Para cálculo responsive
 }
 
 interface TabNote {
@@ -89,14 +93,25 @@ export function Tablature({
   transpose = 0,
   onSeek,
   showHeader = false,
+  mode = 'scroll',
+  containerWidth = CONFIG.DEFAULT_PAGE_WIDTH,
 }: TablatureProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const currentSlotRef = useRef<HTMLDivElement>(null);
+  const currentSystemRef = useRef<HTMLDivElement | null>(null);
 
   const allInstruments = getAllInstruments();
   const instrument = allInstruments[instrumentId];
 
   const { tabNotes, totalSlots, stringCount } = useTabNotes(notes, instrumentId, transpose);
+
+  // Cálculo de slots por sistema (Responsive)
+  const slotsPerSystem = useMemo(() => {
+    if (mode !== 'page') return totalSlots;
+    const availableWidth = containerWidth - CONFIG.LABEL_WIDTH - 40; // padding
+    const slots = Math.floor(availableWidth / CONFIG.CELL_WIDTH);
+    return Math.max(4, slots);
+  }, [containerWidth, mode, totalSlots]);
 
   // Slot actual basado en el tiempo
   const currentSlot = Math.round(currentTime / CONFIG.TIME_QUANTUM);
@@ -113,15 +128,15 @@ export function Tablature({
     return map;
   }, [tabNotes]);
 
-  // Auto-scroll suave
+  // Auto-scroll Horizontal (Modo Scroll)
   useEffect(() => {
-    if (!isPlaying || !scrollRef.current) return;
+    if (mode !== 'scroll' || !isPlaying || !scrollRef.current) return;
 
     const container = scrollRef.current;
     const currentX = currentSlot * CONFIG.CELL_WIDTH;
-    const containerWidth = container.clientWidth;
+    const containerWidthVal = container.clientWidth;
 
-    const targetScroll = currentX - containerWidth * CONFIG.LOOKAHEAD_FACTOR;
+    const targetScroll = currentX - containerWidthVal * CONFIG.LOOKAHEAD_FACTOR;
     const currentScroll = container.scrollLeft;
     const diff = targetScroll - currentScroll;
 
@@ -129,6 +144,16 @@ export function Tablature({
       container.scrollLeft = Math.max(0, currentScroll + diff * CONFIG.LERP_FACTOR);
     }
   });
+
+  // Auto-scroll Vertical (Modo Página)
+  const currentSystemIndex = Math.floor(currentSlot / slotsPerSystem);
+
+  useEffect(() => {
+    if (mode === 'page' && isPlaying && currentSystemRef.current) {
+      // Hacer scroll suave hacia el sistema actual
+      currentSystemRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [currentSystemIndex, isPlaying, mode, slotsPerSystem]);
 
   // Click handler para seek
   const handleCellClick = useCallback(
@@ -149,69 +174,97 @@ export function Tablature({
     );
   }
 
-  // Generar array de slots para renderizar
-  const slots = Array.from({ length: totalSlots }, (_, i) => i);
+  const renderSlot = (slotIndex: number) => {
+    const isCurrentSlot = slotIndex === currentSlot;
+    const slotNotes = notesBySlot.get(slotIndex);
 
-  return (
-    <div className="tablature">
-      {showHeader && (
-        <div className="tablature-header">
-          <span className="tablature-title">
-            {instrument.icon} {instrument.nameEs}
-          </span>
-          <span className="tablature-hint">Click en celda para navegar</span>
-        </div>
-      )}
+    return (
+      <div
+        key={slotIndex}
+        ref={isCurrentSlot ? currentSlotRef : undefined}
+        className={`tablature-column ${isCurrentSlot ? 'current' : ''}`}
+      >
+        {Array.from({ length: stringCount }, (_, stringIdx) => {
+          const note = slotNotes?.get(stringIdx);
+          const isActive =
+            note && currentTime >= note.time && currentTime <= note.time + note.duration;
 
-      <div ref={scrollRef} className="tablature-scroll">
-        <div className="tablature-grid">
-          {/* Nombres de las cuerdas */}
-          <div className="tablature-labels">
-            {instrument.strings.map((stringNote, idx) => (
-              <div key={idx} className="tablature-label">
-                {stringNote}
-              </div>
-            ))}
+          return (
+            <div
+              key={stringIdx}
+              className={`tablature-cell ${note ? 'has-note' : ''} ${isActive ? 'active' : ''} ${onSeek ? 'clickable' : ''}`}
+              onClick={() => handleCellClick(slotIndex)}
+              title={note ? note.noteName : undefined}
+            >
+              <div className="tablature-line" />
+              {note && <span className="tablature-fret">{note.fret}</span>}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // --- Render MODO SCROLL ---
+  if (mode === 'scroll') {
+    const slots = Array.from({ length: totalSlots }, (_, i) => i);
+    return (
+      <div className="tablature">
+        {showHeader && (
+          <div className="tablature-header">
+            <span className="tablature-title">
+              {instrument.icon} {instrument.nameEs}
+            </span>
+            <span className="tablature-hint">Modo Scroll</span>
           </div>
-
-          {/* Grid de tabs */}
-          <div className="tablature-content">
-            {slots.map((slotIndex) => {
-              const isCurrentSlot = slotIndex === currentSlot;
-              const slotNotes = notesBySlot.get(slotIndex);
-
-              return (
-                <div
-                  key={slotIndex}
-                  ref={isCurrentSlot ? currentSlotRef : undefined}
-                  className={`tablature-column ${isCurrentSlot ? 'current' : ''}`}
-                >
-                  {Array.from({ length: stringCount }, (_, stringIdx) => {
-                    const note = slotNotes?.get(stringIdx);
-                    const isActive =
-                      note && currentTime >= note.time && currentTime <= note.time + note.duration;
-
-                    return (
-                      <div
-                        key={stringIdx}
-                        className={`tablature-cell ${note ? 'has-note' : ''} ${isActive ? 'active' : ''} ${onSeek ? 'clickable' : ''}`}
-                        onClick={() => handleCellClick(slotIndex)}
-                        title={note ? note.noteName : undefined}
-                      >
-                        {note ? (
-                          <span className="tablature-fret">{note.fret}</span>
-                        ) : (
-                          <span className="tablature-line">─</span>
-                        )}
-                      </div>
-                    );
-                  })}
+        )}
+        <div ref={scrollRef} className="tablature-scroll">
+          <div className="tablature-grid">
+            <div className="tablature-labels">
+              {instrument.strings.map((stringNote, idx) => (
+                <div key={idx} className="tablature-label">
+                  {stringNote}
                 </div>
-              );
-            })}
+              ))}
+            </div>
+            <div className="tablature-content">{slots.map(renderSlot)}</div>
           </div>
         </div>
       </div>
+    );
+  }
+
+  // --- Render MODO PAGE ---
+  const totalSystems = Math.ceil(totalSlots / slotsPerSystem);
+  const systems = Array.from({ length: totalSystems }, (_, i) => i);
+
+  return (
+    <div className="tablature-page-wrapper" style={{ width: containerWidth }}>
+      {systems.map((systemIndex) => {
+        const isCurrentSystem = systemIndex === currentSystemIndex;
+        const startSlot = systemIndex * slotsPerSystem;
+        const endSlot = Math.min(startSlot + slotsPerSystem, totalSlots);
+        const systemSlots = Array.from({ length: endSlot - startSlot }, (_, i) => startSlot + i);
+
+        return (
+          <div
+            key={systemIndex}
+            className={`tablature-system ${isCurrentSystem ? 'active' : ''}`}
+            ref={isCurrentSystem ? currentSystemRef : undefined}
+          >
+            <div className="tablature-labels">
+              {instrument.strings.map((stringNote, idx) => (
+                <div key={idx} className="tablature-label">
+                  {stringNote}
+                </div>
+              ))}
+            </div>
+            <div className="tablature-content" style={{ flexWrap: 'nowrap' }}>
+              {systemSlots.map(renderSlot)}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
