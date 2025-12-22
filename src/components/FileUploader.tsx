@@ -1,8 +1,6 @@
-/**
- * Componente para subir archivos MIDI
- */
 import { useState, useCallback } from 'react';
-import { Upload, Music } from 'lucide-react';
+import { Upload, Music, FileAudio } from 'lucide-react';
+import './FileUploader.css';
 
 interface FileUploaderProps {
   onFileSelect: (file: File) => void;
@@ -47,7 +45,7 @@ export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
 
   return (
     <div
-      className={`drop-zone ${isDragging ? 'active' : ''}`}
+      className={`file-uploader ${isDragging ? 'dragging' : ''} animate-fadeIn`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -61,20 +59,26 @@ export function FileUploader({ onFileSelect, isLoading }: FileUploaderProps) {
         style={{ display: 'none' }}
       />
 
-      {isLoading ? (
-        <div className="spinner" />
-      ) : (
-        <>
-          <div className="drop-zone-icon">
-            {isDragging ? <Upload size={48} /> : <Music size={48} />}
-          </div>
-          <div className="drop-zone-text">
-            {isDragging
-              ? 'Suelta el archivo aquí'
-              : 'Arrastra un archivo MIDI o haz clic para seleccionar'}
-          </div>
-          <div className="drop-zone-hint">Formatos soportados: .mid, .midi</div>
-        </>
+      <div className="uploader-content">
+        <div className="icon-wrapper">
+          {isDragging ? <Upload size={40} /> : <Music size={40} />}
+        </div>
+
+        <div className="uploader-text">
+          {isDragging ? '¡Suéltalo!' : 'Arrastra tu archivo MIDI aquí'}
+        </div>
+
+        <div className="uploader-hint">
+          <FileAudio size={14} style={{ display: 'inline', marginRight: 4 }} />
+          Soporta .mid y .midi
+        </div>
+      </div>
+
+      {isLoading && (
+        <div className="uploader-loading">
+          <div className="spinner" />
+          <span className="loading-text">Procesando partitura...</span>
+        </div>
       )}
     </div>
   );

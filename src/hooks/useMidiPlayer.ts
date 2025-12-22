@@ -29,7 +29,6 @@ export function useMidiPlayer() {
 
     await Tone.start();
     setIsInitialized(true);
-    console.log('Tone.js initialized');
   }, [isInitialized]);
 
   // Crear sintetizadores para las pistas

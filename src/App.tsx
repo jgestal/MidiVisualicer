@@ -344,7 +344,7 @@ function App() {
           {error && <div className="error-banner">❌ {error}</div>}
 
           {!parsedMidi ? (
-            <div className="empty-state-container">
+            <div className="empty-state-container animate-fadeInUp">
               <div className="hero-section">
                 <div className="hero-icon">🎵</div>
                 <h1>Empieza a practicar</h1>
@@ -361,7 +361,7 @@ function App() {
               </div>
             </div>
           ) : (
-            <div className="visualizations">
+            <div className="visualizations animate-fadeIn">
               {/* Piano Roll */}
               {(showPianoRoll || maximizedView === 'pianoroll') &&
                 maximizedView !== 'tablature' &&

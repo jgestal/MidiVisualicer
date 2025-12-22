@@ -173,6 +173,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -236,6 +237,7 @@
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -264,18 +266,9 @@
 }
 
 .uploader-center {
-  background: var(--color-bg-secondary);
-  border: 2px dashed var(--color-border);
-  border-radius: 24px;
-  padding: 40px;
-  transition: all 0.3s;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.uploader-center:hover {
-  border-color: var(--color-accent-primary);
-  background: rgba(99, 102, 241, 0.05);
-  transform: translateY(-2px);
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .quick-info {
