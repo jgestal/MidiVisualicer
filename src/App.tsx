@@ -12,7 +12,7 @@
  * 5. Footer - Controles de reproducción
  */
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Music, FolderOpen, X } from 'lucide-react';
+import { Music, X } from 'lucide-react';
 
 // Context hooks
 import { useMidi } from './features/library/context/MidiContext';
@@ -30,7 +30,7 @@ import './components/layout/layout.css';
 
 // Feature components
 import { FileUploader } from './components/FileUploader';
-import { FileExplorer } from './components/FileExplorer';
+// FileExplorer removed as requested
 import { InstrumentSelector } from './components/InstrumentSelector';
 import { PianoRollView } from './components/PianoRollView';
 import { TablatureView } from './components/TablatureView';
@@ -41,11 +41,10 @@ import { MidiInfoModal } from './components/MidiInfoModal';
 import { generateCifrado, generateTablatureText, downloadAsTextFile } from './utils/export';
 import { getAllInstruments } from './config/instruments';
 import { useMetronome } from './hooks/useMetronome';
-import type { MidiFile } from './types/midi';
 
 function App() {
   // ===== CONTEXTOS =====
-  const { state: midiState, loadMidiFile, loadMidiFromUrl, clearMidi } = useMidi();
+  const { state: midiState, loadMidiFile, clearMidi } = useMidi();
   const {
     state: playbackState,
     play,
@@ -67,7 +66,7 @@ function App() {
   const [showToolbar, setShowToolbar] = useState(true);
   const [showPianoRoll, setShowPianoRoll] = useState(true);
   const [activeView, setActiveView] = useState<'tablature' | 'notation'>('tablature');
-  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
+  // Sidebar state removed
   const [showInstrumentModal, setShowInstrumentModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
@@ -131,12 +130,7 @@ function App() {
     setTranspose(suggestedTranspose);
   }, [selectedTrackNotes, selectedInstrumentId, setTranspose]);
 
-  // Cerrar sidebar izquierdo al cargar MIDI
-  useEffect(() => {
-    if (parsedMidi) {
-      setIsLeftSidebarOpen(false);
-    }
-  }, [parsedMidi]);
+  // Sidebar effect removed
 
   // ===== HANDLERS =====
 
@@ -147,13 +141,7 @@ function App() {
     [loadMidiFile]
   );
 
-  const handleFileFromExplorer = useCallback(
-    async (midiFile: MidiFile) => {
-      await loadMidiFromUrl(midiFile.path);
-      setIsLeftSidebarOpen(false);
-    },
-    [loadMidiFromUrl]
-  );
+  // FileExplorer handler removed
 
   const handleToggleMute = useCallback(
     (trackIndex: number) => {
@@ -257,36 +245,7 @@ function App() {
         />
       )}
 
-      {/* LEFT SIDEBAR (drawer overlay) */}
-      <div
-        className={`left-sidebar-overlay ${isLeftSidebarOpen ? 'visible' : ''}`}
-        onClick={() => setIsLeftSidebarOpen(false)}
-      />
-      <aside className={`left-sidebar ${isLeftSidebarOpen ? 'open' : ''}`}>
-        <div className="left-sidebar-header">
-          <div className="left-sidebar-title">
-            <FolderOpen size={14} />
-            <span>Explorador</span>
-          </div>
-          <button
-            className="left-sidebar-close"
-            onClick={() => setIsLeftSidebarOpen(false)}
-          >
-            <X size={16} />
-          </button>
-        </div>
-        <div className="left-sidebar-content">
-          {/* File/Folder Open Zone */}
-          <div className="sidebar-open-zone">
-            <FileUploader
-              onFileSelect={handleFileUpload}
-              compact={true}
-            />
-          </div>
-
-          <FileExplorer selectedFile={null} onSelectFile={handleFileFromExplorer} />
-        </div>
-      </aside>
+      {/* LEFT SIDEBAR removed */}
 
       {/* MAIN CONTENT AREA */}
       {hasMidi ? (
