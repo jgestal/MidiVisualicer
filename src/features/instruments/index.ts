@@ -6,9 +6,10 @@
 export {
   InstrumentProvider,
   useInstrument,
-  useSelectedInstrumentId,
-  useTranspose,
+  useAllInstruments,
+  type InstrumentConfig,
 } from './context/InstrumentContext';
 
-// Types
-export type { InstrumentConfig } from './context/InstrumentContext';
+// Components
+export { InstrumentEditor } from './components';
+export type { InstrumentEditorProps } from './components';

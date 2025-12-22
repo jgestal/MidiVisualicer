@@ -2,22 +2,24 @@
  * Contexto para la gestión de instrumentos
  * Maneja selección, transposición auto e instrumentos personalizados
  */
-import { createContext, useContext, useReducer, useCallback, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useReducer,
+  useCallback,
+  useEffect,
+  useMemo,
+  ReactNode,
+} from 'react';
+import {
+  type InstrumentConfig,
+  DEFAULT_INSTRUMENTS,
+  saveCustomInstrument as saveToConfig,
+  deleteCustomInstrument as deleteFromConfig,
+  getAllInstruments as getAllFromConfig,
+} from '@/config/instruments';
 
-// Configuración de instrumento
-export interface InstrumentConfig {
-  id: string;
-  name: string;
-  nameEs: string;
-  strings: string[];
-  midiNotes: number[];
-  frets: number;
-  doubleStrings: boolean;
-  icon: string;
-  description: string;
-  isCustom?: boolean;
-  category?: string;
-}
+export type { InstrumentConfig };
 
 // Estado del contexto
 interface InstrumentState {
@@ -41,9 +43,6 @@ const initialState: InstrumentState = {
   customInstruments: {},
 };
 
-// Clave de localStorage
-const CUSTOM_INSTRUMENTS_KEY = 'midi-visualizer-custom-instruments';
-
 // Reducer
 function instrumentReducer(state: InstrumentState, action: InstrumentAction): InstrumentState {
   switch (action.type) {
@@ -58,9 +57,9 @@ function instrumentReducer(state: InstrumentState, action: InstrumentAction): In
         ...state.customInstruments,
         [action.payload.id]: { ...action.payload, isCustom: true },
       };
-      // Guardar en localStorage
+      // Actualizar localStorage a través de config helper
       try {
-        localStorage.setItem(CUSTOM_INSTRUMENTS_KEY, JSON.stringify(newCustom));
+        saveToConfig({ ...action.payload, isCustom: true });
       } catch (e) {
         console.error('Error saving custom instruments:', e);
       }
@@ -69,9 +68,9 @@ function instrumentReducer(state: InstrumentState, action: InstrumentAction): In
 
     case 'DELETE_CUSTOM_INSTRUMENT': {
       const { [action.payload]: _, ...remaining } = state.customInstruments;
-      // Guardar en localStorage
+      // Actualizar localStorage a través de config helper
       try {
-        localStorage.setItem(CUSTOM_INSTRUMENTS_KEY, JSON.stringify(remaining));
+        deleteFromConfig(action.payload);
       } catch (e) {
         console.error('Error saving custom instruments:', e);
       }
@@ -113,10 +112,18 @@ export function InstrumentProvider({ children }: { children: ReactNode }) {
   // Cargar instrumentos personalizados al montar
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(CUSTOM_INSTRUMENTS_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        dispatch({ type: 'LOAD_CUSTOM_INSTRUMENTS', payload: parsed });
+      // Usar helper para obtener todos, filtrar custom
+      const all = getAllFromConfig();
+      const customOnly: Record<string, InstrumentConfig> = {};
+
+      Object.values(all).forEach((inst) => {
+        if (inst.isCustom) {
+          customOnly[inst.id] = inst;
+        }
+      });
+
+      if (Object.keys(customOnly).length > 0) {
+        dispatch({ type: 'LOAD_CUSTOM_INSTRUMENTS', payload: customOnly });
       }
     } catch (e) {
       console.error('Error loading custom instruments:', e);
@@ -195,4 +202,16 @@ export function useSelectedInstrumentId() {
 export function useTranspose() {
   const { state } = useInstrument();
   return state.transpose;
+}
+
+// Hook para obtener todos los instrumentos (default + custom)
+export function useAllInstruments() {
+  const { state } = useInstrument();
+  return useMemo(
+    () => ({
+      ...DEFAULT_INSTRUMENTS,
+      ...state.customInstruments,
+    }),
+    [state.customInstruments]
+  );
 }
