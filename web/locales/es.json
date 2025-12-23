@@ -1,26 +1,26 @@
 {
     "meta": {
-        "description": "Convierte archivos MIDI a Tabs de Guitarra y Bajo Gratis. Herramienta online para aprender canciones de tus artistas favoritos, videojuegos y más. Tablatura interactiva, partitura y PDF.",
-        "keywords": "convertidor midi a tab, midi a tablatura, aprender guitarra online, tablatura bajo, visor midi, guitar pro online, tabs gratis, partitura interactiva",
-        "ogTitle": "Midi Tab Pro - El Convertidor de MIDI a Tablatura Definitivo",
-        "ogDescription": "Sube cualquier MIDI y obtén tablatura profesional al instante. Práctica con loop, velocidad variable y más. ¡Totalmente gratis!",
-        "title": "Midi Tab Pro | Convierte MIDI a Tablatura de Guitarra Online Gratis"
+        "description": "Convierte archivos MIDI a Tabs de Guitarra y Bajo. Software profesional para Mac y Windows. Aprende canciones de tus artistas favoritos. Pago único, sin suscripciones.",
+        "keywords": "convertidor midi a tab, midi a tablatura, software guitarra mac windows, guitar pro alternativo, aprender canciones, visor midi",
+        "ogTitle": "Midi Tab Pro - El Convertidor Pro de MIDI a Tablatura",
+        "ogDescription": "Software profesional para Mac y Windows. Convierte MIDI a Tabs al instante. Compra única, licencia de por vida.",
+        "title": "Midi Tab Pro | Software de Tablatura para Mac y Windows"
     },
     "nav": {
         "features": "Características",
         "howItWorks": "Cómo Funciona",
         "export": "Exportar",
         "instruments": "Instrumentos",
-        "cta": "Empezar Gratis"
+        "cta": "Comprar Ahora"
     },
     "hero": {
-        "badge": "🌍 Disponible en 13 idiomas · 🎵 Compatible con archivos MIDI",
+        "badge": "💻 Disponible para macOS y Windows · 🌍 13 idiomas",
         "title": "Toca Todas las Canciones que Siempre Soñaste",
-        "subtitle": "Convierte cualquier archivo MIDI en tablatura profesional al instante. Aprende guitarra, bajo o ukelele con las canciones de tus artistas favoritos, videojuegos, películas y música clásica.",
-        "description": "Accede a la mayor biblioteca musical del mundo: internet. Existen millones de archivos MIDI gratuitos. Con Midi Tab Pro, cada uno se convierte en una lección interactiva.",
-        "startBtn": "Comenzar Ahora — Es Gratis",
+        "subtitle": "El estándar profesional para convertir MIDI en tablatura. Aprende con las canciones de tus artistas favoritos en una interfaz premium diseñada para Mac y PC.",
+        "description": "Transforma tu ordenador en el estudio de práctica definitivo. Importa cualquier MIDI y obtén tablaturas precisas al instante. Tuyo para siempre.",
+        "startBtn": "Obtener Licencia Vitalicia",
         "demoBtn": "Ver Demostración",
-        "note": "✓ Sin registro · ✓ Sin instalación · ✓ 100% Gratis",
+        "note": "✓ Pago único · ✓ Sin suscripciones · ✓ Mac & Windows",
         "screenshots": {
             "tablature": "📸 Tablatura Precisa",
             "notation": "📸 Partitura Musical",
@@ -30,7 +30,7 @@
     },
     "benefits": {
         "title": "🎵 Tu Música, Sin Límites",
-        "description": "Olvídate de buscar tabs que no existen o son incorrectas. Si existe el MIDI (y existen millones), puedes obtener la tablatura perfecta en segundos.",
+        "description": "Olvídate de buscar tabs mal hechas en internet. Usa archivos MIDI estándar para generar tablaturas perfectas de cualquier género, artista o época.",
         "genres": {
             "games": "🎮 Videojuegos",
             "soundtracks": "🎬 Cine y TV",
@@ -44,7 +44,7 @@
     },
     "features": {
         "title": "Potencia tu Práctica Musical",
-        "subtitle": "Herramientas diseñadas por músicos para acelerar tu aprendizaje",
+        "subtitle": "Herramientas de nivel profesional diseñadas para acelerar tu aprendizaje",
         "cards": {
             "instruments": {
                 "title": "Multi-Instrumento",
@@ -52,11 +52,11 @@
             },
             "smartTabs": {
                 "title": "Algoritmo Inteligente",
-                "text": "No más digitaciones imposibles. Nuestro motor calcula la posición más lógica y cómoda en el mástil para cada nota."
+                "text": "Motor de análisis avanzado que calcula la digitación más lógica y cómoda en el mástil para cada nota, optimizado para ejecución real."
             },
             "notation": {
                 "title": "Lectura Dual",
-                "text": "Desarrolla tu lectura musical viendo Tablatura y Partitura sincronizadas. La mejor forma de aprender teoría mientras tocas."
+                "text": "Desarrolla tu lectura musical viendo Tablatura y Partitura sincronizadas. La herramienta educativa definitiva."
             },
             "pianoRoll": {
                 "title": "Visión Global",
@@ -68,7 +68,7 @@
             },
             "speed": {
                 "title": "Velocidad Variable",
-                "text": "Empieza lento, acaba rápido. Ajusta la velocidad sin alterar el tono para practicar a tu propio ritmo paso a paso."
+                "text": "Motor de audio de alta calidad que permite ajustar la velocidad sin alterar el tono para practicar a tu propio ritmo."
             },
             "transpose": {
                 "title": "Transposición Smart",
@@ -76,56 +76,56 @@
             },
             "tracks": {
                 "title": "Mezclador de Pistas",
-                "text": "Aísla la guitarra solista, silencia el bajo o escucha solo la melodía. Tienes el control total de la mezcla."
+                "text": "Aísla la guitarra solista, silencia el bajo o escucha solo la melodía. Control total sobre la mezcla de tu práctica."
             },
             "darkMode": {
                 "title": "Modo Estudio",
-                "text": "Interfaz oscura profesional diseñada para evitar la fatiga visual durante tus largas sesiones de práctica nocturna."
+                "text": "Interfaz oscura 'Dark Mode' nativa diseñada para evitar la fatiga visual durante sesiones nocturnas o en el estudio."
             }
         }
     },
     "howItWorks": {
         "title": "De Archivo a Tablatura en Segundos",
-        "subtitle": "La tecnología más avanzada, simplificada para ti",
+        "subtitle": "Software nativo optimizado para el máximo rendimiento",
         "steps": {
             "step1": {
-                "title": "1. Carga tu MIDI",
-                "text": "Arrastra cualquier archivo .mid o .midi. ¿No tienes uno? Busca \"[canción] midi\" en Google y encontrarás miles gratis."
+                "title": "1. Importa tu Archivo",
+                "text": "Abre cualquier archivo .mid o .midi desde tu ordenador. Compatible con librerías masivas de archivos."
             },
             "step2": {
-                "title": "2. Selecciona tu Pista",
-                "text": "Elige qué instrumento quieres tocar. Nuestro sistema detecta automáticamente las pistas de guitarra, bajo y melodía."
+                "title": "2. Personaliza la Vista",
+                "text": "Selecciona pistas, ajusta afinaciones y elige tu instrumento preferido. El software recuerda tus preferencias."
             },
             "step3": {
-                "title": "3. ¡A Tocar!",
-                "text": "Visualiza la tablatura generada al instante. Reproduce, practica y cuando estés listo, exporta tu trabajo."
+                "title": "3. Domina la Canción",
+                "text": "Usa las herramientas de práctica pro: bucle, metrónomo y velocidad. Exporta a PDF para llevar la partitura contigo."
             }
         },
         "video": {
-            "title": "📺 Mira lo fácil que es",
+            "title": "📺 Potencia en estado puro",
             "placeholder": "Vídeo de demostración"
         }
     },
     "export": {
         "title": "Lleva tus Tabs a Donde Quieras",
-        "subtitle": "Formatos estándar para imprimir, compartir o guardar",
+        "subtitle": "Formatos estándar de la industria listos para imprimir y compartir",
         "cards": {
             "txt": {
                 "title": "Texto Simple (.txt)",
-                "text": "Tablatura ASCII pura. Ligera, compatible con todo (bloc de notas, móvil, email) y perfecta para compartir rápido."
+                "text": "Tablatura ASCII pura. Universal y ligera, perfecta para compartir rápidamente en foros o blocs de notas."
             },
             "tab": {
                 "title": "Formato Tab (.tab)",
-                "text": "Formato enriquecido ideal para editores de texto y visores de tablatura clásicos. Mantiene la estructura visual."
+                "text": "Formato enriquecido compatible con otros editores de tablaturas y software musical."
             },
             "pdf": {
                 "title": "Impresión PDF (.pdf)",
-                "text": "Genera partituras vectoriales de alta calidad listas para imprimir. Lleva tus canciones a ensayos o clases sin depender de pantallas."
+                "text": "Genera partituras vectoriales de alta resolución listas para imprimir. Calidad de editorial musical."
             }
         }
     },
     "instruments": {
-        "title": "Un Convertidor, Todos los Instrumentos",
+        "title": "Un Software, Todos los Instrumentos",
         "subtitle": "Adaptamos la tablatura a tu instrumento, no al revés",
         "list": {
             "acousticGuitar": "🎸 Guitarra Acústica",
@@ -145,10 +145,10 @@
         "subtitle": "Interfaz traducida a 13 idiomas para músicos de todo el planeta"
     },
     "cta": {
-        "title": "🎸 Empieza a Tocar Hoy Mismo",
-        "subtitle": "No necesitas cuenta, ni suscripción. Solo tú y tu música.",
-        "button": "Abrir Aplicación Gratis",
-        "note": "Funciona en navegador · Privacidad garantizada"
+        "title": "Tu Software. Tu Música. Para Siempre.",
+        "subtitle": "Rechaza el modelo de suscripción. Con Midi Tab Pro haces un único pago y obtienes una licencia de por vida. Sin publicidad, sin ventas dentro de la app, sin molestias. Solo tú y tu instrumento.",
+        "button": "Comprar Licencia Vitalicia",
+        "note": "Descarga Inmediata para macOS y Windows"
     },
     "footer": {
         "copyright": "© 2024 Midi Tab Pro. Creado con pasión por la música.",
