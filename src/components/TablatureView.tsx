@@ -149,14 +149,30 @@ export function TablatureView({
     return result;
   }, [displayItems, cellsPerLine]);
 
-  const currentSlotIndex = Math.floor(currentTime / TIME_QUANTUM);
+  // Find the currently playing slot based on currentTime
+  const currentSlotIndex = useMemo(() => {
+    // Find the slot that corresponds to the current time
+    // We need to find which slot is currently "active" (being played)
+    for (let i = sortedSlots.length - 1; i >= 0; i--) {
+      const slotTime = sortedSlots[i] * TIME_QUANTUM;
+      if (currentTime >= slotTime) {
+        return sortedSlots[i];
+      }
+    }
+    return -1; // Before first note
+  }, [sortedSlots, currentTime]);
 
   // Find which line contains the current slot
   const currentLineIndex = useMemo(() => {
+    if (currentSlotIndex < 0) return 0;
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (line.some((item) => item.type === 'note' && item.slot >= currentSlotIndex)) {
-        return i;
+      // Check if this line contains the current slot or any slot after it
+      for (const item of line) {
+        if (item.type === 'note' && item.slot >= currentSlotIndex) {
+          return i;
+        }
       }
     }
     return lines.length - 1;
@@ -198,6 +214,39 @@ export function TablatureView({
   const stringCount = instrument.strings.length;
   const stringLabels = [...instrument.strings].reverse();
 
+  // Copy tablature line to clipboard with proper formatting
+  const handleCopyLine = (lineIndex: number) => {
+    const line = lines[lineIndex];
+    if (!line || line.length === 0) return;
+
+    // Build formatted tablature text
+    const lineTexts: string[] = [];
+    stringLabels.forEach((label, stringIdx) => {
+      const stringNum = stringCount - stringIdx;
+      const cleanLabel = label.replace(/\d/, '');
+      let lineStr = cleanLabel.padEnd(2, ' ') + '|';
+
+      line.forEach((item) => {
+        if (item.type === 'pause') {
+          lineStr += '|';
+        } else {
+          const slotNotes = timeSlots.get(item.slot) || [];
+          const noteOnString = slotNotes.find((n) => n.string === stringNum);
+          if (noteOnString) {
+            lineStr += String(noteOnString.fret).padStart(2, '-') + '-';
+          } else {
+            lineStr += '---';
+          }
+        }
+      });
+      lineStr += '|';
+      lineTexts.push(lineStr);
+    });
+
+    const text = lineTexts.join('\n');
+    navigator.clipboard.writeText(text).catch(console.error);
+  };
+
   const notesInRange = tabNotes.length;
   const notesOutOfRange = notes.length - notesInRange;
 
@@ -213,6 +262,13 @@ export function TablatureView({
             <div key={lineIndex} className={`tab-line ${currentLineIndex === lineIndex ? 'current' : ''}`}>
               <div className="tab-line-header">
                 <span className="tab-line-time">{lineStartTime}s</span>
+                <button
+                  className="tab-copy-btn"
+                  onClick={() => handleCopyLine(lineIndex)}
+                  title="Copiar esta línea de tablatura"
+                >
+                  📋
+                </button>
               </div>
               <div className="tab-grid-line">
                 {/* String labels */}
@@ -234,7 +290,7 @@ export function TablatureView({
                         {lineItems.length === 0 ? (
                           <span className="tab-empty">{'─'.repeat(Math.min(40, cellsPerLine))}</span>
                         ) : (
-                          lineItems.map((item, itemIdx) => {
+                          lineItems.map((item) => {
                             if (item.type === 'pause') {
                               // Render pause marker (vertical bar)
                               return (
@@ -252,9 +308,9 @@ export function TablatureView({
                             const slot = item.slot;
                             const slotNotes = timeSlots.get(slot) || [];
                             const noteOnString = slotNotes.find((n) => n.string === stringNum);
-                            const nextNoteItem = lineItems.slice(itemIdx + 1).find(i => i.type === 'note');
-                            const nextSlot = nextNoteItem ? nextNoteItem.slot : Infinity;
-                            const isActive = slot <= currentSlotIndex && nextSlot > currentSlotIndex;
+
+                            // Check if this slot is the current one
+                            const isActive = slot === currentSlotIndex;
 
                             return (
                               <span
