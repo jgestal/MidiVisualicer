@@ -1,0 +1,128 @@
+# Imágenes Requeridas para la Landing Page de Midi Tab Pro
+
+Este archivo documenta todas las imágenes necesarias para completar la landing page.
+Por favor, añade las imágenes en la carpeta `web/images/` con los nombres exactos indicados.
+
+---
+
+## IMÁGENES ESENCIALES
+
+### Favicon e Iconos
+| Archivo | Tamaño | Descripción |
+|---------|--------|-------------|
+| favicon.png | 32x32 px | Favicon del navegador |
+| favicon-192.png | 192x192 px | Icono para Android |
+| favicon-512.png | 512x512 px | Icono para PWA |
+| apple-touch-icon.png | 180x180 px | Icono para iOS |
+
+### Open Graph (Redes Sociales)
+| Archivo | Tamaño | Descripción |
+|---------|--------|-------------|
+| og-image.png | 1200x630 px | Imagen para compartir en redes sociales |
+
+---
+
+## CARRUSEL DE CAPTURAS DE PANTALLA (Hero)
+
+Estas imágenes aparecen en el carrusel principal del hero.
+**Tamaño recomendado: 1920x1080 px (proporción 16:9)**
+**Formato: PNG o WebP para mejor calidad**
+
+| Archivo | Descripción |
+|---------|-------------|
+| screenshot-tablature.png | Captura de la vista de tablatura con una canción cargada |
+| screenshot-notation.png | Captura de la vista de partitura musical |
+| screenshot-pianoroll.png | Captura del piano roll con notas visibles |
+| screenshot-instruments.png | Captura del selector de instrumentos abierto |
+
+### Cómo tomar las capturas:
+1. Abre la aplicación en pantalla completa
+2. Carga un MIDI con notas visibles (preferiblemente una canción conocida)
+3. Asegúrate de que el tema oscuro está activo
+4. Captura toda la ventana de la aplicación
+5. Recorta si es necesario para mantener proporción 16:9
+
+---
+
+## SECCIÓN "CÓMO FUNCIONA" (3 pasos)
+
+Estas imágenes ilustran cada paso del proceso.
+**Tamaño recomendado: 800x600 px (proporción 4:3)**
+
+| Archivo | Descripción |
+|---------|-------------|
+| step-1-upload.png | Pantalla inicial con zona de arrastre o usuario arrastrando archivo |
+| step-2-instrument.png | Selector de instrumentos mostrando las opciones disponibles |
+| step-3-export.png | Menú de exportación abierto mostrando los 3 formatos |
+
+---
+
+## VÍDEO DE YOUTUBE
+
+En la sección "Cómo Funciona", hay un espacio reservado para un vídeo de YouTube.
+
+### Instrucciones para añadir el vídeo:
+
+1. Sube tu vídeo de demostración a YouTube
+2. Copia el ID del vídeo de la URL
+   - Ejemplo: Si la URL es `https://www.youtube.com/watch?v=ABC123xyz`
+   - El ID es: `ABC123xyz`
+3. Abre `web/index.html`
+4. Busca el comentario `<!-- VIDEO_ID_AQUI -->`
+5. Reemplaza `VIDEO_ID_AQUI` con tu ID real
+6. Descomenta el `<iframe>` y elimina el `<div class="video-placeholder">`
+
+### Contenido sugerido para el vídeo (2-3 minutos):
+- Intro: Mostrar el logo y nombre
+- Paso 1: Arrastrar un archivo MIDI famoso
+- Paso 2: Seleccionar un instrumento
+- Paso 3: Mostrar la tablatura generada
+- Demostrar reproducción con distintas velocidades
+- Mostrar el loop A-B en acción
+- Mostrar transposición
+- Demostrar exportación
+- CTA final
+
+---
+
+## ESTRUCTURA DE CARPETAS FINAL
+
+```
+web/
+├── index.html
+├── css/
+│   └── styles.css
+├── js/
+│   └── main.js
+└── images/
+    ├── favicon.png
+    ├── favicon-192.png
+    ├── favicon-512.png
+    ├── apple-touch-icon.png
+    ├── og-image.png
+    ├── screenshot-tablature.png
+    ├── screenshot-notation.png
+    ├── screenshot-pianoroll.png
+    ├── screenshot-instruments.png
+    ├── step-1-upload.png
+    ├── step-2-instrument.png
+    └── step-3-export.png
+```
+
+---
+
+## NOTAS ADICIONALES
+
+### Optimización de imágenes:
+- Usa WebP si es posible para mejor compresión
+- Comprime las PNGs con herramientas como TinyPNG
+- Las capturas del carrusel deben ser de alta calidad (son lo primero que ven los usuarios)
+
+### Placeholder actuales:
+- Las imágenes que faltan muestran un emoji como placeholder
+- El sitio funciona sin las imágenes, pero se verá incompleto
+
+### Colores para diseño de OG Image:
+- Fondo: #0a0a0f (casi negro)
+- Acento: #6366f1 → #8b5cf6 (gradiente violeta)
+- Texto: #f8fafc (blanco)
