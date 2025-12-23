@@ -178,6 +178,16 @@ export function TablatureView({
     return lines.length - 1;
   }, [lines, currentSlotIndex]);
 
+  // Teleprompter mode: show only current line + a few before/after
+  const LINES_BEFORE = 1;  // Show 1 line before current for context
+  const LINES_AFTER = 3;   // Show 3 lines after current
+
+  const visibleLineRange = useMemo(() => {
+    const startLine = Math.max(0, currentLineIndex - LINES_BEFORE);
+    const endLine = Math.min(lines.length - 1, currentLineIndex + LINES_AFTER);
+    return { start: startLine, end: endLine };
+  }, [currentLineIndex, lines.length]);
+
   // Auto-scroll to current line - faster scroll to keep current in view
   useEffect(() => {
     if (!isPlaying || !scrollContainerRef.current) return;
@@ -254,12 +264,29 @@ export function TablatureView({
     <div className="tab-container-multiline" ref={containerRef}>
       <div className="tab-scroll-vertical" ref={scrollContainerRef}>
         {lines.map((lineItems, lineIndex) => {
+          // Only render lines in visible range
+          if (lineIndex < visibleLineRange.start || lineIndex > visibleLineRange.end) {
+            return null;
+          }
+
           const firstNoteItem = lineItems.find(item => item.type === 'note');
           const lineStartSlot = firstNoteItem ? firstNoteItem.slot : lineIndex * cellsPerLine;
           const lineStartTime = (lineStartSlot * TIME_QUANTUM).toFixed(1);
 
+          // Determine line state for styling
+          const isPastLine = lineIndex < currentLineIndex;
+          const isCurrentLine = lineIndex === currentLineIndex;
+          const isUpcomingLine = lineIndex > currentLineIndex;
+
+          const lineClasses = [
+            'tab-line',
+            isCurrentLine && 'current',
+            isPastLine && 'past',
+            isUpcomingLine && 'upcoming',
+          ].filter(Boolean).join(' ');
+
           return (
-            <div key={lineIndex} className={`tab-line ${currentLineIndex === lineIndex ? 'current' : ''}`}>
+            <div key={lineIndex} className={lineClasses}>
               <div className="tab-line-header">
                 <span className="tab-line-time">{lineStartTime}s</span>
                 <button
