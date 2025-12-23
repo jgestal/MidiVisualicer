@@ -5,36 +5,8 @@
 import { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import { Midi } from '@tonejs/midi';
 import type { ParsedMidi, MidiTrack, MidiNote, MidiFile } from '@/shared/types/midi';
+import { getGMInstrumentName } from '@/shared/constants/gmInstruments';
 
-// Mapa de instrumentos GM (General MIDI)
-const GM_INSTRUMENTS: Record<number, string> = {
-  0: 'Piano',
-  1: 'Bright Piano',
-  2: 'Electric Grand',
-  3: 'Honky-tonk',
-  4: 'Electric Piano 1',
-  5: 'Electric Piano 2',
-  6: 'Harpsichord',
-  7: 'Clavinet',
-  24: 'Acoustic Guitar (nylon)',
-  25: 'Acoustic Guitar (steel)',
-  26: 'Electric Guitar (jazz)',
-  27: 'Electric Guitar (clean)',
-  28: 'Electric Guitar (muted)',
-  29: 'Overdriven Guitar',
-  30: 'Distortion Guitar',
-  31: 'Guitar Harmonics',
-  32: 'Acoustic Bass',
-  33: 'Electric Bass (finger)',
-  34: 'Electric Bass (pick)',
-  40: 'Violin',
-  41: 'Viola',
-  42: 'Cello',
-  43: 'Contrabass',
-  56: 'Trumpet',
-  57: 'Trombone',
-  73: 'Flute',
-};
 
 // Estado del contexto
 interface MidiState {
@@ -136,7 +108,7 @@ export function MidiProvider({ children }: { children: ReactNode }) {
           return {
             index,
             name: track.name || `Track ${index + 1}`,
-            instrument: GM_INSTRUMENTS[instrumentNum] || 'Unknown',
+            instrument: getGMInstrumentName(instrumentNum),
             channel: track.channel,
             noteCount: notes.length,
             notes,
