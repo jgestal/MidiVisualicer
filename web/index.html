@@ -5,19 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Midi Tab Pro - Convierte archivos MIDI en tablatura profesional para guitarra, bajo, ukelele y más. Toca canciones de videojuegos, películas y música clásica. ¡Pruébalo gratis!">
+        content="Midi Tab Pro - Convierte archivos MIDI en tablatura profesional para guitarra, bajo, ukelele y más. Toca canciones de videojuegos, películas y música clásica. ¡Pruébalo gratis!"
+        data-i18n="meta.description">
     <meta name="keywords"
-        content="MIDI, tablatura, guitarra, bajo, ukelele, partitura, música, práctica, exportar, videojuegos, películas, clásica">
+        content="MIDI, tablatura, guitarra, bajo, ukelele, partitura, música, práctica, exportar, videojuegos, películas, clásica"
+        data-i18n="meta.keywords">
     <meta name="author" content="Midi Tab Pro">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Midi Tab Pro - Convierte MIDI a Tablatura al Instante">
+    <meta property="og:title" content="Midi Tab Pro - Convierte MIDI a Tablatura al Instante" data-i18n="meta.ogTitle">
     <meta property="og:description"
-        content="La herramienta definitiva para músicos. Toca todas las canciones que siempre soñaste con tablatura profesional.">
+        content="La herramienta definitiva para músicos. Toca todas las canciones que siempre soñaste con tablatura profesional."
+        data-i18n="meta.ogDescription">
     <meta property="og:type" content="website">
     <meta property="og:image" content="images/og-image.png">
 
-    <title>Midi Tab Pro - Convierte MIDI a Tablatura | Toca Tus Canciones Favoritas</title>
+    <title data-i18n="meta.title">Midi Tab Pro - Convierte MIDI a Tablatura | Toca Tus Canciones Favoritas</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,40 +43,43 @@
                 <span class="logo-text">Midi Tab Pro</span>
             </a>
             <nav class="nav">
-                <a href="#features">Características</a>
-                <a href="#how-it-works">Cómo Funciona</a>
-                <a href="#export">Exportar</a>
-                <a href="#instruments">Instrumentos</a>
+                <a href="#features" data-i18n="nav.features">Características</a>
+                <a href="#how-it-works" data-i18n="nav.howItWorks">Cómo Funciona</a>
+                <a href="#export" data-i18n="nav.export">Exportar</a>
+                <a href="#instruments" data-i18n="nav.instruments">Instrumentos</a>
             </nav>
-            <a href="#cta" class="btn btn-primary">Empezar Gratis</a>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="language-selector"></div>
+                <a href="#cta" class="btn btn-primary" data-i18n="nav.cta">Empezar Gratis</a>
+            </div>
         </div>
     </header>
 
     <!-- Hero -->
     <section class="hero">
         <div class="container">
-            <div class="hero-badge">
+            <div class="hero-badge" data-i18n="hero.badge">
                 🌍 Disponible en 13 idiomas · 🎵 Compatible con archivos MIDI
             </div>
-            <h1>Toca Todas las Canciones que Siempre Soñaste</h1>
-            <p class="hero-subtitle">
+            <h1 data-i18n="hero.title">Toca Todas las Canciones que Siempre Soñaste</h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">
                 Convierte cualquier archivo MIDI en tablatura profesional al instante.
                 Aprende guitarra, bajo o ukelele con tus canciones favoritas de videojuegos,
                 películas y música clásica.
             </p>
-            <p class="hero-description">
+            <p class="hero-description" data-i18n="hero.description">
                 Existen cientos de miles de archivos MIDI gratuitos en internet esperándote.
                 Con Midi Tab Pro, cada canción está a tu alcance.
             </p>
             <div class="hero-buttons">
                 <a href="#cta" class="btn btn-primary btn-lg">
-                    <span class="btn-icon">🚀</span> Comenzar Ahora — Es Gratis
+                    <span class="btn-icon">🚀</span> <span data-i18n="hero.startBtn">Comenzar Ahora — Es Gratis</span>
                 </a>
                 <a href="#how-it-works" class="btn btn-secondary btn-lg">
-                    <span class="btn-icon">▶️</span> Ver Demostración
+                    <span class="btn-icon">▶️</span> <span data-i18n="hero.demoBtn">Ver Demostración</span>
                 </a>
             </div>
-            <p class="hero-note">✓ Sin registro · ✓ Sin tarjeta de crédito · ✓ Uso ilimitado</p>
+            <p class="hero-note" data-i18n="hero.note">✓ Sin registro · ✓ Sin tarjeta de crédito · ✓ Uso ilimitado</p>
 
             <!-- Screenshot Carousel -->
             <div class="hero-screenshot">
@@ -83,19 +89,19 @@
                         <div class="carousel-slides">
                             <div class="carousel-slide" data-slide="1">
                                 <!-- Image: screenshot-tablature.png -->
-                                <span>📸 Vista de Tablatura</span>
+                                <span data-i18n="hero.screenshots.tablature">📸 Vista de Tablatura</span>
                             </div>
                             <div class="carousel-slide" data-slide="2">
                                 <!-- Image: screenshot-notation.png -->
-                                <span>📸 Vista de Partitura</span>
+                                <span data-i18n="hero.screenshots.notation">📸 Vista de Partitura</span>
                             </div>
                             <div class="carousel-slide" data-slide="3">
                                 <!-- Image: screenshot-pianoroll.png -->
-                                <span>📸 Piano Roll</span>
+                                <span data-i18n="hero.screenshots.pianoroll">📸 Piano Roll</span>
                             </div>
                             <div class="carousel-slide" data-slide="4">
                                 <!-- Image: screenshot-instruments.png -->
-                                <span>📸 Selector de Instrumentos</span>
+                                <span data-i18n="hero.screenshots.instruments">📸 Selector de Instrumentos</span>
                             </div>
                         </div>
                     </div>
@@ -115,21 +121,21 @@
     <section class="midi-benefits">
         <div class="container">
             <div class="midi-content">
-                <h2>🎵 Un Universo de Canciones Esperándote</h2>
-                <p>
+                <h2 data-i18n="benefits.title">🎵 Un Universo de Canciones Esperándote</h2>
+                <p data-i18n="benefits.description">
                     Los archivos MIDI son el formato estándar de la industria musical.
                     En internet encontrarás cientos de miles de MIDI gratuitos listos para descargar.
                     Con Midi Tab Pro, convierte cualquiera de ellos en tablatura en segundos.
                 </p>
                 <div class="midi-genres">
-                    <div class="genre-tag"><span>🎮</span> Videojuegos</div>
-                    <div class="genre-tag"><span>🎬</span> Bandas Sonoras</div>
-                    <div class="genre-tag"><span>🎻</span> Música Clásica</div>
-                    <div class="genre-tag"><span>🎸</span> Rock & Metal</div>
-                    <div class="genre-tag"><span>🎷</span> Jazz & Blues</div>
-                    <div class="genre-tag"><span>🎹</span> Pop & Electrónica</div>
-                    <div class="genre-tag"><span>🌍</span> Música del Mundo</div>
-                    <div class="genre-tag"><span>📺</span> Series & Anime</div>
+                    <div class="genre-tag"><span data-i18n="benefits.genres.games">🎮 Videojuegos</span></div>
+                    <div class="genre-tag"><span data-i18n="benefits.genres.soundtracks">🎬 Bandas Sonoras</span></div>
+                    <div class="genre-tag"><span data-i18n="benefits.genres.classical">🎻 Música Clásica</span></div>
+                    <div class="genre-tag"><span data-i18n="benefits.genres.rock">🎸 Rock & Metal</span></div>
+                    <div class="genre-tag"><span data-i18n="benefits.genres.jazz">🎷 Jazz & Blues</span></div>
+                    <div class="genre-tag"><span data-i18n="benefits.genres.pop">🎹 Pop & Electrónica</span></div>
+                    <div class="genre-tag"><span data-i18n="benefits.genres.world">🌍 Música del Mundo</span></div>
+                    <div class="genre-tag"><span data-i18n="benefits.genres.tv">📺 Series & Anime</span></div>
                 </div>
             </div>
         </div>
@@ -139,72 +145,74 @@
     <section class="features" id="features">
         <div class="container">
             <div class="section-header">
-                <h2>Herramientas Profesionales para Músicos</h2>
-                <p>Todo lo que necesitas para aprender, practicar y dominar tus canciones favoritas</p>
+                <h2 data-i18n="features.title">Herramientas Profesionales para Músicos</h2>
+                <p data-i18n="features.subtitle">Todo lo que necesitas para aprender, practicar y dominar tus canciones
+                    favoritas</p>
             </div>
 
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">🎸</div>
-                    <h3>Múltiples Instrumentos</h3>
-                    <p>Guitarra acústica, eléctrica, bajo de 4 y 5 cuerdas, ukelele, banjo y mandolina. Además, crea
-                        instrumentos personalizados con cualquier afinación.</p>
+                    <h3 data-i18n="features.cards.instruments.title">Múltiples Instrumentos</h3>
+                    <p data-i18n="features.cards.instruments.text">Guitarra acústica, eléctrica, bajo de 4 y 5 cuerdas,
+                        ukelele, banjo y mandolina. Además, crea instrumentos personalizados con cualquier afinación.
+                    </p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">📝</div>
-                    <h3>Tablatura Inteligente</h3>
-                    <p>Nuestro algoritmo avanzado selecciona las posiciones óptimas en el mástil. Visualiza cada nota
-                        con colores vibrantes y efectos en tiempo real.</p>
+                    <h3 data-i18n="features.cards.smartTabs.title">Tablatura Inteligente</h3>
+                    <p data-i18n="features.cards.smartTabs.text">Nuestro algoritmo avanzado selecciona las posiciones
+                        óptimas en el mástil. Visualiza cada nota con colores vibrantes y efectos en tiempo real.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">🎵</div>
-                    <h3>Partitura Musical</h3>
-                    <p>Visualiza la notación musical tradicional junto con la tablatura. Perfecto para aprender a leer
-                        música mientras tocas tus canciones favoritas.</p>
+                    <h3 data-i18n="features.cards.notation.title">Partitura Musical</h3>
+                    <p data-i18n="features.cards.notation.text">Visualiza la notación musical tradicional junto con la
+                        tablatura. Perfecto para aprender a leer música mientras tocas tus canciones favoritas.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">🎹</div>
-                    <h3>Piano Roll Interactivo</h3>
-                    <p>Vista profesional de piano roll para visualizar todas las notas. Haz clic para navegar al
-                        instante y establece puntos de loop con facilidad.</p>
+                    <h3 data-i18n="features.cards.pianoRoll.title">Piano Roll Interactivo</h3>
+                    <p data-i18n="features.cards.pianoRoll.text">Vista profesional de piano roll para visualizar todas
+                        las notas. Haz clic para navegar al instante y establece puntos de loop con facilidad.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">🔄</div>
-                    <h3>Loop A-B para Práctica</h3>
-                    <p>¿Una sección difícil? Repítela en bucle hasta dominarla. Establece puntos A y B para practicar
-                        cualquier fragmento tantas veces como necesites.</p>
+                    <h3 data-i18n="features.cards.loop.title">Loop A-B para Práctica</h3>
+                    <p data-i18n="features.cards.loop.text">¿Una sección difícil? Repítela en bucle hasta dominarla.
+                        Establece puntos A y B para practicar cualquier fragmento tantas veces como necesites.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">🎚️</div>
-                    <h3>Control de Velocidad</h3>
-                    <p>Reduce la velocidad al 25%, 50% o 75% para aprender pasajes complicados. El metrónomo integrado
-                        te mantiene siempre a tiempo.</p>
+                    <h3 data-i18n="features.cards.speed.title">Control de Velocidad</h3>
+                    <p data-i18n="features.cards.speed.text">Reduce la velocidad al 25%, 50% o 75% para aprender pasajes
+                        complicados. El metrónomo integrado te mantiene siempre a tiempo.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">🎛️</div>
-                    <h3>Transposición Automática</h3>
-                    <p>Transpone arriba o abajo por semitonos u octavas. La función "Auto" ajusta las notas
-                        automáticamente al rango de tu instrumento.</p>
+                    <h3 data-i18n="features.cards.transpose.title">Transposición Automática</h3>
+                    <p data-i18n="features.cards.transpose.text">Transpone arriba o abajo por semitonos u octavas. La
+                        función "Auto" ajusta las notas automáticamente al rango de tu instrumento.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">🎧</div>
-                    <h3>Gestión de Pistas</h3>
-                    <p>Trabaja con archivos MIDI multipista. Silencia, ajusta el volumen individual y cambia entre
-                        pistas para enfocarte en lo que importa.</p>
+                    <h3 data-i18n="features.cards.tracks.title">Gestión de Pistas</h3>
+                    <p data-i18n="features.cards.tracks.text">Trabaja con archivos MIDI multipista. Silencia, ajusta el
+                        volumen individual y cambia entre pistas para enfocarte en lo que importa.</p>
                 </div>
 
                 <div class="feature-card">
                     <div class="feature-icon">🌙</div>
-                    <h3>Modo Oscuro Elegante</h3>
-                    <p>Interfaz moderna con tema oscuro que cuida tus ojos durante largas sesiones de práctica. Diseño
-                        premium que inspira a tocar.</p>
+                    <h3 data-i18n="features.cards.darkMode.title">Modo Oscuro Elegante</h3>
+                    <p data-i18n="features.cards.darkMode.text">Interfaz moderna con tema oscuro que cuida tus ojos
+                        durante largas sesiones de práctica. Diseño premium que inspira a tocar.</p>
                 </div>
             </div>
         </div>
@@ -214,18 +222,19 @@
     <section class="how-it-works" id="how-it-works">
         <div class="container">
             <div class="section-header">
-                <h2>De MIDI a Tablatura en 3 Simples Pasos</h2>
-                <p>Tan fácil que estarás tocando tu primera canción en menos de un minuto</p>
+                <h2 data-i18n="howItWorks.title">De MIDI a Tablatura en 3 Simples Pasos</h2>
+                <p data-i18n="howItWorks.subtitle">Tan fácil que estarás tocando tu primera canción en menos de un
+                    minuto</p>
             </div>
 
             <div class="steps">
                 <div class="step">
                     <div class="step-content">
                         <div class="step-number">1</div>
-                        <h3>Arrastra tu Archivo MIDI</h3>
-                        <p>Descarga un archivo MIDI de internet o usa uno que ya tengas. Simplemente arrástralo y
-                            suéltalo en la aplicación — o haz clic para seleccionarlo. Soportamos todos los formatos
-                            .mid y .midi.</p>
+                        <h3 data-i18n="howItWorks.steps.step1.title">Arrastra tu Archivo MIDI</h3>
+                        <p data-i18n="howItWorks.steps.step1.text">Descarga un archivo MIDI de internet o usa uno que ya
+                            tengas. Simplemente arrástralo y suéltalo en la aplicación — o haz clic para seleccionarlo.
+                            Soportamos todos los formatos .mid y .midi.</p>
                     </div>
                     <div class="step-image">
                         <!-- Image: step-1-upload.png -->
@@ -236,9 +245,10 @@
                 <div class="step">
                     <div class="step-content">
                         <div class="step-number">2</div>
-                        <h3>Elige tu Instrumento</h3>
-                        <p>Selecciona entre guitarra, bajo, ukelele o cualquiera de nuestros instrumentos predefinidos.
-                            ¿Tienes una afinación especial? Crea un instrumento personalizado en segundos.</p>
+                        <h3 data-i18n="howItWorks.steps.step2.title">Elige tu Instrumento</h3>
+                        <p data-i18n="howItWorks.steps.step2.text">Selecciona entre guitarra, bajo, ukelele o cualquiera
+                            de nuestros instrumentos predefinidos. ¿Tienes una afinación especial? Crea un instrumento
+                            personalizado en segundos.</p>
                     </div>
                     <div class="step-image">
                         <!-- Image: step-2-instrument.png -->
@@ -249,9 +259,10 @@
                 <div class="step">
                     <div class="step-content">
                         <div class="step-number">3</div>
-                        <h3>Practica y Exporta</h3>
-                        <p>Reproduce a cualquier velocidad, usa el loop para secciones difíciles, y cuando estés listo,
-                            exporta tu tablatura en TXT, TAB o PDF para practicar donde quieras.</p>
+                        <h3 data-i18n="howItWorks.steps.step3.title">Practica y Exporta</h3>
+                        <p data-i18n="howItWorks.steps.step3.text">Reproduce a cualquier velocidad, usa el loop para
+                            secciones difíciles, y cuando estés listo, exporta tu tablatura en TXT, TAB o PDF para
+                            practicar donde quieras.</p>
                     </div>
                     <div class="step-image">
                         <!-- Image: step-3-export.png -->
@@ -262,7 +273,7 @@
 
             <!-- Video Demo -->
             <div class="video-demo">
-                <h3>📺 Mira Midi Tab Pro en Acción</h3>
+                <h3 data-i18n="howItWorks.video.title">📺 Mira Midi Tab Pro en Acción</h3>
                 <div class="video-container">
                     <!-- 
                     INSTRUCCIONES PARA AÑADIR EL VÍDEO DE YOUTUBE:
@@ -273,7 +284,7 @@
                     -->
                     <div class="video-placeholder">
                         <span class="video-placeholder-icon">▶️</span>
-                        <span>Vídeo de demostración próximamente</span>
+                        <span data-i18n="howItWorks.video.placeholder">Vídeo de demostración próximamente</span>
                     </div>
                     <!-- 
                     <iframe 
@@ -292,32 +303,33 @@
     <section class="export" id="export">
         <div class="container">
             <div class="section-header">
-                <h2>Exporta y Lleva tu Música Contigo</h2>
-                <p>Tres formatos profesionales para practicar donde quieras, cuando quieras</p>
+                <h2 data-i18n="export.title">Exporta y Lleva tu Música Contigo</h2>
+                <p data-i18n="export.subtitle">Tres formatos profesionales para practicar donde quieras, cuando quieras
+                </p>
             </div>
 
             <div class="export-options">
                 <div class="export-card">
                     <div class="export-icon">📄</div>
-                    <h3>Tablatura de Texto</h3>
-                    <p>Formato ASCII clásico, compatible con cualquier dispositivo. Perfecto para compartir en foros,
-                        redes sociales o guardar como referencia rápida.</p>
+                    <h3 data-i18n="export.cards.txt.title">Tablatura de Texto</h3>
+                    <p data-i18n="export.cards.txt.text">Formato ASCII clásico, compatible con cualquier dispositivo.
+                        Perfecto para compartir en foros, redes sociales o guardar como referencia rápida.</p>
                     <span class="export-format">.TXT</span>
                 </div>
 
                 <div class="export-card">
                     <div class="export-icon">🎼</div>
-                    <h3>Tablatura Profesional</h3>
-                    <p>Tablatura con formato avanzado incluyendo marcadores de compás, indicaciones de tiempo y pausas
-                        para una lectura más clara y profesional.</p>
+                    <h3 data-i18n="export.cards.tab.title">Tablatura Profesional</h3>
+                    <p data-i18n="export.cards.tab.text">Tablatura con formato avanzado incluyendo marcadores de compás,
+                        indicaciones de tiempo y pausas para una lectura más clara y profesional.</p>
                     <span class="export-format">.TAB</span>
                 </div>
 
                 <div class="export-card">
                     <div class="export-icon">📑</div>
-                    <h3>Documento PDF</h3>
-                    <p>Exporta a PDF listo para imprimir. Ideal para llevar a tus clases de música, ensayos o
-                        simplemente para tener una copia física de tus canciones.</p>
+                    <h3 data-i18n="export.cards.pdf.title">Documento PDF</h3>
+                    <p data-i18n="export.cards.pdf.text">Exporta a PDF listo para imprimir. Ideal para llevar a tus
+                        clases de música, ensayos o simplemente para tener una copia física de tus canciones.</p>
                     <span class="export-format">.PDF</span>
                 </div>
             </div>
@@ -328,21 +340,28 @@
     <section class="instruments" id="instruments">
         <div class="container">
             <div class="section-header">
-                <h2>Compatible con Todos tus Instrumentos</h2>
-                <p>Instrumentos predefinidos listos para usar + opción de crear personalizados</p>
+                <h2 data-i18n="instruments.title">Compatible con Todos tus Instrumentos</h2>
+                <p data-i18n="instruments.subtitle">Instrumentos predefinidos listos para usar + opción de crear
+                    personalizados</p>
             </div>
 
             <div class="instruments-grid">
-                <div class="instrument-pill"><span>🎸</span> Guitarra Acústica</div>
-                <div class="instrument-pill"><span>🎸</span> Guitarra Eléctrica</div>
-                <div class="instrument-pill"><span>🎸</span> Guitarra 7 cuerdas</div>
-                <div class="instrument-pill"><span>🎸</span> Bajo 4 Cuerdas</div>
-                <div class="instrument-pill"><span>🎸</span> Bajo 5 Cuerdas</div>
-                <div class="instrument-pill"><span>🪕</span> Ukelele Soprano</div>
-                <div class="instrument-pill"><span>🪕</span> Ukelele Barítono</div>
-                <div class="instrument-pill"><span>🪕</span> Banjo 5 Cuerdas</div>
-                <div class="instrument-pill"><span>🎻</span> Mandolina</div>
-                <div class="instrument-pill"><span>✨</span> Instrumento Personalizado</div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.acousticGuitar">🎸 Guitarra
+                        Acústica</span></div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.electricGuitar">🎸 Guitarra
+                        Eléctrica</span></div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.sevenString">🎸 Guitarra 7 cuerdas</span>
+                </div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.bass4">🎸 Bajo 4 Cuerdas</span></div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.bass5">🎸 Bajo 5 Cuerdas</span></div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.ukuleleSoprano">🪕 Ukelele Soprano</span>
+                </div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.ukuleleBaritone">🪕 Ukelele
+                        Barítono</span></div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.banjo">🪕 Banjo 5 Cuerdas</span></div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.mandolin">🎻 Mandolina</span></div>
+                <div class="instrument-pill"><span data-i18n="instruments.list.custom">✨ Instrumento
+                        Personalizado</span></div>
             </div>
         </div>
     </section>
@@ -351,8 +370,8 @@
     <section class="languages" id="languages">
         <div class="container">
             <div class="section-header">
-                <h2>Hecho para Músicos de Todo el Mundo</h2>
-                <p>Disponible en 13 idiomas para que nada te detenga</p>
+                <h2 data-i18n="languages.title">Hecho para Músicos de Todo el Mundo</h2>
+                <p data-i18n="languages.subtitle">Disponible en 13 idiomas para que nada te detenga</p>
             </div>
 
             <div class="languages-grid">
@@ -376,23 +395,23 @@
     <!-- CTA -->
     <section class="cta" id="cta">
         <div class="container">
-            <h2>🎸 ¿Listo para Tocar tus Canciones Favoritas?</h2>
-            <p>Únete a miles de músicos que ya están aprendiendo con Midi Tab Pro</p>
+            <h2 data-i18n="cta.title">🎸 ¿Listo para Tocar tus Canciones Favoritas?</h2>
+            <p data-i18n="cta.subtitle">Únete a miles de músicos que ya están aprendiendo con Midi Tab Pro</p>
             <a href="#" class="btn btn-primary btn-lg">
-                <span class="btn-icon">🚀</span> Empezar Gratis Ahora
+                <span class="btn-icon">🚀</span> <span data-i18n="cta.button">Empezar Gratis Ahora</span>
             </a>
-            <p class="cta-note">Sin registro • Sin límites • Empieza a tocar en segundos</p>
+            <p class="cta-note" data-i18n="cta.note">Sin registro • Sin límites • Empieza a tocar en segundos</p>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>© 2024 Midi Tab Pro. Todos los derechos reservados.</p>
+            <p data-i18n="footer.copyright">© 2024 Midi Tab Pro. Todos los derechos reservados.</p>
             <p>
-                <a href="#">Política de Privacidad</a> ·
-                <a href="#">Términos de Uso</a> ·
-                <a href="#">Contacto</a>
+                <a href="#" data-i18n="footer.privacy">Política de Privacidad</a> ·
+                <a href="#" data-i18n="footer.terms">Términos de Uso</a> ·
+                <a href="#" data-i18n="footer.contact">Contacto</a>
             </p>
         </div>
     </footer>

@@ -1,0 +1,159 @@
+{
+    "meta": {
+        "description": "Midi Tab Pro - Convierte archivos MIDI en tablatura profesional para guitarra, bajo, ukelele y más. Toca canciones de videojuegos, películas y música clásica. ¡Pruébalo gratis!",
+        "keywords": "MIDI, tablatura, guitarra, bajo, ukelele, partitura, música, práctica, exportar, videojuegos, películas, clásica",
+        "ogTitle": "Midi Tab Pro - Convierte MIDI a Tablatura al Instante",
+        "ogDescription": "La herramienta definitiva para músicos. Toca todas las canciones que siempre soñaste con tablatura profesional.",
+        "title": "Midi Tab Pro - Convierte MIDI a Tablatura | Toca Tus Canciones Favoritas"
+    },
+    "nav": {
+        "features": "Características",
+        "howItWorks": "Cómo Funciona",
+        "export": "Exportar",
+        "instruments": "Instrumentos",
+        "cta": "Empezar Gratis"
+    },
+    "hero": {
+        "badge": "🌍 Disponible en 13 idiomas · 🎵 Compatible con archivos MIDI",
+        "title": "Toca Todas las Canciones que Siempre Soñaste",
+        "subtitle": "Convierte cualquier archivo MIDI en tablatura profesional al instante. Aprende guitarra, bajo o ukelele con tus canciones favoritas de videojuegos, películas y música clásica.",
+        "description": "Existen cientos de miles de archivos MIDI gratuitos en internet esperándote. Con Midi Tab Pro, cada canción está a tu alcance.",
+        "startBtn": "🚀 Comenzar Ahora — Es Gratis",
+        "demoBtn": "▶️ Ver Demostración",
+        "note": "✓ Sin registro · ✓ Sin tarjeta de crédito · ✓ Uso ilimitado",
+        "screenshots": {
+            "tablature": "📸 Vista de Tablatura",
+            "notation": "📸 Vista de Partitura",
+            "pianoroll": "📸 Piano Roll",
+            "instruments": "📸 Selector de Instrumentos"
+        }
+    },
+    "benefits": {
+        "title": "🎵 Un Universo de Canciones Esperándote",
+        "description": "Los archivos MIDI son el formato estándar de la industria musical. En internet encontrarás cientos de miles de MIDI gratuitos listos para descargar. Con Midi Tab Pro, convierte cualquiera de ellos en tablatura en segundos.",
+        "genres": {
+            "games": "🎮 Videojuegos",
+            "soundtracks": "🎬 Bandas Sonoras",
+            "classical": "🎻 Música Clásica",
+            "rock": "🎸 Rock & Metal",
+            "jazz": "🎷 Jazz & Blues",
+            "pop": "🎹 Pop & Electrónica",
+            "world": "🌍 Música del Mundo",
+            "tv": "📺 Series & Anime"
+        }
+    },
+    "features": {
+        "title": "Herramientas Profesionales para Músicos",
+        "subtitle": "Todo lo que necesitas para aprender, practicar y dominar tus canciones favoritas",
+        "cards": {
+            "instruments": {
+                "title": "Múltiples Instrumentos",
+                "text": "Guitarra acústica, eléctrica, bajo de 4 y 5 cuerdas, ukelele, banjo y mandolina. Además, crea instrumentos personalizados con cualquier afinación."
+            },
+            "smartTabs": {
+                "title": "Tablatura Inteligente",
+                "text": "Nuestro algoritmo avanzado selecciona las posiciones óptimas en el mástil. Visualiza cada nota con colores vibrantes y efectos en tiempo real."
+            },
+            "notation": {
+                "title": "Partitura Musical",
+                "text": "Visualiza la notación musical tradicional junto con la tablatura. Perfecto para aprender a leer música mientras tocas tus canciones favoritas."
+            },
+            "pianoRoll": {
+                "title": "Piano Roll Interactivo",
+                "text": "Vista profesional de piano roll para visualizar todas las notas. Haz clic para navegar al instante y establece puntos de loop con facilidad."
+            },
+            "loop": {
+                "title": "Loop A-B para Práctica",
+                "text": "¿Una sección difícil? Repítela en bucle hasta dominarla. Establece puntos A y B para practicar cualquier fragmento tantas veces como necesites."
+            },
+            "speed": {
+                "title": "Control de Velocidad",
+                "text": "Reduce la velocidad al 25%, 50% o 75% para aprender pasajes complicados. El metrónomo integrado te mantiene siempre a tiempo."
+            },
+            "transpose": {
+                "title": "Transposición Automática",
+                "text": "Transpone arriba o abajo por semitonos u octavas. La función \"Auto\" ajusta las notas automáticamente al rango de tu instrumento."
+            },
+            "tracks": {
+                "title": "Gestión de Pistas",
+                "text": "Trabaja con archivos MIDI multipista. Silencia, ajusta el volumen individual y cambia entre pistas para enfocarte en lo que importa."
+            },
+            "darkMode": {
+                "title": "Modo Oscuro Elegante",
+                "text": "Interfaz moderna con tema oscuro que cuida tus ojos durante largas sesiones de práctica. Diseño premium que inspira a tocar."
+            }
+        }
+    },
+    "howItWorks": {
+        "title": "De MIDI a Tablatura en 3 Simples Pasos",
+        "subtitle": "Tan fácil que estarás tocando tu primera canción en menos de un minuto",
+        "steps": {
+            "step1": {
+                "title": "Arrastra tu Archivo MIDI",
+                "text": "Descarga un archivo MIDI de internet o usa uno que ya tengas. Simplemente arrástralo y suéltalo en la aplicación — o haz clic para seleccionarlo. Soportamos todos los formatos .mid y .midi."
+            },
+            "step2": {
+                "title": "Elige tu Instrumento",
+                "text": "Selecciona entre guitarra, bajo, ukelele o cualquiera de nuestros instrumentos predefinidos. ¿Tienes una afinación especial? Crea un instrumento personalizado en segundos."
+            },
+            "step3": {
+                "title": "Practica y Exporta",
+                "text": "Reproduce a cualquier velocidad, usa el loop para secciones difíciles, y cuando estés listo, exporta tu tablatura en TXT, TAB o PDF para practicar donde quieras."
+            }
+        },
+        "video": {
+            "title": "📺 Mira Midi Tab Pro en Acción",
+            "placeholder": "Vídeo de demostración próximamente"
+        }
+    },
+    "export": {
+        "title": "Exporta y Lleva tu Música Contigo",
+        "subtitle": "Tres formatos profesionales para practicar donde quieras, cuando quieras",
+        "cards": {
+            "txt": {
+                "title": "Tablatura de Texto",
+                "text": "Formato ASCII clásico, compatible con cualquier dispositivo. Perfecto para compartir en foros, redes sociales o guardar como referencia rápida."
+            },
+            "tab": {
+                "title": "Tablatura Profesional",
+                "text": "Tablatura con formato avanzado incluyendo marcadores de compás, indicaciones de tiempo y pausas para una lectura más clara y profesional."
+            },
+            "pdf": {
+                "title": "Documento PDF",
+                "text": "Exporta a PDF listo para imprimir. Ideal para llevar a tus clases de música, ensayos o simplemente para tener una copia física de tus canciones."
+            }
+        }
+    },
+    "instruments": {
+        "title": "Compatible con Todos tus Instrumentos",
+        "subtitle": "Instrumentos predefinidos listos para usar + opción de crear personalizados",
+        "list": {
+            "acousticGuitar": "🎸 Guitarra Acústica",
+            "electricGuitar": "🎸 Guitarra Eléctrica",
+            "sevenString": "🎸 Guitarra 7 cuerdas",
+            "bass4": "🎸 Bajo 4 Cuerdas",
+            "bass5": "🎸 Bajo 5 Cuerdas",
+            "ukuleleSoprano": "🪕 Ukelele Soprano",
+            "ukuleleBaritone": "🪕 Ukelele Barítono",
+            "banjo": "🪕 Banjo 5 Cuerdas",
+            "mandolin": "🎻 Mandolina",
+            "custom": "✨ Instrumento Personalizado"
+        }
+    },
+    "languages": {
+        "title": "Hecho para Músicos de Todo el Mundo",
+        "subtitle": "Disponible en 13 idiomas para que nada te detenga"
+    },
+    "cta": {
+        "title": "🎸 ¿Listo para Tocar tus Canciones Favoritas?",
+        "subtitle": "Únete a miles de músicos que ya están aprendiendo con Midi Tab Pro",
+        "button": "🚀 Empezar Gratis Ahora",
+        "note": "Sin registro • Sin límites • Empieza a tocar en segundos"
+    },
+    "footer": {
+        "copyright": "© 2024 Midi Tab Pro. Todos los derechos reservados.",
+        "privacy": "Política de Privacidad",
+        "terms": "Términos de Uso",
+        "contact": "Contacto"
+    }
+}
