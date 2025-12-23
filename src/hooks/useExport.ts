@@ -1,14 +1,10 @@
-/**
- * Custom hook for export functionality
- * Consolidates all export-related logic in one place
- */
 import { useCallback } from 'react';
 import type { ParsedMidi } from '../types/midi';
 import {
     generateCifrado,
     generateTablatureText,
     generateMusicXML,
-    generateJson,
+    generateWordDoc,
     downloadAsTextFile
 } from '../utils/export';
 
@@ -43,11 +39,21 @@ export function useExport({ parsedMidi, selectedTrack, selectedInstrumentId }: U
         downloadAsTextFile(xml, `${parsedMidi.name || 'midi'}.musicxml`);
     }, [parsedMidi, selectedTrack]);
 
-    const exportJson = useCallback(() => {
+    const exportWord = useCallback(() => {
         if (!parsedMidi) return;
-        const json = generateJson(parsedMidi, selectedTrack);
-        downloadAsTextFile(json, `${parsedMidi.name || 'midi'}.json`);
-    }, [parsedMidi, selectedTrack]);
+        const content = generateWordDoc(parsedMidi, selectedTrack, selectedInstrumentId);
+
+        // Manual download with correct MIME type for Word
+        const blob = new Blob([content], { type: 'application/msword;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${parsedMidi.name || 'midi'}.doc`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }, [parsedMidi, selectedTrack, selectedInstrumentId]);
 
     const exportPdf = useCallback(() => {
         if (!parsedMidi) return;
@@ -116,7 +122,7 @@ export function useExport({ parsedMidi, selectedTrack, selectedInstrumentId }: U
         exportTxt,
         exportPdf,
         exportMusicXML,
-        exportJson,
+        exportWord,
         canExport: !!parsedMidi,
     };
 }

@@ -21,7 +21,7 @@ import {
     Printer,
     HelpCircle,
     FileCode,
-    Braces,
+    FileText,
 } from 'lucide-react';
 import { useTheme } from '../../shared/context/ThemeContext';
 import { useI18n, LANGUAGES, type Language } from '../../shared/context/I18nContext';
@@ -45,11 +45,10 @@ interface HeaderProps {
     onExportTab: () => void;
     onExportPdf: () => void;
     onExportMusicXML?: () => void;
-    onExportJson?: () => void;
+    onExportWord?: () => void;
 
     // Info
     onShowInfo: () => void;
-
 
     // About & Help
     onShowAbout: () => void;
@@ -68,7 +67,7 @@ export function Header({
     onExportTab,
     onExportPdf,
     onExportMusicXML,
-    onExportJson,
+    onExportWord,
     onShowInfo,
     onShowAbout,
     onShowHelp,
@@ -160,14 +159,14 @@ export function Header({
                                 <button onClick={() => { onExportTab(); setShowExportMenu(false); }}>
                                     <Download size={14} /> Tablatura (.tab)
                                 </button>
+                                {onExportWord && (
+                                    <button onClick={() => { onExportWord(); setShowExportMenu(false); }}>
+                                        <FileText size={14} /> Word / Doc (.doc)
+                                    </button>
+                                )}
                                 {onExportMusicXML && (
                                     <button onClick={() => { onExportMusicXML(); setShowExportMenu(false); }}>
                                         <FileCode size={14} /> MusicXML (GP/MuseScore)
-                                    </button>
-                                )}
-                                {onExportJson && (
-                                    <button onClick={() => { onExportJson(); setShowExportMenu(false); }}>
-                                        <Braces size={14} /> JSON Raw Data
                                     </button>
                                 )}
                                 <div className="export-menu-divider" />

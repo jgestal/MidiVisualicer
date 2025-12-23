@@ -170,7 +170,7 @@ function App() {
   });
 
   // ===== EXPORT (via custom hook) =====
-  const { exportTablature, exportTxt, exportPdf, exportMusicXML, exportJson } = useExport({
+  const { exportTablature, exportTxt, exportPdf, exportMusicXML, exportWord } = useExport({
     parsedMidi,
     selectedTrack,
     selectedInstrumentId,
@@ -225,7 +225,7 @@ function App() {
         onExportTab={exportTablature}
         onExportPdf={exportPdf}
         onExportMusicXML={exportMusicXML}
-        onExportJson={exportJson}
+        onExportWord={exportWord}
         onShowInfo={ui.openInfoModal}
         onShowAbout={ui.openAboutModal}
         onShowHelp={ui.openHelpModal}

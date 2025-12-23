@@ -294,21 +294,30 @@ export function generateMusicXML(midi: ParsedMidi, trackIndex: number): string {
 }
 
 /**
- * Genera JSON raw de la pista
+ * Genera documento Word (.doc) compatible con MS Word y OpenOffice
+ * Envuelve la tablatura en HTML con tags específicos de Office
  */
-export function generateJson(midi: ParsedMidi, trackIndex: number): string {
+export function generateWordDoc(midi: ParsedMidi, trackIndex: number, instrumentId: string): string {
   const track = midi.tracks[trackIndex];
-  if (!track) return '{}';
+  if (!track) return '';
 
-  return JSON.stringify({
-    metadata: {
-      name: midi.name,
-      bpm: midi.bpm,
-      timeSignature: midi.timeSignature,
-      duration: midi.duration
-    },
-    track: track
-  }, null, 2);
+  const tablature = generateTablatureText(track, instrumentId);
+
+  return `
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>${midi.name}</title>
+<style>
+  body { font-family: 'Courier New', monospace; font-size: 10pt; }
+  pre { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>${midi.name} - ${track.name}</h1>
+<pre>${tablature}</pre>
+</body>
+</html>`;
 }
 
 /**
@@ -329,4 +338,4 @@ export function downloadAsTextFile(content: string, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-export default { generateCifrado, generateTablatureText, generateMusicXML, generateJson, downloadAsTextFile };
+export default { generateCifrado, generateTablatureText, generateMusicXML, generateWordDoc, downloadAsTextFile };
