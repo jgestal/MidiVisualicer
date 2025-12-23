@@ -1044,6 +1044,9 @@ img {
     justify-content: center;
     gap: 16px;
     margin-top: 48px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .language-flag {
@@ -1101,7 +1104,7 @@ img {
 
 .cta h2 {
     font-size: 2.75rem;
-    margin-bottom: 20px;
+    margin-bottom: 32px;
     background: linear-gradient(to right, #fff, #c4b5fd);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -1110,14 +1113,15 @@ img {
 .cta>p {
     color: var(--color-text-secondary);
     font-size: 1.25rem;
-    margin-bottom: 60px;
+    margin-bottom: 64px;
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.8;
 }
 
 .cta-note {
-    margin-top: 20px;
+    margin-top: 48px;
     font-size: 0.875rem;
     color: var(--color-text-muted);
 }
@@ -1144,6 +1148,84 @@ img {
 
 .footer a:hover {
     color: var(--color-text-primary);
+}
+
+/* ============================================
+   Light Theme Sections
+   ============================================ */
+.section-light {
+    position: relative;
+    background: #f8fafc;
+    /* Slate 50 */
+    color: #0f172a;
+    /* Slate 900 */
+}
+
+/* Override text colors in light sections */
+.section-light h2,
+.section-light h3 {
+    color: #0f172a;
+    background: none;
+    -webkit-text-fill-color: initial;
+}
+
+.section-light p,
+.section-light .hero-subtitle,
+.section-light .feature-card p,
+.section-light .step p,
+.section-light .export-card p {
+    color: #475569;
+    /* Slate 600 */
+}
+
+/* Card overrides for light theme */
+.section-light .feature-card,
+.section-light .export-card,
+.section-light .instrument-pill {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    /* Slate 200 */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.section-light .feature-card:hover,
+.section-light .export-card:hover,
+.section-light .instrument-pill:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+    border-color: var(--color-accent-primary);
+    transform: translateY(-4px);
+}
+
+/* MIDI Content override */
+.section-light .midi-content h2 {
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: #0f172a;
+}
+
+.section-light .genre-tag {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+}
+
+.section-light .genre-tag:hover {
+    border-color: var(--color-accent-primary);
+    color: var(--color-accent-primary);
+    background: #eff6ff;
+}
+
+/* Step Image override */
+.section-light .step-image {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Video container in light section needs border */
+.section-light .video-container {
+    border: 1px solid #e2e8f0;
 }
 
 /* ============================================
