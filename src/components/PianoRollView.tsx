@@ -92,8 +92,8 @@ export function PianoRollView({
       ctx.stroke();
 
       // Etiqueta de tiempo
-      ctx.fillStyle = '#3a3a4a';
-      ctx.font = '8px Inter, sans-serif';
+      ctx.fillStyle = '#a0a0b0';
+      ctx.font = '9px Inter, sans-serif';
       ctx.fillText(`${t}s`, x + 2, 10);
     }
 

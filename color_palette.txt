@@ -1,0 +1,89 @@
+# Color Palette - Midi Tab Pro
+
+This file documents the color palette used throughout the application.
+
+## Dark Theme (Default)
+
+### Background Colors
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --color-bg-primary | #0a0a0f | Main app background |
+| --color-bg-secondary | #12121a | Sidebar, panels |
+| --color-bg-tertiary | #1a1a25 | Cards, buttons |
+| --color-bg-elevated | #22222f | Elevated elements |
+| --color-bg-hover | #2a2a3a | Hover states |
+
+### Accent Colors
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --color-accent-primary | #6366f1 | Primary buttons, highlights |
+| --color-accent-secondary | #8b5cf6 | Secondary accents |
+| --color-accent-gradient | linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) | Gradients |
+| --color-accent-glow | rgba(99, 102, 241, 0.3) | Glow effects |
+
+### Semantic Colors
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --color-success | #22c55e | Success messages |
+| --color-warning | #f59e0b | Warning messages |
+| --color-error | #ef4444 | Error messages |
+| --color-info | #3b82f6 | Info messages |
+
+### Text Colors
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --color-text-primary | #f8fafc | Main text, headings |
+| --color-text-secondary | #94a3b8 | Secondary text |
+| --color-text-muted | #64748b | Muted text, labels |
+| --color-text-inverse | #0a0a0f | Text on light backgrounds |
+
+### Border Colors
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --color-border | rgba(255, 255, 255, 0.08) | Default borders |
+| --color-border-hover | rgba(255, 255, 255, 0.15) | Hover borders |
+| --color-border-active | rgba(99, 102, 241, 0.5) | Active borders |
+
+### Glassmorphism
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --glass-bg | rgba(18, 18, 26, 0.8) | Glass backgrounds |
+| --glass-border | rgba(255, 255, 255, 0.1) | Glass borders |
+| --glass-blur | 20px | Blur amount |
+
+### Shadows
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --shadow-sm | 0 1px 2px rgba(0, 0, 0, 0.5) | Small shadow |
+| --shadow-md | 0 4px 12px rgba(0, 0, 0, 0.4) | Medium shadow |
+| --shadow-lg | 0 12px 40px rgba(0, 0, 0, 0.5) | Large shadow |
+| --shadow-glow | 0 0 30px var(--color-accent-glow) | Glow effect |
+
+## Light Theme
+
+### Background Colors
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --color-bg-primary | #ffffff | Main app background |
+| --color-bg-secondary | #f8fafc | Sidebar, panels |
+| --color-bg-tertiary | #f1f5f9 | Cards, buttons |
+| --color-bg-elevated | #ffffff | Elevated elements |
+| --color-bg-hover | #e2e8f0 | Hover states |
+
+### Text Colors
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --color-text-primary | #0f172a | Main text, headings |
+| --color-text-secondary | #475569 | Secondary text |
+| --color-text-muted | #94a3b8 | Muted text, labels |
+
+### Border Colors
+| Variable | Value | Usage |
+|----------|-------|-------|
+| --color-border | rgba(0, 0, 0, 0.08) | Default borders |
+| --color-border-hover | rgba(0, 0, 0, 0.15) | Hover borders |
+
+---
+
+## CSS File Location
+The CSS variables are defined in: `src/shared/styles/global.css`

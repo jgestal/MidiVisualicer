@@ -323,10 +323,11 @@ export function TablatureView({
         .tab-line-time {
           font-size: 10px;
           font-family: var(--font-mono);
-          color: var(--color-text-muted);
+          color: var(--color-text-secondary);
           background: var(--color-bg-secondary);
           padding: 2px 6px;
           border-radius: var(--radius-sm);
+          font-weight: 500;
         }
 
         .tab-grid-line {

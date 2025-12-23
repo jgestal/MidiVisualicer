@@ -16,9 +16,14 @@ import { de } from './de';
 import { it } from './it';
 import { zh } from './zh';
 import { ja } from './ja';
+import { ru } from './ru';
+import { ko } from './ko';
+import { hi } from './hi';
+import { ar } from './ar';
+import { bn } from './bn';
 
 // Supported language codes
-export type Language = 'es' | 'en' | 'pt' | 'fr' | 'de' | 'it' | 'zh' | 'ja';
+export type Language = 'es' | 'en' | 'pt' | 'fr' | 'de' | 'it' | 'zh' | 'ja' | 'ru' | 'ko' | 'hi' | 'ar' | 'bn';
 
 // Type for translation keys (based on Spanish file keys)
 export type TranslationKey = keyof typeof es;
@@ -36,6 +41,11 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     it,
     zh,
     ja,
+    ru,
+    ko,
+    hi,
+    ar,
+    bn,
 };
 
 // Language metadata for UI display
@@ -48,6 +58,11 @@ export const LANGUAGES: Record<Language, { name: string; nativeName: string; fla
     it: { name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
     zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
     ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+    ru: { name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+    ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
+    hi: { name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
+    ar: { name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+    bn: { name: 'Bengali', nativeName: 'বাংলা', flag: '🇧🇩' },
 };
 
 // Helper to get translations for a language (with fallback to English)
@@ -56,4 +71,5 @@ export function getTranslations(lang: Language): Translations {
 }
 
 // Re-export individual translations for direct access if needed
-export { es, en, pt, fr, de, it, zh, ja };
+export { es, en, pt, fr, de, it, zh, ja, ru, ko, hi, ar, bn };
+

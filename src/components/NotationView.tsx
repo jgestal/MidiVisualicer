@@ -240,16 +240,40 @@ export function NotationView({
         }
 
         .notation-line-content {
-          background: #fffdf5;
+          background: #ffffff;
           border-radius: 4px;
           overflow: hidden;
           position: relative;
           border: 1px solid var(--color-border);
         }
         
-        /* Dark theme override for notation paper */
-        :root[data-theme="dark"] .notation-line-content {
-          background: #1a1a25;
+        /* Force VexFlow SVG elements to be black on white */
+        .notation-line-content svg {
+          background: #ffffff;
+        }
+        
+        .notation-line-content svg path,
+        .notation-line-content svg line,
+        .notation-line-content svg rect:not([fill="none"]) {
+          stroke: #000000;
+        }
+        
+        .notation-line-content svg text {
+          fill: #000000;
+        }
+        
+        .notation-line-content svg .vf-stavenote path,
+        .notation-line-content svg .vf-notehead path,
+        .notation-line-content svg .vf-stem path,
+        .notation-line-content svg .vf-flag path,
+        .notation-line-content svg .vf-beam path {
+          fill: #000000;
+          stroke: #000000;
+        }
+        
+        .notation-line-content svg .vf-stave path,
+        .notation-line-content svg .vf-stave line {
+          stroke: #000000;
         }
 
         .notation-playhead {
