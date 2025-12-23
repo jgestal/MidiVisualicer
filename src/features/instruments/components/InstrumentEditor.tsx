@@ -2,7 +2,7 @@
  * InstrumentEditor - Modal para crear/editar instrumentos personalizados
  * Incluye selección de plantilla desde cualquier instrumento existente
  */
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { X, Plus, Trash2, Music2, Save, AlertCircle, ChevronUp, ChevronDown, Copy } from 'lucide-react';
 import { noteToMidi, midiToNote } from '@/config/instruments';
 import type { InstrumentConfig } from '@/config/instruments';
@@ -95,6 +95,41 @@ export function InstrumentEditor({
   const [showTemplates, setShowTemplates] = useState(!instrument); // Show templates for new instruments
 
   const isEditing = !!instrument;
+
+  // Efecto para cargar datos cuando cambia el instrumento (o se abre el modal)
+  useEffect(() => {
+    if (instrument) {
+      setName(instrument.nameEs);
+      setIcon(instrument.icon);
+      setFrets(instrument.frets);
+      setDoubleStrings(instrument.doubleStrings);
+      if (instrument.strings) {
+        setStrings(
+          instrument.strings.map((s) => {
+            const parsed = parseNoteString(s);
+            return { id: generateId(), ...parsed };
+          })
+        );
+      }
+      setShowTemplates(false);
+    } else {
+      // Reset para nuevo instrumento
+      setName('');
+      setIcon('🎸');
+      setFrets(22);
+      setDoubleStrings(false);
+      setStrings([
+        { id: generateId(), note: 'E', octave: 2 },
+        { id: generateId(), note: 'A', octave: 2 },
+        { id: generateId(), note: 'D', octave: 3 },
+        { id: generateId(), note: 'G', octave: 3 },
+        { id: generateId(), note: 'B', octave: 3 },
+        { id: generateId(), note: 'E', octave: 4 },
+      ]);
+      setShowTemplates(true);
+    }
+    setErrors([]);
+  }, [instrument]);
 
   // Aplicar plantilla
   const applyTemplate = useCallback((template: InstrumentConfig) => {
@@ -255,7 +290,28 @@ export function InstrumentEditor({
 
               {showTemplates && (
                 <div className="template-grid">
-                  {allInstruments.map((inst) => (
+                  {/* Custom Instruments */}
+                  {allInstruments.filter(i => i.isCustom).length > 0 && (
+                    <>
+                      <div className="template-section-label">Mis Instrumentos</div>
+                      {allInstruments.filter(i => i.isCustom).map((inst) => (
+                        <button
+                          key={inst.id}
+                          className="template-item"
+                          onClick={() => applyTemplate(inst)}
+                          title={`Usar ${inst.nameEs} como plantilla`}
+                        >
+                          <span className="template-icon">{inst.icon}</span>
+                          <span className="template-name">{inst.nameEs}</span>
+                        </button>
+                      ))}
+                      <div className="template-divider" />
+                    </>
+                  )}
+
+                  {/* Predefined Instruments */}
+                  <div className="template-section-label">Predefinidos</div>
+                  {allInstruments.filter(i => !i.isCustom).map((inst) => (
                     <button
                       key={inst.id}
                       className="template-item"

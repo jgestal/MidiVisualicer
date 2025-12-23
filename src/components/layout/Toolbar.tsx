@@ -109,7 +109,7 @@ export function Toolbar({
                     title={t.selectInstrument}
                 >
                     <span style={{ fontSize: '16px', lineHeight: 1 }}>{instrument?.icon || '🎵'}</span>
-                    <span>{selectedInstrumentName}</span>
+                    <span className="toolbar-instrument-name">{selectedInstrumentName}</span>
                     <ChevronDown size={14} />
                 </button>
             </div>

@@ -3,7 +3,7 @@
  */
 import { useMemo, useState, useCallback } from 'react';
 import { ArrowUp, ArrowDown, RotateCcw, Wand2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { INSTRUMENTS } from '../config/instruments';
+import { getAllInstruments } from '../config/instruments';
 import { useI18n } from '../shared/context/I18nContext';
 import type { MidiNote } from '../types/midi';
 
@@ -20,7 +20,7 @@ export function TransposeControls({
   transpose,
   onTransposeChange,
 }: TransposeControlsProps) {
-  const instrument = INSTRUMENTS[instrumentId];
+  const instrument = getAllInstruments()[instrumentId];
   const { t } = useI18n();
 
   // Historial de transposiciones

@@ -23,6 +23,13 @@
     border-color: var(--color-accent-primary);
 }
 
+.toolbar-instrument-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .metronome-section {
     display: flex;
     align-items: center;
