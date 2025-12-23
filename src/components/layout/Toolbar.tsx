@@ -5,6 +5,7 @@
 import { Timer, Music2, ChevronDown } from 'lucide-react';
 import TransposeControls from '../TransposeControls';
 import LoopControls from '../LoopControls';
+import { useI18n } from '../../shared/context/I18nContext';
 import type { MidiNote } from '../../types/midi';
 
 interface ToolbarProps {
@@ -53,6 +54,8 @@ export function Toolbar({
     isMetronomeEnabled = false,
     onToggleMetronome,
 }: ToolbarProps) {
+    const { t } = useI18n();
+
     return (
         <div className="app-toolbar">
             <div className="toolbar-section">
@@ -87,7 +90,7 @@ export function Toolbar({
                 <button
                     className="toolbar-instrument-btn"
                     onClick={onOpenInstrumentMenu}
-                    title="Seleccionar Instrumento"
+                    title={t.selectInstrument}
                 >
                     <Music2 size={16} />
                     <span>{selectedInstrumentName}</span>
@@ -103,10 +106,10 @@ export function Toolbar({
                         <button
                             className={`metronome-btn ${isMetronomeEnabled ? 'active' : ''}`}
                             onClick={onToggleMetronome}
-                            title={isMetronomeEnabled ? 'Desactivar metrónomo' : 'Activar metrónomo'}
+                            title={isMetronomeEnabled ? t.disableLoop : t.enableLoop}
                         >
                             <Timer size={16} />
-                            <span>Metrónomo</span>
+                            <span>{t.metronome}</span>
                             {isMetronomeEnabled && <span className="metronome-active-dot" />}
                         </button>
                     </div>

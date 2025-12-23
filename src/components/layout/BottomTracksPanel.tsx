@@ -4,6 +4,7 @@
  */
 import { useState } from 'react';
 import { Layers, ChevronDown, ChevronUp, Volume2, VolumeX } from 'lucide-react';
+import { useI18n } from '../../shared/context/I18nContext';
 import type { MidiTrack } from '../../types/midi';
 
 interface BottomTracksPanelProps {
@@ -75,6 +76,7 @@ export function BottomTracksPanel({
   onVolumeChange,
 }: BottomTracksPanelProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { t } = useI18n();
 
   if (tracks.length === 0) {
     return null;
@@ -86,10 +88,10 @@ export function BottomTracksPanel({
       <button
         className="bottom-tracks-toggle"
         onClick={() => setIsCollapsed(!isCollapsed)}
-        title={isCollapsed ? 'Mostrar pistas' : 'Ocultar pistas'}
+        title={isCollapsed ? t.showToolbar : t.hideToolbar}
       >
         <Layers size={14} />
-        <span>Pistas ({tracks.length})</span>
+        <span>{t.tracks} ({tracks.length})</span>
         {isCollapsed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>
 
@@ -121,9 +123,9 @@ export function BottomTracksPanel({
                     <span className="bottom-track-index">{index + 1}</span>
                     <div className="bottom-track-info">
                       <span className="bottom-track-name">
-                        {track.name || `Pista ${index + 1}`}
+                        {track.name || `${t.track} ${index + 1}`}
                       </span>
-                      <span className="bottom-track-notes">{noteCount} notas</span>
+                      <span className="bottom-track-notes">{noteCount} {t.notes}</span>
                     </div>
                   </button>
 
@@ -134,7 +136,7 @@ export function BottomTracksPanel({
                         e.stopPropagation();
                         onToggleMute(index);
                       }}
-                      title={isMuted ? 'Activar' : 'Silenciar'}
+                      title={isMuted ? t.unmute : t.mute}
                     >
                       {isMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
                     </button>

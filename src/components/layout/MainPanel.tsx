@@ -3,6 +3,7 @@
  * Muestra Tablatura (por defecto) o Partitura
  */
 import { Music2, FileText } from 'lucide-react';
+import { useI18n } from '../../shared/context/I18nContext';
 
 interface MainPanelProps {
     activeView: 'tablature' | 'notation';
@@ -15,6 +16,8 @@ export function MainPanel({
     onViewChange,
     children,
 }: MainPanelProps) {
+    const { t } = useI18n();
+
     return (
         <div className="main-panel">
             {/* Tab Bar */}
@@ -24,14 +27,14 @@ export function MainPanel({
                     onClick={() => onViewChange('tablature')}
                 >
                     <Music2 size={14} />
-                    <span>Tablatura</span>
+                    <span>{t.tablature}</span>
                 </button>
                 <button
                     className={`main-panel-tab ${activeView === 'notation' ? 'active' : ''}`}
                     onClick={() => onViewChange('notation')}
                 >
                     <FileText size={14} />
-                    <span>Partitura</span>
+                    <span>{t.notation}</span>
                 </button>
             </div>
 
@@ -44,3 +47,4 @@ export function MainPanel({
 }
 
 export default MainPanel;
+

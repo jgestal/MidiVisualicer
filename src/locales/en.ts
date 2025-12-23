@@ -1,0 +1,156 @@
+/**
+ * English translations
+ */
+export const en = {
+    // App
+    appName: 'Midi Tab Pro',
+
+    // Navigation
+    back: 'Back',
+    close: 'Close',
+    settings: 'Settings',
+
+    // Main sections
+    tracks: 'Tracks',
+    instruments: 'Instruments',
+    tablature: 'Tablature',
+    notation: 'Notation',
+    pianoRoll: 'Piano Roll',
+
+    // File operations
+    openFile: 'Open file',
+    openMidiFile: 'Open MIDI file',
+    refreshList: 'Refresh list',
+    noFilesFound: 'No files found',
+
+    // Export
+    export: 'Export',
+    exportAs: 'Export as...',
+    exportCifrado: 'Chord chart (.txt)',
+    exportTablature: 'Tablature (.tab)',
+    exportPdf: 'PDF (.pdf)',
+
+    // Playback controls
+    play: 'Play',
+    pause: 'Pause',
+    stop: 'Stop',
+    restart: 'Restart',
+    rewind5s: 'Rewind 5s',
+    forward5s: 'Forward 5s',
+    speed: 'Speed',
+
+    // Transpose
+    transpose: 'Transpose',
+    semitones: 'semitones',
+    octave: 'octave',
+    autoFit: 'Auto-fit to instrument',
+    undoTranspose: 'Undo transpose',
+    redoTranspose: 'Redo transpose',
+    resetTranspose: 'Reset',
+    minus1: '-1 semitone',
+    plus1: '+1 semitone',
+    minus8va: '-1 octave',
+    plus8va: '+1 octave',
+
+    // Loop
+    loop: 'Loop',
+    loopA: 'Point A',
+    loopB: 'Point B',
+    enableLoop: 'Enable loop',
+    disableLoop: 'Disable loop',
+    clearLoop: 'Clear loop',
+
+    // Metronome
+    metronome: 'Metronome',
+    bpm: 'BPM',
+
+    // Instrument
+    instrument: 'Instrument',
+    selectInstrument: 'Select Instrument',
+    createCustom: 'Create Custom Instrument',
+    editInstrument: 'Edit',
+    deleteInstrument: 'Delete',
+    tuning: 'Tuning',
+    strings: 'strings',
+    frets: 'frets',
+
+    // Tracks
+    track: 'Track',
+    noTracks: 'No tracks',
+    notes: 'notes',
+    mute: 'Mute',
+    unmute: 'Unmute',
+    solo: 'Solo',
+
+    // Views
+    showToolbar: 'Show Toolbar',
+    hideToolbar: 'Hide Toolbar',
+    showPianoRoll: 'Show Piano Roll',
+    hidePianoRoll: 'Hide Piano Roll',
+
+    // Messages
+    notesOutOfRange: 'notes out of instrument range',
+    instrumentNotFound: 'Instrument not found',
+    selectTrackToView: 'Select a track to view',
+    selectTrackToViewSheet: 'Select a track to view the sheet music',
+    noFile: 'No file',
+    dropFile: 'Drag a MIDI file or click to open',
+    confirmClose: 'Close current file? Unsaved changes will be lost.',
+
+    // Modal titles
+    midiInfo: 'MIDI Info',
+    about: 'About',
+    help: 'Help',
+    userManual: 'User Manual',
+
+    // MIDI Info labels
+    name: 'Name',
+    duration: 'Duration',
+    fileSize: 'Size',
+    tempo: 'Tempo',
+    timeSignature: 'Time Signature',
+    ppq: 'PPQ',
+
+    // About modal
+    aboutDeveloper: 'About the developer',
+    version: 'Version',
+    developer: 'Developer',
+    contact: 'Contact',
+    website: 'Website',
+    license: 'License',
+
+    // Theme
+    darkMode: 'Dark mode',
+    lightMode: 'Light mode',
+
+    // Language
+    language: 'Language',
+
+    // Initial screen
+    startSession: 'Start your session',
+    dragDropHint: 'Drag a MIDI file or click to open',
+    dropHere: 'Drag your MIDI file here',
+    dropNow: 'Drop it!',
+    supportsMidi: 'Supports .mid and .midi',
+    processing: 'Processing sheet music...',
+
+    // Piano Roll hints
+    pianoRollHint: 'Drag: Scroll | Click: Go to position | Ctrl+Click: Loop A | Shift+Click: Loop B',
+
+    // Tablature
+    pauseMarker: 'Pause',
+
+    // Instrument Editor
+    instrumentName: 'Instrument name',
+    instrumentIcon: 'Icon',
+    numberOfStrings: 'Number of strings',
+    numberOfFrets: 'Number of frets',
+    stringTuning: 'String tuning',
+    selectTemplate: 'Select template',
+    saveInstrument: 'Save instrument',
+    cancel: 'Cancel',
+
+    // Errors
+    error: 'Error',
+    loadingError: 'Loading error',
+} as const;

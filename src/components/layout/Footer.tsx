@@ -3,6 +3,7 @@
  * Barra fija en la parte inferior con play/pause, progreso y velocidad
  */
 import { Play, Pause, Square, SkipBack, SkipForward, RotateCcw } from 'lucide-react';
+import { useI18n } from '../../shared/context/I18nContext';
 import type { PlaybackSpeed } from '../../types/midi';
 
 interface FooterProps {
@@ -39,6 +40,7 @@ export function Footer({
     onSeek,
     onSpeedChange,
 }: FooterProps) {
+    const { t } = useI18n();
     const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
     const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -58,7 +60,7 @@ export function Footer({
                     className="footer-btn"
                     onClick={() => onSeek(0)}
                     disabled={disabled}
-                    title="Reiniciar"
+                    title={t.restart}
                 >
                     <RotateCcw size={16} />
                 </button>
@@ -67,7 +69,7 @@ export function Footer({
                     className="footer-btn"
                     onClick={() => onSeek(Math.max(0, currentTime - 5))}
                     disabled={disabled}
-                    title="Retroceder 5s"
+                    title={t.rewind5s}
                 >
                     <SkipBack size={18} />
                 </button>
@@ -77,7 +79,7 @@ export function Footer({
                         className="footer-btn footer-btn-main"
                         onClick={onPause}
                         disabled={disabled}
-                        title="Pausar"
+                        title={t.pause}
                     >
                         <Pause size={22} />
                     </button>
@@ -86,7 +88,7 @@ export function Footer({
                         className="footer-btn footer-btn-main"
                         onClick={onPlay}
                         disabled={disabled}
-                        title="Reproducir"
+                        title={t.play}
                     >
                         <Play size={22} style={{ marginLeft: 2 }} />
                     </button>
@@ -96,7 +98,7 @@ export function Footer({
                     className="footer-btn"
                     onClick={onStop}
                     disabled={disabled}
-                    title="Detener"
+                    title={t.stop}
                 >
                     <Square size={16} />
                 </button>
@@ -105,7 +107,7 @@ export function Footer({
                     className="footer-btn"
                     onClick={() => onSeek(Math.min(duration, currentTime + 5))}
                     disabled={disabled}
-                    title="Avanzar 5s"
+                    title={t.forward5s}
                 >
                     <SkipForward size={18} />
                 </button>
@@ -129,7 +131,7 @@ export function Footer({
 
             {/* Speed Controls */}
             <div className="footer-speed">
-                <span className="footer-speed-label">Velocidad:</span>
+                <span className="footer-speed-label">{t.speed}:</span>
                 <div className="footer-speed-options">
                     {SPEED_OPTIONS.map((s) => (
                         <button
@@ -147,3 +149,4 @@ export function Footer({
 }
 
 export default Footer;
+

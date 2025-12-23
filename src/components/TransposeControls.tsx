@@ -4,6 +4,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import { ArrowUp, ArrowDown, RotateCcw, Wand2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { INSTRUMENTS } from '../config/instruments';
+import { useI18n } from '../shared/context/I18nContext';
 import type { MidiNote } from '../types/midi';
 
 interface TransposeControlsProps {
@@ -20,6 +21,7 @@ export function TransposeControls({
   onTransposeChange,
 }: TransposeControlsProps) {
   const instrument = INSTRUMENTS[instrumentId];
+  const { t } = useI18n();
 
   // Historial de transposiciones
   const [history, setHistory] = useState<number[]>([0]);
@@ -95,35 +97,35 @@ export function TransposeControls({
     <div className="transpose-compact">
       <div className="transpose-label">
         <Wand2 size={14} />
-        <span>Transponer</span>
+        <span>{t.transpose}</span>
       </div>
 
       {/* Historial Undo/Redo */}
       <div className="transpose-history">
-        <button onClick={handleUndo} disabled={!canUndo} title="Deshacer transposición">
+        <button onClick={handleUndo} disabled={!canUndo} title={t.undoTranspose}>
           <ChevronLeft size={14} />
         </button>
-        <button onClick={handleRedo} disabled={!canRedo} title="Rehacer transposición">
+        <button onClick={handleRedo} disabled={!canRedo} title={t.redoTranspose}>
           <ChevronRight size={14} />
         </button>
       </div>
 
       <div className="transpose-controls">
-        <button onClick={() => handleTransposeChange(transpose - 12)} title="-8va">
+        <button onClick={() => handleTransposeChange(transpose - 12)} title={t.minus8va}>
           <ArrowDown size={12} />
           -8va
         </button>
-        <button onClick={() => handleTransposeChange(transpose - 1)} title="-1">
+        <button onClick={() => handleTransposeChange(transpose - 1)} title={t.minus1}>
           -1
         </button>
         <span className="transpose-value" style={{ color: rangeColor }}>
           {transpose > 0 ? '+' : ''}
           {transpose}
         </span>
-        <button onClick={() => handleTransposeChange(transpose + 1)} title="+1">
+        <button onClick={() => handleTransposeChange(transpose + 1)} title={t.plus1}>
           +1
         </button>
-        <button onClick={() => handleTransposeChange(transpose + 12)} title="+8va">
+        <button onClick={() => handleTransposeChange(transpose + 12)} title={t.plus8va}>
           +8va
           <ArrowUp size={12} />
         </button>
@@ -133,11 +135,11 @@ export function TransposeControls({
         <button
           className="btn-auto"
           onClick={() => handleTransposeChange(suggestedTranspose)}
-          title="Auto-adaptar al instrumento"
+          title={t.autoFit}
         >
           Auto
         </button>
-        <button onClick={() => handleTransposeChange(0)} disabled={transpose === 0} title="Reset">
+        <button onClick={() => handleTransposeChange(0)} disabled={transpose === 0} title={t.resetTranspose}>
           <RotateCcw size={12} />
         </button>
       </div>

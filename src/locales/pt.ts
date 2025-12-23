@@ -1,0 +1,156 @@
+/**
+ * Portuguese (Português) translations
+ */
+export const pt = {
+    // App
+    appName: 'Midi Tab Pro',
+
+    // Navigation
+    back: 'Voltar',
+    close: 'Fechar',
+    settings: 'Definições',
+
+    // Main sections
+    tracks: 'Pistas',
+    instruments: 'Instrumentos',
+    tablature: 'Tablatura',
+    notation: 'Partitura',
+    pianoRoll: 'Piano Roll',
+
+    // File operations
+    openFile: 'Abrir ficheiro',
+    openMidiFile: 'Abrir ficheiro MIDI',
+    refreshList: 'Atualizar lista',
+    noFilesFound: 'Nenhum ficheiro encontrado',
+
+    // Export
+    export: 'Exportar',
+    exportAs: 'Exportar como...',
+    exportCifrado: 'Cifra (.txt)',
+    exportTablature: 'Tablatura (.tab)',
+    exportPdf: 'PDF (.pdf)',
+
+    // Playback controls
+    play: 'Reproduzir',
+    pause: 'Pausar',
+    stop: 'Parar',
+    restart: 'Reiniciar',
+    rewind5s: 'Recuar 5s',
+    forward5s: 'Avançar 5s',
+    speed: 'Velocidade',
+
+    // Transpose
+    transpose: 'Transpor',
+    semitones: 'semitons',
+    octave: 'oitava',
+    autoFit: 'Auto-ajustar ao instrumento',
+    undoTranspose: 'Desfazer transposição',
+    redoTranspose: 'Refazer transposição',
+    resetTranspose: 'Reset',
+    minus1: '-1 semitom',
+    plus1: '+1 semitom',
+    minus8va: '-1 oitava',
+    plus8va: '+1 oitava',
+
+    // Loop
+    loop: 'Loop',
+    loopA: 'Ponto A',
+    loopB: 'Ponto B',
+    enableLoop: 'Ativar loop',
+    disableLoop: 'Desativar loop',
+    clearLoop: 'Limpar loop',
+
+    // Metronome
+    metronome: 'Metrónomo',
+    bpm: 'BPM',
+
+    // Instrument
+    instrument: 'Instrumento',
+    selectInstrument: 'Selecionar Instrumento',
+    createCustom: 'Criar Instrumento Personalizado',
+    editInstrument: 'Editar',
+    deleteInstrument: 'Eliminar',
+    tuning: 'Afinação',
+    strings: 'cordas',
+    frets: 'trastes',
+
+    // Tracks
+    track: 'Pista',
+    noTracks: 'Sem pistas',
+    notes: 'notas',
+    mute: 'Silenciar',
+    unmute: 'Ativar',
+    solo: 'Solo',
+
+    // Views
+    showToolbar: 'Mostrar Barra de Ferramentas',
+    hideToolbar: 'Ocultar Barra de Ferramentas',
+    showPianoRoll: 'Mostrar Piano Roll',
+    hidePianoRoll: 'Ocultar Piano Roll',
+
+    // Messages
+    notesOutOfRange: 'notas fora do alcance do instrumento',
+    instrumentNotFound: 'Instrumento não encontrado',
+    selectTrackToView: 'Selecione uma pista para ver',
+    selectTrackToViewSheet: 'Selecione uma pista para ver a partitura',
+    noFile: 'Sem ficheiro',
+    dropFile: 'Arraste um ficheiro MIDI ou clique para abrir',
+    confirmClose: 'Fechar ficheiro atual? As alterações não guardadas serão perdidas.',
+
+    // Modal titles
+    midiInfo: 'Informação MIDI',
+    about: 'Sobre',
+    help: 'Ajuda',
+    userManual: 'Manual do Utilizador',
+
+    // MIDI Info labels
+    name: 'Nome',
+    duration: 'Duração',
+    fileSize: 'Tamanho',
+    tempo: 'Tempo',
+    timeSignature: 'Compasso',
+    ppq: 'PPQ',
+
+    // About modal
+    aboutDeveloper: 'Sobre o desenvolvedor',
+    version: 'Versão',
+    developer: 'Desenvolvedor',
+    contact: 'Contacto',
+    website: 'Website',
+    license: 'Licença',
+
+    // Theme
+    darkMode: 'Modo escuro',
+    lightMode: 'Modo claro',
+
+    // Language
+    language: 'Idioma',
+
+    // Initial screen
+    startSession: 'Inicie a sua sessão',
+    dragDropHint: 'Arraste um ficheiro MIDI ou clique para abrir',
+    dropHere: 'Arraste o seu ficheiro MIDI aqui',
+    dropNow: 'Largue-o!',
+    supportsMidi: 'Suporta .mid e .midi',
+    processing: 'A processar partitura...',
+
+    // Piano Roll hints
+    pianoRollHint: 'Arrastar: Deslocar | Clique: Ir para posição | Ctrl+Clique: Loop A | Shift+Clique: Loop B',
+
+    // Tablature
+    pauseMarker: 'Pausa',
+
+    // Instrument Editor
+    instrumentName: 'Nome do instrumento',
+    instrumentIcon: 'Ícone',
+    numberOfStrings: 'Número de cordas',
+    numberOfFrets: 'Número de trastes',
+    stringTuning: 'Afinação das cordas',
+    selectTemplate: 'Selecionar modelo',
+    saveInstrument: 'Guardar instrumento',
+    cancel: 'Cancelar',
+
+    // Errors
+    error: 'Erro',
+    loadingError: 'Erro ao carregar',
+} as const;

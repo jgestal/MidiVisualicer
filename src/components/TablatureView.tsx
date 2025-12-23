@@ -7,6 +7,7 @@
  */
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import { getAllInstruments, getOptimalPosition, midiToNoteName } from '../config/instruments';
+import { useI18n } from '../shared/context/I18nContext';
 import type { MidiNote } from '../types/midi';
 
 interface TablatureViewProps {
@@ -44,6 +45,7 @@ export function TablatureView({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
   const instrument = useMemo(() => getAllInstruments()[instrumentId], [instrumentId]);
+  const { t } = useI18n();
 
   // Measure container width on resize
   useEffect(() => {
@@ -280,7 +282,7 @@ export function TablatureView({
       </div>
 
       {notesOutOfRange > 0 && (
-        <div className="tab-footer">⚠️ {notesOutOfRange} notas fuera del rango del instrumento</div>
+        <div className="tab-footer">⚠️ {notesOutOfRange} {t.notesOutOfRange}</div>
       )}
 
       <style>{`
