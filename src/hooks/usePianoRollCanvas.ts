@@ -2,7 +2,7 @@
  * Custom hook for Piano Roll canvas rendering
  * Handles all draw logic, note range calculation, and dimensions
  */
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useEffect } from 'react';
 import type { MidiNote } from '../types/midi';
 
 // Constants
@@ -52,6 +52,17 @@ export function usePianoRollCanvas({
     // Calculate dimensions
     const height = (noteRange.max - noteRange.min + 1) * NOTE_HEIGHT + 30;
     const width = Math.max(800, duration * PIXELS_PER_SECOND + 100);
+
+    // Use ref to ensure draw always has fresh notes
+    const notesRef = useRef(notes);
+    const transposeRef = useRef(transpose);
+    const noteRangeRef = useRef(noteRange);
+
+    useEffect(() => {
+        notesRef.current = notes;
+        transposeRef.current = transpose;
+        noteRangeRef.current = noteRange;
+    }, [notes, transpose, noteRange]);
 
     // Convert time to X position
     const timeToX = useCallback(
@@ -133,26 +144,35 @@ export function usePianoRollCanvas({
                 ctx.setLineDash([]);
             }
 
-            // Draw notes
-            notes.forEach((note) => {
-                const transposedMidi = note.midi + transpose;
+            // Draw notes - use ref to ensure fresh data
+            const currentNotes = notesRef.current;
+            const currentTranspose = transposeRef.current;
+            const currentNoteRange = noteRangeRef.current;
+
+            currentNotes.forEach((note) => {
+                const transposedMidi = note.midi + currentTranspose;
                 const x = note.time * PIXELS_PER_SECOND + LEFT_MARGIN;
-                const y = (noteRange.max - transposedMidi) * NOTE_HEIGHT + 15;
-                const noteWidth = Math.max(3, note.duration * PIXELS_PER_SECOND);
+                const y = (currentNoteRange.max - transposedMidi) * NOTE_HEIGHT + 15;
+                // Ensure minimum visible note width (at least 6 pixels)
+                const noteWidth = Math.max(6, note.duration * PIXELS_PER_SECOND);
 
                 const isActive =
                     currentTime >= note.time && currentTime <= note.time + note.duration;
-                const hue = (note.midi * 7) % 360;
+                const hue = (transposedMidi * 7) % 360;
+
+                // Clear shadow before drawing
+                ctx.shadowBlur = 0;
 
                 // Glow effect for active note
                 if (isActive) {
-                    ctx.shadowColor = `hsl(${hue}, 80%, 60%)`;
-                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = `hsl(${hue}, 100%, 70%)`;
+                    ctx.shadowBlur = 12;
                 }
 
+                // Use brighter colors for better visibility
                 ctx.fillStyle = isActive
-                    ? `hsl(${hue}, 80%, 65%)`
-                    : `hsl(${hue}, 50%, 40%)`;
+                    ? `hsl(${hue}, 85%, 65%)`
+                    : `hsl(${hue}, 70%, 50%)`;
 
                 ctx.beginPath();
                 ctx.roundRect(x, y + 1, noteWidth, NOTE_HEIGHT - 2, 2);
