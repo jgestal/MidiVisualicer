@@ -30,7 +30,8 @@ interface TabNote {
   slotIndex: number;
 }
 
-const TIME_QUANTUM = 0.15;
+const CHORD_THRESHOLD = 0.05; // 50ms window to group simultaneous notes
+const PAUSE_THRESHOLD_SECONDS = 0.5; // Gap to show pause
 const CELL_WIDTH = 28;
 const MARGIN_LEFT = 30; // space for string labels
 
@@ -70,52 +71,64 @@ export function TablatureView({
     return Math.max(10, Math.floor(availableWidth / CELL_WIDTH));
   }, [containerWidth]);
 
-  // Convert MIDI notes to tablature positions
+  // Convert MIDI notes to tablature positions and group by time slots
   const { tabNotes, timeSlots } = useMemo(() => {
     if (!instrument) {
       return { tabNotes: [] as TabNote[], timeSlots: new Map<number, TabNote[]>() };
     }
 
-    const processed: TabNote[] = [];
+
+    const validNotes: TabNote[] = [];
+
+    // 1. Calculate optimized positions for all notes
+    const rawNotes = notes
+      .map(note => {
+        const transposedMidi = note.midi + transpose;
+        const position = getOptimalPosition(transposedMidi, instrument);
+        return { note, position, transposedMidi };
+      })
+      .filter(item => item.position && item.position.fret >= 0 && item.position.fret <= instrument.frets);
+
+    // 2. Sort by time
+    rawNotes.sort((a, b) => a.note.time - b.note.time);
+
+    // 3. Group into slots (columns)
     const slots: Map<number, TabNote[]> = new Map();
+    let currentSlotIndex = -1;
+    let currentSlotTime = -9999;
 
-    notes.forEach((note) => {
-      const transposedMidi = note.midi + transpose;
-      const position = getOptimalPosition(transposedMidi, instrument);
-
-      if (position && position.fret >= 0 && position.fret <= instrument.frets) {
-        const slotIndex = Math.floor(note.time / TIME_QUANTUM);
-        const tabNote: TabNote = {
-          string: position.string,
-          fret: position.fret,
-          time: note.time,
-          duration: note.duration,
-          midiNote: transposedMidi,
-          noteName: midiToNoteName(transposedMidi),
-          slotIndex,
-        };
-        processed.push(tabNote);
-
-        if (!slots.has(slotIndex)) {
-          slots.set(slotIndex, []);
-        }
-        const slotNotes = slots.get(slotIndex);
-        if (slotNotes) {
-          slotNotes.push(tabNote);
-        }
+    rawNotes.forEach(({ note, position, transposedMidi }) => {
+      // If note is far enough from current slot, start new slot
+      if (Math.abs(note.time - currentSlotTime) > CHORD_THRESHOLD) {
+        currentSlotIndex++;
+        currentSlotTime = note.time;
+        slots.set(currentSlotIndex, []);
       }
+
+      const tabNote: TabNote = {
+        string: position!.string,
+        fret: position!.fret,
+        time: note.time,
+        duration: note.duration,
+        midiNote: transposedMidi,
+        noteName: midiToNoteName(transposedMidi),
+        slotIndex: currentSlotIndex,
+      };
+
+      validNotes.push(tabNote);
+      slots.get(currentSlotIndex)?.push(tabNote);
     });
 
-    return { tabNotes: processed, timeSlots: slots };
+    return { tabNotes: validNotes, timeSlots: slots };
   }, [notes, instrument, transpose]);
 
+
+
+  // No need to sort if we inserted in order, but safe to map keys
   const sortedSlots = useMemo(
     () => Array.from(timeSlots.keys()).sort((a, b) => a - b),
     [timeSlots]
   );
-
-  // Detect gaps between consecutive slots (gaps > 3 slots = 0.45s indicate significant pause)
-  const PAUSE_THRESHOLD = 3; // gaps larger than this many slots get a pause marker
 
   type SlotItem = { type: 'note'; slot: number } | { type: 'pause'; afterSlot: number };
 
@@ -123,18 +136,24 @@ export function TablatureView({
   const displayItems = useMemo(() => {
     const items: SlotItem[] = [];
     for (let i = 0; i < sortedSlots.length; i++) {
-      items.push({ type: 'note', slot: sortedSlots[i] });
+      const currentSlotIdx = sortedSlots[i];
+      items.push({ type: 'note', slot: currentSlotIdx });
+
       // Check for gap before next slot
       if (i < sortedSlots.length - 1) {
-        const currentSlot = sortedSlots[i];
-        const nextSlot = sortedSlots[i + 1];
-        if (nextSlot - currentSlot > PAUSE_THRESHOLD) {
-          items.push({ type: 'pause', afterSlot: currentSlot });
+        const nextSlotIdx = sortedSlots[i + 1];
+
+        // Get times
+        const timeA = timeSlots.get(currentSlotIdx)?.[0]?.time || 0;
+        const timeB = timeSlots.get(nextSlotIdx)?.[0]?.time || 0;
+
+        if (timeB - timeA > PAUSE_THRESHOLD_SECONDS) {
+          items.push({ type: 'pause', afterSlot: currentSlotIdx });
         }
       }
     }
     return items;
-  }, [sortedSlots]);
+  }, [sortedSlots, timeSlots]);
 
   // Split items into lines/rows based on cellsPerLine
   const lines = useMemo(() => {
@@ -151,16 +170,22 @@ export function TablatureView({
 
   // Find the currently playing slot based on currentTime
   const currentSlotIndex = useMemo(() => {
-    // Find the slot that corresponds to the current time
-    // We need to find which slot is currently "active" (being played)
-    for (let i = sortedSlots.length - 1; i >= 0; i--) {
-      const slotTime = sortedSlots[i] * TIME_QUANTUM;
-      if (currentTime >= slotTime) {
-        return sortedSlots[i];
+    // Find last slot that started before or at currentTime
+    // Since slots are sorted by time, we can look for the last one <= currentTime
+    let active = -1;
+    for (const slotIdx of sortedSlots) {
+      const notesInSlot = timeSlots.get(slotIdx);
+      if (!notesInSlot || notesInSlot.length === 0) continue;
+
+      const slotTime = notesInSlot[0].time;
+      // If this slot is in the future, stop
+      if (slotTime > currentTime + 0.05) { // Small buffer
+        break;
       }
+      active = slotIdx;
     }
-    return -1; // Before first note
-  }, [sortedSlots, currentTime]);
+    return active;
+  }, [sortedSlots, timeSlots, currentTime]);
 
   // Find which line contains the current slot
   const currentLineIndex = useMemo(() => {
@@ -270,8 +295,9 @@ export function TablatureView({
           }
 
           const firstNoteItem = lineItems.find(item => item.type === 'note');
-          const lineStartSlot = firstNoteItem ? firstNoteItem.slot : lineIndex * cellsPerLine;
-          const lineStartTime = (lineStartSlot * TIME_QUANTUM).toFixed(1);
+          const lineStartSlot = firstNoteItem ? firstNoteItem.slot : -1;
+          const startNote = lineStartSlot !== -1 ? timeSlots.get(lineStartSlot)?.[0] : null;
+          const lineStartTime = startNote ? startNote.time.toFixed(1) : '0.0';
 
           // Determine line state for styling
           const isPastLine = lineIndex < currentLineIndex;
@@ -343,11 +369,14 @@ export function TablatureView({
                               <span
                                 key={slot}
                                 className={`tab-cell ${isActive ? 'active' : ''} ${noteOnString ? 'has-note' : ''} ${onSeek ? 'clickable' : ''}`}
-                                onClick={() => handleNoteClick(slot * TIME_QUANTUM)}
+                                onClick={() => {
+                                  const t = timeSlots.get(slot)?.[0]?.time || 0;
+                                  handleNoteClick(t);
+                                }}
                                 title={
                                   noteOnString
-                                    ? `${noteOnString.noteName} (${(slot * TIME_QUANTUM).toFixed(2)}s)`
-                                    : `${(slot * TIME_QUANTUM).toFixed(2)}s`
+                                    ? `${noteOnString.noteName} (${(slotNotes[0]?.time || 0).toFixed(2)}s)`
+                                    : `${(slotNotes[0]?.time || 0).toFixed(2)}s`
                                 }
                               >
                                 {noteOnString ? String(noteOnString.fret).padStart(2, ' ') : '──'}
