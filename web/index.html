@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Midi Tab Pro - Convierte archivos MIDI en tablatura para guitarra, bajo, ukelele y más. Visualiza, practica y exporta tus canciones favoritas.">
+    <meta name="keywords" content="MIDI, tablatura, guitarra, bajo, ukelele, partitura, música, práctica, exportar">
+    <title>Midi Tab Pro - Convierte MIDI a Tablatura</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           CSS Variables - Design Tokens (matching app)
+           ============================================ */
+        :root {
+            --color-bg-primary: #0a0a0f;
+            --color-bg-secondary: #12121a;
+            --color-bg-tertiary: #1a1a25;
+            --color-bg-elevated: #22222f;
+            --color-bg-hover: #2a2a3a;
+
+            --color-accent-primary: #6366f1;
+            --color-accent-secondary: #8b5cf6;
+            --color-accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --color-accent-glow: rgba(99, 102, 241, 0.3);
+
+            --color-success: #22c55e;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+
+            --color-text-primary: #f8fafc;
+            --color-text-secondary: #94a3b8;
+            --color-text-muted: #64748b;
+
+            --color-border: rgba(255, 255, 255, 0.08);
+            --color-border-hover: rgba(255, 255, 255, 0.15);
+
+            --glass-bg: rgba(18, 18, 26, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 30px var(--color-accent-glow);
+
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+        }
+
+        /* Reset */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139, 92, 246, 0.1), transparent);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        a {
+            color: var(--color-accent-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--color-accent-secondary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-accent-gradient);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--color-accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav a {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .nav a:hover {
+            color: var(--color-text-primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-family: var(--font-family);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: var(--radius-lg);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--color-accent-gradient);
+            color: var(--color-text-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px var(--color-accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-bg-hover);
+            border-color: var(--color-border-hover);
+        }
+
+        .btn-lg {
+            padding: 16px 32px;
+            font-size: 1rem;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 999px;
+            font-size: 0.875rem;
+            color: var(--color-accent-primary);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 24px;
+            background: linear-gradient(180deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-screenshot {
+            margin-top: 80px;
+            position: relative;
+        }
+
+        .screenshot-placeholder {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-2xl);
+            aspect-ratio: 16/9;
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            font-size: 1.125rem;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .screenshot-placeholder::before {
+            content: '📸 Captura de pantalla de la aplicación';
+        }
+
+        /* Features */
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--color-text-secondary);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-border-hover);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--color-accent-gradient);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--color-text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 100px 0;
+            background: var(--color-bg-secondary);
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 64px;
+        }
+
+        .step {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .step:nth-child(even) {
+            direction: rtl;
+        }
+
+        .step:nth-child(even)>* {
+            direction: ltr;
+        }
+
+        .step-content {
+            max-width: 480px;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--color-accent-gradient);
+            border-radius: 999px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .step h3 {
+            font-size: 1.75rem;
+            margin-bottom: 16px;
+        }
+
+        .step p {
+            color: var(--color-text-secondary);
+            font-size: 1.0625rem;
+        }
+
+        .step-image {
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            font-size: 3rem;
+        }
+
+        /* Export */
+        .export {
+            padding: 100px 0;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .export-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            text-align: center;
+        }
+
+        .export-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .export-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+
+        .export-card p {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .export-format {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 4px 12px;
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-accent-primary);
+            letter-spacing: 0.05em;
+        }
+
+        /* Instruments */
+        .instruments {
+            padding: 100px 0;
+            background: var(--color-bg-secondary);
+        }
+
+        .instruments-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .instrument-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: 999px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .instrument-pill span {
+            font-size: 1.5rem;
+        }
+
+        /* Languages */
+        .languages {
+            padding: 100px 0;
+        }
+
+        .languages-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .language-flag {
+            font-size: 2.5rem;
+            padding: 16px;
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s;
+        }
+
+        .language-flag:hover {
+            transform: scale(1.1);
+            border-color: var(--color-border-hover);
+        }
+
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            text-align: center;
+            background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            color: var(--color-text-secondary);
+            font-size: 1.25rem;
+            margin-bottom: 32px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 48px 0;
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--color-text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .step {
+                grid-template-columns: 1fr;
+            }
+
+            .step:nth-child(even) {
+                direction: ltr;
+            }
+
+            .step-content {
+                max-width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-inner">
+            <div class="logo">
+                <div class="logo-icon">🎸</div>
+                <span class="logo-text">Midi Tab Pro</span>
+            </div>
+            <nav class="nav">
+                <a href="#features">Características</a>
+                <a href="#how-it-works">Cómo Funciona</a>
+                <a href="#export">Exportar</a>
+                <a href="#languages">Idiomas</a>
+            </nav>
+            <a href="#" class="btn btn-primary">Probar Gratis</a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                ✨ Ahora con 13 idiomas disponibles
+            </div>
+            <h1>Convierte MIDI en Tablatura al Instante</h1>
+            <p>
+                La herramienta definitiva para músicos. Carga un archivo MIDI y obtén
+                tablatura profesional para guitarra, bajo, ukelele y más. Practica,
+                aprende y exporta tus canciones favoritas.
+            </p>
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary btn-lg">
+                    🚀 Comenzar Ahora — Es Gratis
+                </a>
+                <a href="#how-it-works" class="btn btn-secondary btn-lg">
+                    Ver Cómo Funciona
+                </a>
+            </div>
+
+            <div class="hero-screenshot">
+                <div class="screenshot-placeholder"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Todo lo que Necesitas para Practicar</h2>
+                <p>Potentes herramientas diseñadas para hacerte mejor músico</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎸</div>
+                    <h3>Múltiples Instrumentos</h3>
+                    <p>Guitarra acústica, eléctrica, bajo de 4 y 5 cuerdas, ukelele, banjo y más. Crea instrumentos
+                        personalizados con tu propia afinación.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Tablatura Inteligente</h3>
+                    <p>Algoritmo avanzado que elige las mejores posiciones en el mástil. Visualiza cada nota con colores
+                        y efectos en tiempo real.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎵</div>
+                    <h3>Partitura Musical</h3>
+                    <p>Visualiza la notación musical tradicional junto con la tablatura. Ideal para aprender a leer
+                        música mientras practicas.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎹</div>
+                    <h3>Piano Roll</h3>
+                    <p>Vista de piano roll profesional para visualizar todas las notas. Haz clic para navegar y
+                        establecer puntos de loop.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Función de Bucle A-B</h3>
+                    <p>Practica secciones difíciles en bucle. Establece puntos A y B para repetir automáticamente
+                        cualquier parte de la canción.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎚️</div>
+                    <h3>Control de Velocidad</h3>
+                    <p>Reduce la velocidad para aprender partes difíciles a 25%, 50% o 75%. El metrónomo integrado te
+                        ayuda con el ritmo.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎛️</div>
+                    <h3>Transposición</h3>
+                    <p>Transpone arriba o abajo por semitonos u octavas. La función "Auto" ajusta automáticamente las
+                        notas al rango de tu instrumento.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎧</div>
+                    <h3>Múltiples Pistas</h3>
+                    <p>Trabaja con archivos MIDI multipista. Silencia, ajusta volumen y cambia entre pistas de forma
+                        independiente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Tan Fácil como 1, 2, 3</h2>
+                <p>De archivo MIDI a tablatura profesional en segundos</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-content">
+                        <div class="step-number">1</div>
+                        <h3>Arrastra tu Archivo MIDI</h3>
+                        <p>Simplemente arrastra y suelta cualquier archivo .mid o .midi en la aplicación. También puedes
+                            hacer clic para abrir el explorador de archivos.</p>
+                    </div>
+                    <div class="step-image">📂</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-content">
+                        <div class="step-number">2</div>
+                        <h3>Elige tu Instrumento</h3>
+                        <p>Selecciona entre guitarra, bajo, ukelele o crea un instrumento personalizado. La tablatura se
+                            adapta automáticamente a la afinación de tu instrumento.</p>
+                    </div>
+                    <div class="step-image">🎸</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-content">
+                        <div class="step-number">3</div>
+                        <h3>Practica y Exporta</h3>
+                        <p>Reproduce con control de velocidad, usa el loop para secciones difíciles, y cuando estés
+                            listo, exporta tu tablatura para practicar offline.</p>
+                    </div>
+                    <div class="step-image">📤</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Export -->
+    <section class="export" id="export">
+        <div class="container">
+            <div class="section-header">
+                <h2>Exporta en Múltiples Formatos</h2>
+                <p>Lleva tu música a donde quieras</p>
+            </div>
+
+            <div class="export-options">
+                <div class="export-card">
+                    <div class="export-icon">📄</div>
+                    <h3>Tablatura de Texto</h3>
+                    <p>Formato ASCII tradicional, compatible con cualquier editor de texto. Perfecto para compartir en
+                        foros y redes sociales.</p>
+                    <span class="export-format">.TXT</span>
+                </div>
+
+                <div class="export-card">
+                    <div class="export-icon">🎼</div>
+                    <h3>Tablatura Formateada</h3>
+                    <p>Tablatura con formato profesional incluyendo marcadores de compás, tiempos y pausas para mayor
+                        legibilidad.</p>
+                    <span class="export-format">.TAB</span>
+                </div>
+
+                <div class="export-card">
+                    <div class="export-icon">📑</div>
+                    <h3>Documento PDF</h3>
+                    <p>Exporta a PDF para imprimir o compartir. Ideal para profesores de música y estudiantes.</p>
+                    <span class="export-format">.PDF</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instruments -->
+    <section class="instruments" id="instruments">
+        <div class="container">
+            <div class="section-header">
+                <h2>Compatible con Tus Instrumentos</h2>
+                <p>Instrumentos predefinidos y opción de crear personalizados</p>
+            </div>
+
+            <div class="instruments-grid">
+                <div class="instrument-pill"><span>🎸</span> Guitarra Acústica</div>
+                <div class="instrument-pill"><span>🎸</span> Guitarra Eléctrica</div>
+                <div class="instrument-pill"><span>🎸</span> Bajo 4 Cuerdas</div>
+                <div class="instrument-pill"><span>🎸</span> Bajo 5 Cuerdas</div>
+                <div class="instrument-pill"><span>🪕</span> Ukelele Soprano</div>
+                <div class="instrument-pill"><span>🪕</span> Ukelele Barítono</div>
+                <div class="instrument-pill"><span>🪕</span> Banjo 5 Cuerdas</div>
+                <div class="instrument-pill"><span>🎻</span> Mandolina</div>
+                <div class="instrument-pill"><span>✨</span> Instrumento Personalizado</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Languages -->
+    <section class="languages" id="languages">
+        <div class="container">
+            <div class="section-header">
+                <h2>Disponible en 13 Idiomas</h2>
+                <p>Hecho para músicos de todo el mundo</p>
+            </div>
+
+            <div class="languages-grid">
+                <span class="language-flag" title="Español">🇪🇸</span>
+                <span class="language-flag" title="English">🇬🇧</span>
+                <span class="language-flag" title="Português">🇵🇹</span>
+                <span class="language-flag" title="Français">🇫🇷</span>
+                <span class="language-flag" title="Deutsch">🇩🇪</span>
+                <span class="language-flag" title="Italiano">🇮🇹</span>
+                <span class="language-flag" title="中文">🇨🇳</span>
+                <span class="language-flag" title="日本語">🇯🇵</span>
+                <span class="language-flag" title="Русский">🇷🇺</span>
+                <span class="language-flag" title="한국어">🇰🇷</span>
+                <span class="language-flag" title="हिन्दी">🇮🇳</span>
+                <span class="language-flag" title="العربية">🇸🇦</span>
+                <span class="language-flag" title="বাংলা">🇧🇩</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>¿Listo para Empezar?</h2>
+            <p>Únete a miles de músicos que ya usan Midi Tab Pro</p>
+            <a href="#" class="btn btn-primary btn-lg">
+                🎸 Probar Midi Tab Pro Gratis
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2024 Midi Tab Pro. Todos los derechos reservados.</p>
+            <p style="margin-top: 8px;">
+                <a href="#">Política de Privacidad</a> ·
+                <a href="#">Términos de Uso</a> ·
+                <a href="#">Contacto</a>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>
