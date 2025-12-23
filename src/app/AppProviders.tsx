@@ -10,6 +10,7 @@ import { PlaybackProvider } from '@/features/player/context/PlaybackContext';
 import { TracksProvider } from '@/features/tracks/context/TracksContext';
 import { InstrumentProvider } from '@/features/instruments/context/InstrumentContext';
 import { VisualizationProvider } from '@/features/visualization/context/VisualizationContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -20,26 +21,29 @@ interface AppProvidersProps {
  * El orden importa: los providers más externos son los que
  * pueden ser usados por los más internos
  *
+ * ErrorBoundary envuelve todo para capturar errores
  * I18nProvider va primero para que todos los componentes
  * puedan acceder a las traducciones
  */
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <I18nProvider>
-      <ThemeProvider>
-        <LibraryProvider>
-          <MidiProvider>
-            <PlaybackProvider>
-              <TracksProvider>
-                <InstrumentProvider>
-                  <VisualizationProvider>{children}</VisualizationProvider>
-                </InstrumentProvider>
-              </TracksProvider>
-            </PlaybackProvider>
-          </MidiProvider>
-        </LibraryProvider>
-      </ThemeProvider>
-    </I18nProvider>
+    <ErrorBoundary>
+      <I18nProvider>
+        <ThemeProvider>
+          <LibraryProvider>
+            <MidiProvider>
+              <PlaybackProvider>
+                <TracksProvider>
+                  <InstrumentProvider>
+                    <VisualizationProvider>{children}</VisualizationProvider>
+                  </InstrumentProvider>
+                </TracksProvider>
+              </PlaybackProvider>
+            </MidiProvider>
+          </LibraryProvider>
+        </ThemeProvider>
+      </I18nProvider>
+    </ErrorBoundary>
   );
 }
 

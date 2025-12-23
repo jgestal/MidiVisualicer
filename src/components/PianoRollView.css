@@ -1,0 +1,60 @@
+/**
+ * PianoRollView Styles
+ * Extracted from inline styles for better maintainability
+ */
+
+.piano-roll-container {
+    background: var(--color-bg-secondary);
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.piano-roll-toggle-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 16px;
+    background: var(--color-bg-tertiary);
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: left;
+}
+
+.piano-roll-toggle-header:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+}
+
+.piano-roll-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: none;
+    font-size: 12px;
+}
+
+.piano-roll-hint {
+    font-size: 10px;
+    color: var(--color-text-muted);
+    flex: 1;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.piano-roll-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px;
+}
+
+.piano-roll-scroll canvas {
+    display: block;
+}
