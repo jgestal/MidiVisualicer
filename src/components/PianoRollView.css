@@ -47,6 +47,7 @@
     font-weight: 400;
     text-transform: none;
     letter-spacing: normal;
+    text-align: right;
 }
 
 .piano-roll-scroll {

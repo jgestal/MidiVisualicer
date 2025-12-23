@@ -3,6 +3,7 @@
  * Separates UI concerns from business logic in App.tsx
  */
 import { useState, useCallback } from 'react';
+import { useLocalStorage } from './useLocalStorage';
 
 export interface AppUIState {
     showToolbar: boolean;
@@ -25,24 +26,29 @@ const initialState: AppUIState = {
 };
 
 export function useAppUI() {
+    // Persisted state
+    const [showToolbar, setShowToolbar] = useLocalStorage('ui_showToolbar', true);
+    const [showPianoRoll, setShowPianoRoll] = useLocalStorage('ui_showPianoRoll', true);
+
+    // Transient state (reset on refresh usually, but could also be persisted if desired)
     const [state, setState] = useState<AppUIState>(initialState);
 
     // Panel toggles
     const toggleToolbar = useCallback(() => {
-        setState(prev => ({ ...prev, showToolbar: !prev.showToolbar }));
-    }, []);
+        setShowToolbar(prev => !prev);
+    }, [setShowToolbar]);
 
     const togglePianoRoll = useCallback(() => {
-        setState(prev => ({ ...prev, showPianoRoll: !prev.showPianoRoll }));
-    }, []);
+        setShowPianoRoll(prev => !prev);
+    }, [setShowPianoRoll]);
 
     const showPianoRollPanel = useCallback(() => {
-        setState(prev => ({ ...prev, showPianoRoll: true }));
-    }, []);
+        setShowPianoRoll(true);
+    }, [setShowPianoRoll]);
 
     const hidePianoRollPanel = useCallback(() => {
-        setState(prev => ({ ...prev, showPianoRoll: false }));
-    }, []);
+        setShowPianoRoll(false);
+    }, [setShowPianoRoll]);
 
     // View switching
     const setActiveView = useCallback((view: 'tablature' | 'notation') => {
@@ -83,8 +89,10 @@ export function useAppUI() {
     }, []);
 
     return {
-        // State
+        // Combined State
         ...state,
+        showToolbar,
+        showPianoRoll,
 
         // Panel actions
         toggleToolbar,

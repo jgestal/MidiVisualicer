@@ -2,10 +2,11 @@
  * Toolbar Component - Barra de herramientas con Transpose, Loop, Instrumento y Metrónomo
  * Aparece debajo del header cuando está activada
  */
-import { Timer, Music2, ChevronDown, Guitar } from 'lucide-react';
+import { Timer, ChevronDown, Guitar } from 'lucide-react';
 import TransposeControls from '../TransposeControls';
 import LoopControls from '../LoopControls';
 import { useI18n } from '../../shared/context/I18nContext';
+import { getAllInstruments } from '../../config/instruments';
 import type { MidiNote } from '../../types/midi';
 import './Toolbar.css';
 
@@ -56,6 +57,7 @@ export function Toolbar({
     onToggleMetronome,
 }: ToolbarProps) {
     const { t } = useI18n();
+    const instrument = getAllInstruments()[instrumentId];
 
     return (
         <div className="app-toolbar">
@@ -98,7 +100,7 @@ export function Toolbar({
                     minWidth: '70px', /* Consistent width with Loop/Transpose */
                     fontSize: '12px'
                 }}>
-                    <Guitar size={14} />
+                    <Guitar size={16} />
                     <span>{t.instrument}</span>
                 </div>
                 <button
@@ -106,7 +108,7 @@ export function Toolbar({
                     onClick={onOpenInstrumentMenu}
                     title={t.selectInstrument}
                 >
-                    <Music2 size={16} />
+                    <span style={{ fontSize: '16px', lineHeight: 1 }}>{instrument?.icon || '🎵'}</span>
                     <span>{selectedInstrumentName}</span>
                     <ChevronDown size={14} />
                 </button>

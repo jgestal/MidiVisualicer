@@ -221,11 +221,13 @@ export function PianoRollView({
         onClick={onToggle}
         title="Ocultar Piano Roll"
       >
-        <span className="piano-roll-title">🎹 Piano Roll</span>
+        <span className="piano-roll-title">
+          🎹 Piano Roll
+          {onToggle && <ChevronUp size={14} />}
+        </span>
         <span className="piano-roll-hint">
           Arrastrar: Desplazar | Click: Ir a posición | Ctrl+Click: Loop A | Shift+Click: Loop B
         </span>
-        {onToggle && <ChevronUp size={14} />}
       </button>
 
       {/* Canvas Scroll Area */}

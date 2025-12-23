@@ -110,6 +110,56 @@ function App() {
     }
   }, [parsedMidi, resetTracks]);
 
+  // Global Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          if (playbackState.isPlaying) {
+            pause();
+          } else {
+            // Needed to pass args if play requires them, though pause/resume might be simpler if play supports no-args resume
+            // Looking at context, play requires midi. If paused, we want to resume.
+            // If we have midi, we can call play. existing play function restarts transport if not paused?
+            // Actually play() in context takes (midi, muted, volumes).
+            // A simple togglePlay would be better in context, but let's use what we have.
+            if (parsedMidi) {
+              // If paused, Tone.Transport.start() is handled inside play? 
+              // Context implementation says: if paused, continues. 
+              play(parsedMidi, mutedTracks, trackVolumes);
+            }
+          }
+          break;
+        case 'KeyR':
+          seekTo(0);
+          break;
+        case 'KeyM':
+          if (selectedTrack >= 0) {
+            const wasMuted = mutedTracks.has(selectedTrack);
+            setTrackMuted(selectedTrack, !wasMuted);
+            toggleMute(selectedTrack); // Update local track context too
+          }
+          break;
+        case 'ArrowLeft':
+          seekTo(Math.max(0, playbackState.currentTime - 5));
+          break;
+        case 'ArrowRight':
+          // No hard max implemented in seekTo, but safely guarded usually
+          seekTo(playbackState.currentTime + 5);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [playbackState.isPlaying, playbackState.currentTime, parsedMidi, mutedTracks, trackVolumes, selectedTrack, play, pause, seekTo, setTrackMuted, toggleMute]);
+
   // Auto-transposición (via custom hook)
   const selectedInstrument = useMemo(() => getAllInstruments()[selectedInstrumentId], [selectedInstrumentId]);
   useAutoTranspose({
@@ -232,8 +282,10 @@ function App() {
                 onClick={ui.showPianoRollPanel}
                 title="Mostrar Piano Roll"
               >
-                <span>🎹 Piano Roll</span>
-                <ChevronDown size={14} />
+                <span>
+                  🎹 Piano Roll
+                  <ChevronDown size={14} />
+                </span>
               </button>
             )}
           </div>
