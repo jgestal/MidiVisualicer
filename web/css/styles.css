@@ -1113,7 +1113,7 @@ img {
     /* Slate 900 */
 }
 
-.cta>p {
+.cta p {
     color: #475569;
     /* Slate 600 */
     font-size: 1.25rem;
@@ -1127,6 +1127,7 @@ img {
 
 .cta-note {
     margin-top: 48px;
+    margin-bottom: 0;
     font-size: 0.9375rem;
     color: #64748b;
     /* Slate 500 */
