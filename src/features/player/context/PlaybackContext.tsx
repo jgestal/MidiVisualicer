@@ -288,11 +288,21 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 
   // Detener
   const stop = useCallback(() => {
+    // 1. Stop Transport
     Tone.Transport.stop();
-    Tone.Transport.cancel();
+    Tone.Transport.cancel(); // Clears transport schedule
 
+    // 2. Clear our own tracked events
     scheduledEventsRef.current.forEach((id) => Tone.Transport.clear(id));
     scheduledEventsRef.current = [];
+
+    // 3. Immediately silence all synths to prevent hanging notes
+    synthsRef.current.forEach((synth) => {
+      // releaseAll() is available on PolySynth to stop all currently sounding voices
+      if (synth) {
+        synth.releaseAll();
+      }
+    });
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);

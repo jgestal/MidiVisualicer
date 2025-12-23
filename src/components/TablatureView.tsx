@@ -169,39 +169,90 @@ export function TablatureView({
   }, [displayItems, cellsPerLine]);
 
   // Find the currently playing slot based on currentTime
-  const currentSlotIndex = useMemo(() => {
-    // Find last slot that started before or at currentTime
-    // Since slots are sorted by time, we can look for the last one <= currentTime
-    let active = -1;
+  // Find the currently playing slot based on currentTime
+  const activeSlotIndex = useMemo(() => {
+    // We want to highlight the note IF currentTime is within [noteStartTime, noteEndTime]
+    // Or if it's very close to start (e.g. 50ms tolerance for visual snappy-ness, but not too much)
+
+    // Iterate slots to find the one matching current time
     for (const slotIdx of sortedSlots) {
       const notesInSlot = timeSlots.get(slotIdx);
       if (!notesInSlot || notesInSlot.length === 0) continue;
 
-      const slotTime = notesInSlot[0].time;
-      // If this slot is in the future, stop
-      if (slotTime > currentTime + 0.05) { // Small buffer
-        break;
+      const firstNote = notesInSlot[0];
+      const start = firstNote.time;
+      const end = start + firstNote.duration;
+
+      // Note is active if we are between start and end (with small tolerance for start)
+      if (currentTime >= start - 0.02 && currentTime <= end) {
+        return slotIdx;
       }
-      active = slotIdx;
     }
-    return active;
+    return -1;
   }, [sortedSlots, timeSlots, currentTime]);
 
-  // Find which line contains the current slot
+  // Find the "current context" slot for scrolling (even if nothing is playing)
+  const scrollSlotIndex = useMemo(() => {
+    // Find last slot that started before or at currentTime
+    let lastStarted = -1;
+    for (const slotIdx of sortedSlots) {
+      const notesInSlot = timeSlots.get(slotIdx);
+      if (!notesInSlot || notesInSlot.length === 0) continue;
+
+      const start = notesInSlot[0].time;
+      if (start <= currentTime + 0.1) {
+        lastStarted = slotIdx;
+      } else {
+        // Since sorted, once we pass currentTime, we can stop
+        break;
+      }
+    }
+    return lastStarted;
+  }, [sortedSlots, timeSlots, currentTime]);
+
+  // Find which line contains the current scroll slot
   const currentLineIndex = useMemo(() => {
-    if (currentSlotIndex < 0) return 0;
+    // If no slot is active, we might be at start (0) or end
+    // Use scrollSlotIndex to determine line
+    if (scrollSlotIndex < 0) return 0;
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      // Check if this line contains the current slot or any slot after it
+      // Check if this line contains the scroll slot
+      // We look for the first slot in the line that is >= scrollSlotIndex
+      // Actually, we want the line that CONTAINS the scrollSlotIndex
       for (const item of line) {
-        if (item.type === 'note' && item.slot >= currentSlotIndex) {
+        if (item.type === 'note' && item.slot >= scrollSlotIndex) {
+          // Found a note that is >= our scroll target. 
+          // Since we iterate lines in order, and notes in order, this is our line.
+          // Wait, if item.slot > scrollSlotIndex, it means scrollSlotIndex was previous?
+          // Correct logic: Find the line where the slot EXISTS or WOULD exist.
+
+          // Simpler: iterate lines, check if scrollSlotIndex is within line's range
           return i;
         }
       }
+
+      // Better Check:
+      // Does this line contain scrollSlotIndex directly?
+      const hasSlot = line.some(item => item.type === 'note' && item.slot === scrollSlotIndex);
+      if (hasSlot) return i;
+
+      // Fallback: if we passed it? No, lines are ordered.
     }
+
+    // Fallback: search again looser. 
+    // Find the line that starts AFTER the scrollSlotIndex, then return the previous line
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const firstNote = line.find(it => it.type === 'note');
+      if (firstNote && firstNote.slot > scrollSlotIndex) {
+        return Math.max(0, i - 1);
+      }
+    }
+
     return lines.length - 1;
-  }, [lines, currentSlotIndex]);
+  }, [lines, scrollSlotIndex]);
 
   // Teleprompter mode: show only current line + a few before/after
   const LINES_BEFORE = 1;  // Show 1 line before current for context
@@ -363,7 +414,7 @@ export function TablatureView({
                             const noteOnString = slotNotes.find((n) => n.string === stringNum);
 
                             // Check if this slot is the current one
-                            const isActive = slot === currentSlotIndex;
+                            const isActive = slot === activeSlotIndex;
 
                             return (
                               <span

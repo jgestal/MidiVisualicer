@@ -284,6 +284,8 @@ function App() {
               });
               setTrackVolume(idx, vol);
             }}
+            currentTime={playbackState.currentTime}
+            isPlaying={playbackState.isPlaying}
           />
 
           {/* FOOTER - Player Controls */}

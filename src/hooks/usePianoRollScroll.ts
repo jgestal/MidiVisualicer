@@ -50,8 +50,8 @@ export function usePianoRollScroll({
         const playheadX = currentTime * pixelsPerSecond + leftMargin;
         const containerWidth = container.clientWidth;
 
-        // Target: playhead at 30% from left
-        const targetScrollLeft = playheadX - containerWidth * 0.3;
+        // Target: playhead at 50% from left (center)
+        const targetScrollLeft = playheadX - containerWidth * 0.5;
         const currentScroll = container.scrollLeft;
         const diff = targetScrollLeft - currentScroll;
 
