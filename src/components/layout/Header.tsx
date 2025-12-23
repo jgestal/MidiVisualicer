@@ -12,7 +12,6 @@ import {
     Sun,
     Moon,
     Download,
-    Music2,
     Wand2,
     Repeat,
     ChevronDown,
@@ -20,8 +19,7 @@ import {
     FileDown,
     ListMusic,
     Printer,
-    Timer,
-    Globe,
+    HelpCircle,
 } from 'lucide-react';
 import { useTheme } from '../../shared/context/ThemeContext';
 import { useI18n, LANGUAGES, type Language } from '../../shared/context/I18nContext';
@@ -35,15 +33,9 @@ interface HeaderProps {
     // Volver a la pantalla inicial
     onClose: () => void;
 
-    // Instrumento
-    selectedInstrumentName: string;
-    onOpenInstrumentMenu: () => void;
-
     // Toggles de barras
     showToolbar: boolean;
     onToggleToolbar: () => void;
-    showPianoRoll: boolean;
-    onTogglePianoRoll: () => void;
 
     // Exportar
     onExportTxt: () => void;
@@ -53,9 +45,9 @@ interface HeaderProps {
     // Info
     onShowInfo: () => void;
 
-    // Metronome
-    isMetronomeEnabled?: boolean;
-    onToggleMetronome?: () => void;
+    // About & Help
+    onShowAbout: () => void;
+    onShowHelp: () => void;
 }
 
 export function Header({
@@ -64,35 +56,41 @@ export function Header({
     tempo,
     timeSignature,
     onClose,
-    selectedInstrumentName,
-    onOpenInstrumentMenu,
     showToolbar,
     onToggleToolbar,
-    showPianoRoll,
-    onTogglePianoRoll,
     onExportTxt,
     onExportTab,
     onExportPdf,
     onShowInfo,
-    isMetronomeEnabled = false,
-    onToggleMetronome,
+    onShowAbout,
+    onShowHelp,
 }: HeaderProps) {
     const { theme, toggleTheme } = useTheme();
     const { language, setLanguage, t } = useI18n();
     const [showExportMenu, setShowExportMenu] = useState(false);
     const [showLangMenu, setShowLangMenu] = useState(false);
 
+    // Handler for back button with confirmation
+    const handleBackClick = () => {
+        if (window.confirm(t.confirmClose || '¿Salir y cerrar el archivo MIDI actual?')) {
+            onClose();
+        }
+    };
+
     return (
         <header className="app-header">
             {/* Left Section */}
             <div className="header-left">
-                <button
-                    className="header-btn header-back-btn"
-                    onClick={onClose}
-                    title="Back / Volver"
-                >
-                    <ArrowLeft size={18} />
-                </button>
+                {/* Back button - only visible when MIDI is loaded */}
+                {hasMidi && (
+                    <button
+                        className="header-btn header-back-btn"
+                        onClick={handleBackClick}
+                        title="Back / Volver"
+                    >
+                        <ArrowLeft size={18} />
+                    </button>
+                )}
 
                 <div className="header-brand">
                     <Music size={20} className="header-logo" />
@@ -120,29 +118,6 @@ export function Header({
             {/* Right Section (solo si hay MIDI cargado) */}
             {hasMidi && (
                 <div className="header-right">
-                    {/* Selector de Instrumento */}
-                    <button
-                        className="header-btn header-instrument-btn"
-                        onClick={onOpenInstrumentMenu}
-                        title="Seleccionar Instrumento"
-                    >
-                        <Music2 size={16} />
-                        <span>{selectedInstrumentName}</span>
-                        <ChevronDown size={14} />
-                    </button>
-
-                    {/* Metronome - next to instrument */}
-                    {onToggleMetronome && (
-                        <button
-                            className={`header-btn header-metronome-btn ${isMetronomeEnabled ? 'active' : ''}`}
-                            onClick={onToggleMetronome}
-                            title={isMetronomeEnabled ? 'Desactivar metrónomo' : 'Activar metrónomo'}
-                        >
-                            <Timer size={16} />
-                            {isMetronomeEnabled && <span className="metronome-pulse" />}
-                        </button>
-                    )}
-
                     {/* Toggle Toolbar (Transpose + Loop) */}
                     <button
                         className={`header-btn header-toggle-btn ${showToolbar ? 'active' : ''}`}
@@ -151,15 +126,6 @@ export function Header({
                     >
                         <Wand2 size={16} />
                         <Repeat size={14} />
-                    </button>
-
-                    {/* Toggle Piano Roll */}
-                    <button
-                        className={`header-btn header-toggle-btn ${showPianoRoll ? 'active' : ''}`}
-                        onClick={onTogglePianoRoll}
-                        title="Mostrar/Ocultar Piano Roll"
-                    >
-                        <Music size={16} />
                     </button>
 
                     {/* Divider */}
@@ -204,8 +170,7 @@ export function Header({
                             onClick={() => setShowLangMenu(!showLangMenu)}
                             title={t.language}
                         >
-                            <Globe size={16} />
-                            <span className="lang-flag">{LANGUAGES[language].flag}</span>
+                            <span className="lang-flag-only">{LANGUAGES[language].flag}</span>
                         </button>
 
                         {showLangMenu && (
@@ -223,6 +188,24 @@ export function Header({
                             </div>
                         )}
                     </div>
+
+                    {/* Help Button */}
+                    <button
+                        className="header-btn header-help-btn"
+                        onClick={onShowHelp}
+                        title={t.help}
+                    >
+                        <HelpCircle size={18} />
+                    </button>
+
+                    {/* About Button */}
+                    <button
+                        className="header-btn header-about-btn"
+                        onClick={onShowAbout}
+                        title={t.about}
+                    >
+                        <Info size={18} />
+                    </button>
 
                     {/* Theme Toggle */}
                     <button
@@ -245,8 +228,7 @@ export function Header({
                             onClick={() => setShowLangMenu(!showLangMenu)}
                             title={t.language}
                         >
-                            <Globe size={16} />
-                            <span className="lang-flag">{LANGUAGES[language].flag}</span>
+                            <span className="lang-flag-only">{LANGUAGES[language].flag}</span>
                         </button>
 
                         {showLangMenu && (
@@ -265,6 +247,25 @@ export function Header({
                         )}
                     </div>
 
+                    {/* Help Button */}
+                    <button
+                        className="header-btn header-help-btn"
+                        onClick={onShowHelp}
+                        title={t.help}
+                    >
+                        <HelpCircle size={18} />
+                    </button>
+
+                    {/* About Button */}
+                    <button
+                        className="header-btn header-about-btn"
+                        onClick={onShowAbout}
+                        title={t.about}
+                    >
+                        <Info size={18} />
+                    </button>
+
+                    {/* Theme Toggle */}
                     <button
                         className="header-btn header-theme-btn"
                         onClick={toggleTheme}
@@ -374,6 +375,11 @@ export function Header({
 
                 .lang-flag {
                     font-size: 16px;
+                }
+
+                .lang-flag-only {
+                    font-size: 20px;
+                    line-height: 1;
                 }
 
                 .header-lang-menu {

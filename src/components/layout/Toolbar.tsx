@@ -1,8 +1,8 @@
 /**
- * Toolbar Component - Barra de herramientas con Transpose, Loop y Metrónomo
+ * Toolbar Component - Barra de herramientas con Transpose, Loop, Instrumento y Metrónomo
  * Aparece debajo del header cuando está activada
  */
-import { Timer } from 'lucide-react';
+import { Timer, Music2, ChevronDown } from 'lucide-react';
 import TransposeControls from '../TransposeControls';
 import LoopControls from '../LoopControls';
 import type { MidiNote } from '../../types/midi';
@@ -25,6 +25,10 @@ interface ToolbarProps {
     onToggleLoop: () => void;
     onClearLoop: () => void;
 
+    // Instrument
+    selectedInstrumentName: string;
+    onOpenInstrumentMenu: () => void;
+
     // Metronome
     isMetronomeEnabled?: boolean;
     onToggleMetronome?: () => void;
@@ -44,6 +48,8 @@ export function Toolbar({
     onSetLoopEnd,
     onToggleLoop,
     onClearLoop,
+    selectedInstrumentName,
+    onOpenInstrumentMenu,
     isMetronomeEnabled = false,
     onToggleMetronome,
 }: ToolbarProps) {
@@ -74,6 +80,21 @@ export function Toolbar({
                 />
             </div>
 
+            <div className="toolbar-divider" />
+
+            {/* Instrument Selector */}
+            <div className="toolbar-section">
+                <button
+                    className="toolbar-instrument-btn"
+                    onClick={onOpenInstrumentMenu}
+                    title="Seleccionar Instrumento"
+                >
+                    <Music2 size={16} />
+                    <span>{selectedInstrumentName}</span>
+                    <ChevronDown size={14} />
+                </button>
+            </div>
+
             {onToggleMetronome && (
                 <>
                     <div className="toolbar-divider" />
@@ -89,58 +110,77 @@ export function Toolbar({
                             {isMetronomeEnabled && <span className="metronome-active-dot" />}
                         </button>
                     </div>
-
-                    <style>{`
-                        .metronome-section {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-                        }
-
-                        .metronome-btn {
-                            display: flex;
-                            align-items: center;
-                            gap: 6px;
-                            padding: 6px 12px;
-                            background: var(--color-bg-tertiary);
-                            border: 1px solid var(--color-border);
-                            border-radius: var(--radius-md);
-                            color: var(--color-text-secondary);
-                            font-size: 12px;
-                            cursor: pointer;
-                            transition: all var(--transition-fast);
-                            position: relative;
-                        }
-
-                        .metronome-btn:hover {
-                            background: var(--color-bg-hover);
-                            color: var(--color-text-primary);
-                        }
-
-                        .metronome-btn.active {
-                            background: var(--color-accent-primary);
-                            color: white;
-                            border-color: var(--color-accent-primary);
-                        }
-                        
-                        .metronome-active-dot {
-                            width: 6px;
-                            height: 6px;
-                            background: #22c55e;
-                            border-radius: 50%;
-                            animation: metronomePulse 0.5s ease-in-out infinite;
-                        }
-                        
-                        @keyframes metronomePulse {
-                            0%, 100% { opacity: 1; transform: scale(1); }
-                            50% { opacity: 0.5; transform: scale(1.2); }
-                        }
-                    `}</style>
                 </>
             )}
+
+            <style>{`
+                .toolbar-instrument-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    background: var(--color-bg-tertiary);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                    color: var(--color-text-primary);
+                    font-size: 12px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all var(--transition-fast);
+                }
+
+                .toolbar-instrument-btn:hover {
+                    background: var(--color-bg-hover);
+                    border-color: var(--color-accent-primary);
+                }
+
+                .metronome-section {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .metronome-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    background: var(--color-bg-tertiary);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                    color: var(--color-text-secondary);
+                    font-size: 12px;
+                    cursor: pointer;
+                    transition: all var(--transition-fast);
+                    position: relative;
+                }
+
+                .metronome-btn:hover {
+                    background: var(--color-bg-hover);
+                    color: var(--color-text-primary);
+                }
+
+                .metronome-btn.active {
+                    background: var(--color-accent-primary);
+                    color: white;
+                    border-color: var(--color-accent-primary);
+                }
+                
+                .metronome-active-dot {
+                    width: 6px;
+                    height: 6px;
+                    background: #22c55e;
+                    border-radius: 50%;
+                    animation: metronomePulse 0.5s ease-in-out infinite;
+                }
+                
+                @keyframes metronomePulse {
+                    0%, 100% { opacity: 1; transform: scale(1); }
+                    50% { opacity: 0.5; transform: scale(1.2); }
+                }
+            `}</style>
         </div>
     );
 }
 
 export default Toolbar;
-

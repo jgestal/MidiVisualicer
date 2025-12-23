@@ -1,8 +1,43 @@
 /**
  * MidiInfoModal - Modal con información general del MIDI
  */
-import { X, Music, Clock, Layers, Zap, Hash } from 'lucide-react';
+import { X, Music, Clock, Layers, Zap, Hash, HardDrive } from 'lucide-react';
 import type { ParsedMidi } from '../types/midi';
+
+// Map of instruments to icons (emoji)
+const INSTRUMENT_ICONS: Record<string, string> = {
+  'Piano': '🎹',
+  'Bright Piano': '🎹',
+  'Electric Grand': '🎹',
+  'Honky-tonk': '🎹',
+  'Electric Piano 1': '🎹',
+  'Electric Piano 2': '🎹',
+  'Harpsichord': '🎹',
+  'Clavinet': '🎹',
+  'Acoustic Guitar (nylon)': '🎸',
+  'Acoustic Guitar (steel)': '🎸',
+  'Electric Guitar (jazz)': '🎸',
+  'Electric Guitar (clean)': '🎸',
+  'Electric Guitar (muted)': '🎸',
+  'Overdriven Guitar': '🎸',
+  'Distortion Guitar': '🎸',
+  'Guitar Harmonics': '🎸',
+  'Acoustic Bass': '🎸',
+  'Electric Bass (finger)': '🎸',
+  'Electric Bass (pick)': '🎸',
+  'Violin': '🎻',
+  'Viola': '🎻',
+  'Cello': '🎻',
+  'Contrabass': '🎻',
+  'Trumpet': '🎺',
+  'Trombone': '🎺',
+  'Flute': '🎵',
+  'Unknown': '🎵',
+};
+
+function getInstrumentIcon(instrument: string): string {
+  return INSTRUMENT_ICONS[instrument] || '🎵';
+}
 
 interface MidiInfoModalProps {
   midi: ParsedMidi;
@@ -13,6 +48,15 @@ function formatDuration(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatFileSize(bytes: number | undefined): string {
+  if (!bytes) return 'N/A';
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(1)} KB`;
+  const mb = kb / 1024;
+  return `${mb.toFixed(2)} MB`;
 }
 
 export function MidiInfoModal({ midi, onClose }: MidiInfoModalProps) {
@@ -80,6 +124,13 @@ export function MidiInfoModal({ midi, onClose }: MidiInfoModalProps) {
               <span className="midi-info-label">PPQ</span>
               <span className="midi-info-value">{midi.header.ppq}</span>
             </div>
+
+            <div className="midi-info-item">
+              <span className="midi-info-label">
+                <HardDrive size={14} /> Tamaño
+              </span>
+              <span className="midi-info-value">{formatFileSize(midi.fileSize)}</span>
+            </div>
           </div>
 
           <h3 className="midi-info-subtitle">Pistas</h3>
@@ -87,8 +138,11 @@ export function MidiInfoModal({ midi, onClose }: MidiInfoModalProps) {
             {midi.tracks.filter(t => t.noteCount > 0).map((track, idx) => (
               <div key={idx} className="midi-info-track">
                 <span className="track-num">{track.index + 1}</span>
-                <span className="track-name">{track.name || `Pista ${track.index + 1}`}</span>
-                <span className="track-instrument">{track.instrument}</span>
+                <span className="track-icon">{getInstrumentIcon(track.instrument)}</span>
+                <div className="track-details">
+                  <span className="track-name">{track.name || `Pista ${track.index + 1}`}</span>
+                  <span className="track-instrument">{track.instrument}</span>
+                </div>
                 <span className="track-notes">{track.noteCount} notas</span>
               </div>
             ))}
@@ -221,8 +275,8 @@ export function MidiInfoModal({ midi, onClose }: MidiInfoModalProps) {
         }
 
         .track-num {
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -231,12 +285,26 @@ export function MidiInfoModal({ midi, onClose }: MidiInfoModalProps) {
           border-radius: var(--radius-sm);
           font-size: 10px;
           font-weight: 600;
+          flex-shrink: 0;
+        }
+
+        .track-icon {
+          font-size: 18px;
+          flex-shrink: 0;
+        }
+
+        .track-details {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          min-width: 0;
         }
 
         .track-name {
-          flex: 1;
           color: var(--color-text-primary);
           font-weight: 500;
+          font-size: 12px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -244,8 +312,7 @@ export function MidiInfoModal({ midi, onClose }: MidiInfoModalProps) {
 
         .track-instrument {
           color: var(--color-text-muted);
-          font-size: 10px;
-          max-width: 100px;
+          font-size: 11px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -254,9 +321,13 @@ export function MidiInfoModal({ midi, onClose }: MidiInfoModalProps) {
         .track-notes {
           color: var(--color-text-muted);
           font-size: 10px;
+          flex-shrink: 0;
+          padding: 2px 6px;
+          background: var(--color-bg-secondary);
+          border-radius: var(--radius-sm);
         }
       `}</style>
-    </div>
+    </div >
   );
 }
 

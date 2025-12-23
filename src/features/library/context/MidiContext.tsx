@@ -114,9 +114,9 @@ export function MidiProvider({ children }: { children: ReactNode }) {
       const timeSignature =
         timeSignatures.length > 0
           ? {
-              numerator: timeSignatures[0].timeSignature[0],
-              denominator: timeSignatures[0].timeSignature[1],
-            }
+            numerator: timeSignatures[0].timeSignature[0],
+            denominator: timeSignatures[0].timeSignature[1],
+          }
           : { numerator: 4, denominator: 4 };
 
       // Procesar pistas
@@ -167,6 +167,8 @@ export function MidiProvider({ children }: { children: ReactNode }) {
       try {
         const arrayBuffer = await file.arrayBuffer();
         const parsed = await parseMidiBuffer(arrayBuffer, file.name);
+        // Add file size to parsed MIDI
+        parsed.fileSize = file.size;
         dispatch({ type: 'LOAD_SUCCESS', payload: { midi: parsed } });
         return parsed;
       } catch (err) {
@@ -193,6 +195,8 @@ export function MidiProvider({ children }: { children: ReactNode }) {
         const arrayBuffer = await response.arrayBuffer();
         const fileName = fileInfo?.name || url.split('/').pop() || 'midi.mid';
         const parsed = await parseMidiBuffer(arrayBuffer, fileName);
+        // Add file size from arrayBuffer
+        parsed.fileSize = arrayBuffer.byteLength;
 
         dispatch({
           type: 'LOAD_SUCCESS',

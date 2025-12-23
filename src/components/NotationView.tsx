@@ -196,13 +196,13 @@ export function NotationView({
           overflow-y: auto;
           overflow-x: hidden;
           padding: var(--space-2);
-          background: var(--notation-bg, #f8f6f0);
+          background: var(--color-bg-secondary);
         }
 
         .notation-empty {
           padding: 40px;
           text-align: center;
-          color: #666;
+          color: var(--color-text-muted);
         }
 
         .notation-empty-icon {
@@ -215,32 +215,41 @@ export function NotationView({
         }
 
         .notation-line {
-          margin-bottom: 8px;
+          margin-bottom: 16px;
           padding: 8px;
-          background: var(--notation-line-bg, #f0ebe0);
+          background: var(--color-bg-tertiary);
           border-radius: var(--radius-md);
           transition: all var(--transition-fast);
           position: relative;
         }
 
         .notation-line.current {
-          background: var(--notation-line-active, rgba(99, 102, 241, 0.15));
-          box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.3);
+          background: rgba(99, 102, 241, 0.1);
+          box-shadow: inset 0 0 0 1px var(--color-accent-primary);
         }
 
         .notation-line-header {
           font-size: 10px;
-          color: #999;
+          font-family: var(--font-mono);
+          color: var(--color-text-muted);
           margin-bottom: 4px;
-          padding-left: 4px;
+          padding: 2px 6px;
+          background: var(--color-bg-secondary);
+          border-radius: var(--radius-sm);
+          display: inline-block;
         }
 
         .notation-line-content {
-          background: var(--notation-paper, #fffdf5);
+          background: #fffdf5;
           border-radius: 4px;
           overflow: hidden;
           position: relative;
-          border: 1px solid var(--notation-border, rgba(0,0,0,0.1));
+          border: 1px solid var(--color-border);
+        }
+        
+        /* Dark theme override for notation paper */
+        :root[data-theme="dark"] .notation-line-content {
+          background: #1a1a25;
         }
 
         .notation-playhead {

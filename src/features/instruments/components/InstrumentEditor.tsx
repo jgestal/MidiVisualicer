@@ -1,10 +1,12 @@
 /**
  * InstrumentEditor - Modal para crear/editar instrumentos personalizados
+ * Incluye selección de plantilla desde cualquier instrumento existente
  */
 import { useState, useCallback, useMemo } from 'react';
-import { X, Plus, Trash2, Music2, Save, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react';
+import { X, Plus, Trash2, Music2, Save, AlertCircle, ChevronUp, ChevronDown, Copy } from 'lucide-react';
 import { noteToMidi, midiToNote } from '@/config/instruments';
 import type { InstrumentConfig } from '@/config/instruments';
+import { useAllInstruments } from '@/features/instruments';
 import './InstrumentEditor.css';
 
 // Opciones de iconos disponibles
@@ -62,6 +64,10 @@ export function InstrumentEditor({
   onSave,
   onDelete,
 }: InstrumentEditorProps) {
+  // Obtener todos los instrumentos para plantillas
+  const allInstrumentsMap = useAllInstruments();
+  const allInstruments = useMemo(() => Object.values(allInstrumentsMap), [allInstrumentsMap]);
+
   // Estado del formulario
   const [name, setName] = useState(instrument?.nameEs || '');
   const [icon, setIcon] = useState(instrument?.icon || '🎸');
@@ -86,8 +92,24 @@ export function InstrumentEditor({
   });
 
   const [errors, setErrors] = useState<string[]>([]);
+  const [showTemplates, setShowTemplates] = useState(!instrument); // Show templates for new instruments
 
   const isEditing = !!instrument;
+
+  // Aplicar plantilla
+  const applyTemplate = useCallback((template: InstrumentConfig) => {
+    setName(template.nameEs + ' (Copia)');
+    setIcon(template.icon);
+    setFrets(template.frets);
+    setDoubleStrings(template.doubleStrings || false);
+    setStrings(
+      template.strings.map((s) => {
+        const parsed = parseNoteString(s);
+        return { id: generateId(), ...parsed };
+      })
+    );
+    setShowTemplates(false);
+  }, []);
 
   // Validar el instrumento
   const validate = useCallback((): string[] => {
@@ -216,6 +238,36 @@ export function InstrumentEditor({
                   <li key={i}>{err}</li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* Template Selection Section */}
+          {!isEditing && (
+            <div className="template-section">
+              <button
+                className="template-toggle"
+                onClick={() => setShowTemplates(!showTemplates)}
+              >
+                <Copy size={14} />
+                <span>Usar plantilla de instrumento existente</span>
+                {showTemplates ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              </button>
+
+              {showTemplates && (
+                <div className="template-grid">
+                  {allInstruments.map((inst) => (
+                    <button
+                      key={inst.id}
+                      className="template-item"
+                      onClick={() => applyTemplate(inst)}
+                      title={`Usar ${inst.nameEs} como plantilla`}
+                    >
+                      <span className="template-icon">{inst.icon}</span>
+                      <span className="template-name">{inst.nameEs}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

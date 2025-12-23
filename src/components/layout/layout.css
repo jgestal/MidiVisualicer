@@ -106,7 +106,7 @@
     font-size: 12px;
     font-weight: 600;
     color: var(--color-text-primary);
-    max-width: 200px;
+    max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -588,8 +588,35 @@
 }
 
 .piano-roll-section.collapsed {
-    height: 0 !important;
-    border-bottom: none;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* Collapsed toggle button - matches BottomTracksPanel style */
+.piano-roll-collapsed-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 16px;
+    background: var(--color-bg-tertiary);
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.piano-roll-collapsed-toggle:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+}
+
+.piano-roll-collapsed-toggle span {
+    text-transform: none;
+    font-size: 12px;
 }
 
 /* ============================================

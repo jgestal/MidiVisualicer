@@ -47,6 +47,7 @@ export interface ParsedMidi {
     ppq: number; // Pulses per quarter note
     tempos: Array<{ bpm: number; time: number }>;
   };
+  fileSize?: number; // File size in bytes
 }
 
 export interface ChordInfo {

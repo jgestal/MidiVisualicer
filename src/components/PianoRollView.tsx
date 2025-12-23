@@ -1,8 +1,10 @@
 /**
  * Componente Piano Roll View - VERSIÓN OPTIMIZADA
  * Click interactivo para seek + loop markers
+ * Toggle arrow para ocultar/mostrar
  */
 import { useRef, useEffect, useMemo, useCallback } from 'react';
+import { ChevronUp } from 'lucide-react';
 import type { MidiNote } from '../types/midi';
 
 interface PianoRollViewProps {
@@ -15,6 +17,8 @@ interface PianoRollViewProps {
   onSetLoopStart: (time: number) => void;
   onSetLoopEnd: (time: number) => void;
   onSeek?: (time: number) => void;
+  // Toggle visibility
+  onToggle?: () => void;
 }
 
 const NOTE_HEIGHT = 6;
@@ -32,6 +36,7 @@ export function PianoRollView({
   onSetLoopStart,
   onSetLoopEnd,
   onSeek,
+  onToggle,
 }: PianoRollViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -287,12 +292,20 @@ export function PianoRollView({
 
   return (
     <div className="piano-roll-container">
-      <div className="piano-roll-header">
-        <span>🎹 Piano Roll</span>
+      {/* Toggle Header - Full width like BottomTracksPanel */}
+      <button
+        className="piano-roll-toggle-header"
+        onClick={onToggle}
+        title="Ocultar Piano Roll"
+      >
+        <span className="piano-roll-title">🎹 Piano Roll</span>
         <span className="piano-roll-hint">
           Arrastrar: Desplazar | Click: Ir a posición | Ctrl+Click: Loop A | Shift+Click: Loop B
         </span>
-      </div>
+        {onToggle && <ChevronUp size={14} />}
+      </button>
+
+      {/* Canvas Scroll Area */}
       <div
         ref={containerRef}
         className="piano-roll-scroll"
@@ -317,29 +330,54 @@ export function PianoRollView({
 const styles = `
 .piano-roll-container {
   background: var(--color-bg-secondary);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   overflow: hidden;
 }
 
-.piano-roll-header {
+.piano-roll-toggle-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--space-2) var(--space-3);
+  gap: 8px;
+  width: 100%;
+  padding: 8px 16px;
   background: var(--color-bg-tertiary);
+  border: none;
   border-bottom: 1px solid var(--color-border);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+}
+
+.piano-roll-toggle-header:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.piano-roll-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: none;
+  font-size: 12px;
 }
 
 .piano-roll-hint {
   font-size: 10px;
   color: var(--color-text-muted);
+  flex: 1;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .piano-roll-scroll {
   overflow-x: auto;
   overflow-y: hidden;
+  padding: 4px;
 }
 
 .piano-roll-scroll canvas {

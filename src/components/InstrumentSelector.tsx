@@ -1,14 +1,13 @@
 /**
  * Componente selector de instrumentos para tablatura
- * - Cuadrícula de instrumentos
+ * - Cuadrícula de instrumentos en 3 columnas
  * - Personalizados con color distinto, antes que predefinidos
- * - Plantilla al crear nuevo instrumento
+ * - Plantilla dentro del editor de instrumento
  */
 import { useState, useMemo } from 'react';
-import { Plus, Trash2, Edit2, Copy } from 'lucide-react';
+import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { InstrumentEditor } from '@/features/instruments/components/InstrumentEditor';
 import { useAllInstruments, useInstrument, type InstrumentConfig } from '@/features/instruments';
-import { DEFAULT_INSTRUMENTS } from '@/config/instruments';
 
 interface InstrumentSelectorProps {
   selectedInstrument: string;
@@ -21,7 +20,6 @@ export function InstrumentSelector({
 }: InstrumentSelectorProps) {
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingInstrument, setEditingInstrument] = useState<InstrumentConfig | null>(null);
-  const [showTemplateMenu, setShowTemplateMenu] = useState(false);
 
   // Obtener instrumentos del contexto
   const instrumentsMap = useAllInstruments();
@@ -53,7 +51,6 @@ export function InstrumentSelector({
   };
 
   const handleCreateFromTemplate = (template: InstrumentConfig | null) => {
-    setShowTemplateMenu(false);
     if (template) {
       // Crear copia con nuevo ID
       const newInstrument: InstrumentConfig = {
@@ -112,35 +109,12 @@ export function InstrumentSelector({
 
   return (
     <div className="instrument-selector-wrapper">
-      {/* CREATE BUTTON with Template Menu */}
+      {/* CREATE BUTTON - Opens editor directly */}
       <div className="create-section">
-        <button className="btn-create" onClick={() => setShowTemplateMenu(!showTemplateMenu)}>
+        <button className="btn-create" onClick={() => handleCreateFromTemplate(null)}>
           <Plus size={16} />
           <span>Crear Instrumento Personalizado</span>
         </button>
-
-        {showTemplateMenu && (
-          <div className="template-menu">
-            <div className="template-menu-header">Elegir plantilla:</div>
-            <button className="template-option" onClick={() => handleCreateFromTemplate(null)}>
-              <Plus size={14} />
-              <span>Desde cero</span>
-            </button>
-            <div className="template-divider" />
-            <div className="template-list">
-              {Object.values(DEFAULT_INSTRUMENTS).slice(0, 8).map((inst) => (
-                <button
-                  key={inst.id}
-                  className="template-option"
-                  onClick={() => handleCreateFromTemplate(inst)}
-                >
-                  <Copy size={14} />
-                  <span>{inst.icon} {inst.nameEs}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* CUSTOM INSTRUMENTS */}
@@ -299,7 +273,7 @@ export function InstrumentSelector({
 
         .instrument-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 6px;
         }
 

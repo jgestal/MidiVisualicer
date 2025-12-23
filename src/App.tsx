@@ -12,13 +12,14 @@
  * 5. Footer - Controles de reproducción
  */
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Music, X } from 'lucide-react';
+import { Music, X, ChevronDown } from 'lucide-react';
 
 // Context hooks
 import { useMidi } from './features/library/context/MidiContext';
 import { usePlayback } from './features/player/context/PlaybackContext';
 import { useTracks } from './features/tracks/context/TracksContext';
 import { useInstrument } from './features/instruments/context/InstrumentContext';
+import { useI18n } from './shared/context/I18nContext';
 
 // Layout components
 import { Header } from './components/layout/Header';
@@ -36,6 +37,8 @@ import { PianoRollView } from './components/PianoRollView';
 import { TablatureView } from './components/TablatureView';
 import { NotationView } from './components/NotationView';
 import { MidiInfoModal } from './components/MidiInfoModal';
+import { AboutModal } from './components/AboutModal';
+import { HelpModal } from './components/HelpModal';
 
 // Utils y config
 import { generateCifrado, generateTablatureText, downloadAsTextFile } from './utils/export';
@@ -61,6 +64,7 @@ function App() {
   } = usePlayback();
   const { state: tracksState, toggleMute, resetTracks } = useTracks();
   const { state: instrumentState, selectInstrument, setTranspose } = useInstrument();
+  const { t } = useI18n();
 
   // ===== ESTADO LOCAL (UI) =====
   const [showToolbar, setShowToolbar] = useState(true);
@@ -69,6 +73,8 @@ function App() {
   // Sidebar state removed
   const [showInstrumentModal, setShowInstrumentModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
 
   // ===== METRONOME =====
@@ -212,18 +218,14 @@ function App() {
             : undefined
         }
         onClose={handleClose}
-        selectedInstrumentName={selectedInstrumentName}
-        onOpenInstrumentMenu={() => setShowInstrumentModal(true)}
         showToolbar={showToolbar}
         onToggleToolbar={() => setShowToolbar(!showToolbar)}
-        showPianoRoll={showPianoRoll}
-        onTogglePianoRoll={() => setShowPianoRoll(!showPianoRoll)}
         onExportTxt={handleExportTxt}
         onExportTab={handleExportTablature}
         onExportPdf={handleExportPdf}
         onShowInfo={() => setShowInfoModal(true)}
-        isMetronomeEnabled={isMetronomeEnabled}
-        onToggleMetronome={toggleMetronome}
+        onShowAbout={() => setShowAboutModal(true)}
+        onShowHelp={() => setShowHelpModal(true)}
       />
 
       {/* TOOLBAR (conditional) */}
@@ -242,6 +244,10 @@ function App() {
           onSetLoopEnd={setLoopEnd}
           onToggleLoop={toggleLoop}
           onClearLoop={clearLoop}
+          selectedInstrumentName={selectedInstrumentName}
+          onOpenInstrumentMenu={() => setShowInstrumentModal(true)}
+          isMetronomeEnabled={isMetronomeEnabled}
+          onToggleMetronome={toggleMetronome}
         />
       )}
 
@@ -253,9 +259,9 @@ function App() {
           {/* Piano Roll Section */}
           <div
             className={`piano-roll-section ${!showPianoRoll ? 'collapsed' : ''}`}
-            style={{ height: showPianoRoll ? '180px' : '0' }}
+            style={{ height: showPianoRoll ? '180px' : 'auto' }}
           >
-            {showPianoRoll && (
+            {showPianoRoll ? (
               <PianoRollView
                 notes={selectedTrackNotes}
                 currentTime={playbackState.currentTime}
@@ -266,7 +272,17 @@ function App() {
                 onSetLoopStart={setLoopStart}
                 onSetLoopEnd={setLoopEnd}
                 onSeek={seekTo}
+                onToggle={() => setShowPianoRoll(false)}
               />
+            ) : (
+              <button
+                className="piano-roll-collapsed-toggle"
+                onClick={() => setShowPianoRoll(true)}
+                title="Mostrar Piano Roll"
+              >
+                <span>🎹 Piano Roll</span>
+                <ChevronDown size={14} />
+              </button>
             )}
           </div>
 
@@ -338,10 +354,9 @@ function App() {
           <div className="empty-state-icon">
             <Music size={40} />
           </div>
-          <h1 className="empty-state-title">Comienza tu sesión</h1>
+          <h1 className="empty-state-title">{t.startSession}</h1>
           <p className="empty-state-description">
-            Arrastra un archivo MIDI aquí o usa el explorador de archivos para
-            comenzar a visualizar y practicar música.
+            {t.dragDropHint}
           </p>
           <FileUploader onFileSelect={handleFileUpload} isLoading={isLoading} />
         </div>
@@ -385,6 +400,16 @@ function App() {
           midi={parsedMidi}
           onClose={() => setShowInfoModal(false)}
         />
+      )}
+
+      {/* ABOUT MODAL */}
+      {showAboutModal && (
+        <AboutModal onClose={() => setShowAboutModal(false)} />
+      )}
+
+      {/* HELP MODAL */}
+      {showHelpModal && (
+        <HelpModal onClose={() => setShowHelpModal(false)} />
       )}
     </div>
   );
