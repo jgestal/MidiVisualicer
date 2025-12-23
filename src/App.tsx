@@ -21,6 +21,12 @@ import { useTracks } from './features/tracks/context/TracksContext';
 import { useInstrument } from './features/instruments/context/InstrumentContext';
 import { useI18n } from './shared/context/I18nContext';
 
+// Custom hooks
+import { useMetronome } from './hooks/useMetronome';
+import { useAppUI } from './hooks/useAppUI';
+import { useExport } from './hooks/useExport';
+import { useAutoTranspose } from './hooks/useAutoTranspose';
+
 // Layout components
 import { Header } from './components/layout/Header';
 import { Toolbar } from './components/layout/Toolbar';
@@ -31,7 +37,6 @@ import './components/layout/layout.css';
 
 // Feature components
 import { FileUploader } from './components/FileUploader';
-// FileExplorer removed as requested
 import { InstrumentSelector } from './components/InstrumentSelector';
 import { PianoRollView } from './components/PianoRollView';
 import { TablatureView } from './components/TablatureView';
@@ -40,10 +45,8 @@ import { MidiInfoModal } from './components/MidiInfoModal';
 import { AboutModal } from './components/AboutModal';
 import { HelpModal } from './components/HelpModal';
 
-// Utils y config
-import { generateCifrado, generateTablatureText, downloadAsTextFile } from './utils/export';
+// Config
 import { getAllInstruments } from './config/instruments';
-import { useMetronome } from './hooks/useMetronome';
 
 function App() {
   // ===== CONTEXTOS =====
@@ -66,15 +69,8 @@ function App() {
   const { state: instrumentState, selectInstrument, setTranspose } = useInstrument();
   const { t } = useI18n();
 
-  // ===== ESTADO LOCAL (UI) =====
-  const [showToolbar, setShowToolbar] = useState(true);
-  const [showPianoRoll, setShowPianoRoll] = useState(true);
-  const [activeView, setActiveView] = useState<'tablature' | 'notation'>('tablature');
-  // Sidebar state removed
-  const [showInstrumentModal, setShowInstrumentModal] = useState(false);
-  const [showInfoModal, setShowInfoModal] = useState(false);
-  const [showAboutModal, setShowAboutModal] = useState(false);
-  const [showHelpModal, setShowHelpModal] = useState(false);
+  // ===== UI STATE (via custom hook) =====
+  const ui = useAppUI();
   const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
 
   // ===== METRONOME =====
@@ -114,27 +110,20 @@ function App() {
     }
   }, [parsedMidi, resetTracks]);
 
-  // Auto-transposición
-  useEffect(() => {
-    if (selectedTrackNotes.length === 0) return;
-    const allInstruments = getAllInstruments();
-    const instrument = allInstruments[selectedInstrumentId];
-    if (!instrument) return;
+  // Auto-transposición (via custom hook)
+  const selectedInstrument = useMemo(() => getAllInstruments()[selectedInstrumentId], [selectedInstrumentId]);
+  useAutoTranspose({
+    notes: selectedTrackNotes,
+    instrument: selectedInstrument,
+    onTransposeChange: setTranspose,
+  });
 
-    const midiNotes = selectedTrackNotes.map((n) => n.midi);
-    const minNote = Math.min(...midiNotes);
-    const maxNote = Math.max(...midiNotes);
-
-    if (!isFinite(minNote)) return;
-
-    const noteCenter = (minNote + maxNote) / 2;
-    const instMin = Math.min(...instrument.midiNotes);
-    const instMax = Math.max(...instrument.midiNotes) + (instrument.frets || 20);
-    const instCenter = (instMin + instMax) / 2;
-
-    const suggestedTranspose = Math.round((instCenter - noteCenter) / 12) * 12;
-    setTranspose(suggestedTranspose);
-  }, [selectedTrackNotes, selectedInstrumentId, setTranspose]);
+  // ===== EXPORT (via custom hook) =====
+  const { exportTablature, exportTxt, exportPdf } = useExport({
+    parsedMidi,
+    selectedTrack,
+    selectedInstrumentId,
+  });
 
   // Sidebar effect removed
 
@@ -162,46 +151,7 @@ function App() {
     clearMidi();
   }, [stop, clearMidi]);
 
-  const handleExportTablature = useCallback(() => {
-    if (!parsedMidi) return;
-
-    const track = parsedMidi.tracks[selectedTrack];
-    const tablature = generateTablatureText(track, selectedInstrumentId);
-    downloadAsTextFile(tablature, `${parsedMidi.name || 'midi'}_tablatura.tab`);
-  }, [parsedMidi, selectedTrack, selectedInstrumentId]);
-
-  const handleExportTxt = useCallback(() => {
-    if (!parsedMidi) return;
-    const cifrado = generateCifrado(parsedMidi, selectedTrack);
-    downloadAsTextFile(cifrado, `${parsedMidi.name || 'midi'}.txt`);
-  }, [parsedMidi, selectedTrack]);
-
-  const handleExportPdf = useCallback(() => {
-    if (!parsedMidi) return;
-    // Usar la API de impresión del navegador para generar PDF
-    const track = parsedMidi.tracks[selectedTrack];
-    const tablature = generateTablatureText(track, selectedInstrumentId);
-
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      printWindow.document.write(`
-        <html>
-        <head>
-          <title>${parsedMidi.name || 'Tablatura'}</title>
-          <style>
-            body { font-family: 'Courier New', monospace; font-size: 12px; padding: 20px; }
-            pre { white-space: pre-wrap; word-wrap: break-word; }
-          </style>
-        </head>
-        <body>
-          <pre>${tablature}</pre>
-          <script>window.print(); window.close();</script>
-        </body>
-        </html>
-      `);
-      printWindow.document.close();
-    }
-  }, [parsedMidi, selectedTrack, selectedInstrumentId]);
+  // Export handlers now provided by useExport hook above
 
   // ===== RENDER =====
 
@@ -218,18 +168,18 @@ function App() {
             : undefined
         }
         onClose={handleClose}
-        showToolbar={showToolbar}
-        onToggleToolbar={() => setShowToolbar(!showToolbar)}
-        onExportTxt={handleExportTxt}
-        onExportTab={handleExportTablature}
-        onExportPdf={handleExportPdf}
-        onShowInfo={() => setShowInfoModal(true)}
-        onShowAbout={() => setShowAboutModal(true)}
-        onShowHelp={() => setShowHelpModal(true)}
+        showToolbar={ui.showToolbar}
+        onToggleToolbar={ui.toggleToolbar}
+        onExportTxt={exportTxt}
+        onExportTab={exportTablature}
+        onExportPdf={exportPdf}
+        onShowInfo={ui.openInfoModal}
+        onShowAbout={ui.openAboutModal}
+        onShowHelp={ui.openHelpModal}
       />
 
       {/* TOOLBAR (conditional) */}
-      {hasMidi && showToolbar && (
+      {hasMidi && ui.showToolbar && (
         <Toolbar
           instrumentId={selectedInstrumentId}
           notes={selectedTrackNotes}
@@ -245,7 +195,7 @@ function App() {
           onToggleLoop={toggleLoop}
           onClearLoop={clearLoop}
           selectedInstrumentName={selectedInstrumentName}
-          onOpenInstrumentMenu={() => setShowInstrumentModal(true)}
+          onOpenInstrumentMenu={ui.openInstrumentModal}
           isMetronomeEnabled={isMetronomeEnabled}
           onToggleMetronome={toggleMetronome}
         />
@@ -258,10 +208,10 @@ function App() {
         <>
           {/* Piano Roll Section */}
           <div
-            className={`piano-roll-section ${!showPianoRoll ? 'collapsed' : ''}`}
-            style={{ height: showPianoRoll ? '180px' : 'auto' }}
+            className={`piano-roll-section ${!ui.showPianoRoll ? 'collapsed' : ''}`}
+            style={{ height: ui.showPianoRoll ? '180px' : 'auto' }}
           >
-            {showPianoRoll ? (
+            {ui.showPianoRoll ? (
               <PianoRollView
                 notes={selectedTrackNotes}
                 currentTime={playbackState.currentTime}
@@ -272,12 +222,12 @@ function App() {
                 onSetLoopStart={setLoopStart}
                 onSetLoopEnd={setLoopEnd}
                 onSeek={seekTo}
-                onToggle={() => setShowPianoRoll(false)}
+                onToggle={ui.hidePianoRollPanel}
               />
             ) : (
               <button
                 className="piano-roll-collapsed-toggle"
-                onClick={() => setShowPianoRoll(true)}
+                onClick={ui.showPianoRollPanel}
                 title="Mostrar Piano Roll"
               >
                 <span>🎹 Piano Roll</span>
@@ -289,8 +239,8 @@ function App() {
           {/* Main Layout: Central Panel + Right Sidebar */}
           <div className="app-layout-content">
             {/* Central Panel with Tabs */}
-            <MainPanel activeView={activeView} onViewChange={setActiveView}>
-              {activeView === 'tablature' ? (
+            <MainPanel activeView={ui.activeView} onViewChange={ui.setActiveView}>
+              {ui.activeView === 'tablature' ? (
                 <TablatureView
                   notes={selectedTrackNotes}
                   instrumentId={selectedInstrumentId}
@@ -363,10 +313,10 @@ function App() {
       )}
 
       {/* INSTRUMENT MODAL */}
-      {showInstrumentModal && (
+      {ui.showInstrumentModal && (
         <div
           className="instrument-modal-overlay"
-          onClick={() => setShowInstrumentModal(false)}
+          onClick={ui.closeInstrumentModal}
         >
           <div
             className="instrument-modal"
@@ -376,7 +326,7 @@ function App() {
               <h2 className="instrument-modal-title">Seleccionar Instrumento</h2>
               <button
                 className="instrument-modal-close"
-                onClick={() => setShowInstrumentModal(false)}
+                onClick={ui.closeInstrumentModal}
               >
                 <X size={18} />
               </button>
@@ -386,7 +336,7 @@ function App() {
                 selectedInstrument={selectedInstrumentId}
                 onSelectInstrument={(id: string) => {
                   selectInstrument(id);
-                  setShowInstrumentModal(false);
+                  ui.closeInstrumentModal();
                 }}
               />
             </div>
@@ -395,21 +345,21 @@ function App() {
       )}
 
       {/* MIDI INFO MODAL */}
-      {showInfoModal && parsedMidi && (
+      {ui.showInfoModal && parsedMidi && (
         <MidiInfoModal
           midi={parsedMidi}
-          onClose={() => setShowInfoModal(false)}
+          onClose={ui.closeInfoModal}
         />
       )}
 
       {/* ABOUT MODAL */}
-      {showAboutModal && (
-        <AboutModal onClose={() => setShowAboutModal(false)} />
+      {ui.showAboutModal && (
+        <AboutModal onClose={ui.closeAboutModal} />
       )}
 
       {/* HELP MODAL */}
-      {showHelpModal && (
-        <HelpModal onClose={() => setShowHelpModal(false)} />
+      {ui.showHelpModal && (
+        <HelpModal onClose={ui.closeHelpModal} />
       )}
     </div>
   );
