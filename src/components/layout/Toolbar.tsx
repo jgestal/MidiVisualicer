@@ -127,10 +127,10 @@ export function Toolbar({
                         <button
                             className={`metronome-btn ${isCountInEnabled ? 'active' : ''}`}
                             onClick={onToggleCountIn}
-                            title="Delay 3s"
+                            title={t.countInDelay}
                         >
                             <Hourglass size={16} />
-                            <span>Delay</span>
+                            <span>{t.countInDelay}</span>
                             {isCountInEnabled && <span className="metronome-active-dot" />}
                         </button>
                     </div>

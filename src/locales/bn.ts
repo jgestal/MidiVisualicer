@@ -153,4 +153,15 @@ export const bn = {
     // Errors
     error: 'ত্রুটি',
     loadingError: 'লোডিং ত্রুটি',
+
+    // Additional UI strings
+    toggleToolbar: 'টুলবার দেখান/লুকান',
+    showTracks: 'ট্র্যাক দেখান',
+    hideTracks: 'ট্র্যাক লুকান',
+    countInDelay: '3 সেকেন্ড বিলম্ব',
+    volume: 'ভলিউম',
+    cifrado: 'কর্ড চার্ট',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: 'প্রিন্ট / PDF',
 } as const;

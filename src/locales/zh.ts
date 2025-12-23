@@ -153,4 +153,15 @@ export const zh = {
     // Errors
     error: '错误',
     loadingError: '加载错误',
+
+    // Additional UI strings
+    toggleToolbar: '显示/隐藏工具栏',
+    showTracks: '显示音轨',
+    hideTracks: '隐藏音轨',
+    countInDelay: '延迟3秒',
+    volume: '音量',
+    cifrado: '和弦图',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: '打印 / PDF',
 } as const;

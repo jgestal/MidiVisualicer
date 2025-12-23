@@ -153,4 +153,15 @@ export const hi = {
     // Errors
     error: 'त्रुटि',
     loadingError: 'लोडिंग त्रुटि',
+
+    // Additional UI strings
+    toggleToolbar: 'टूलबार दिखाएं/छुपाएं',
+    showTracks: 'ट्रैक दिखाएं',
+    hideTracks: 'ट्रैक छुपाएं',
+    countInDelay: '3 सेकंड देरी',
+    volume: 'वॉल्यूम',
+    cifrado: 'कॉर्ड चार्ट',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: 'प्रिंट / PDF',
 } as const;

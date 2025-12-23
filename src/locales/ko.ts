@@ -153,4 +153,15 @@ export const ko = {
     // Errors
     error: '오류',
     loadingError: '로딩 오류',
+
+    // Additional UI strings
+    toggleToolbar: '도구 모음 표시/숨기기',
+    showTracks: '트랙 표시',
+    hideTracks: '트랙 숨기기',
+    countInDelay: '3초 지연',
+    volume: '볼륨',
+    cifrado: '코드 차트',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: '인쇄 / PDF',
 } as const;

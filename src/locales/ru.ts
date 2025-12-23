@@ -153,4 +153,15 @@ export const ru = {
     // Errors
     error: 'Ошибка',
     loadingError: 'Ошибка загрузки',
+
+    // Additional UI strings
+    toggleToolbar: 'Показать/Скрыть панель',
+    showTracks: 'Показать дорожки',
+    hideTracks: 'Скрыть дорожки',
+    countInDelay: 'Задержка 3с',
+    volume: 'Громкость',
+    cifrado: 'Аккорды',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: 'Печать / PDF',
 } as const;

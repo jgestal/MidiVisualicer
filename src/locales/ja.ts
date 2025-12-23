@@ -153,4 +153,15 @@ export const ja = {
     // Errors
     error: 'エラー',
     loadingError: '読み込みエラー',
+
+    // Additional UI strings
+    toggleToolbar: 'ツールバー表示/非表示',
+    showTracks: 'トラック表示',
+    hideTracks: 'トラック非表示',
+    countInDelay: '3秒遅延',
+    volume: '音量',
+    cifrado: 'コード譜',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: '印刷 / PDF',
 } as const;

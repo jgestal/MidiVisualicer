@@ -154,4 +154,15 @@ export const ar = {
     // Errors
     error: 'خطأ',
     loadingError: 'خطأ في التحميل',
+
+    // Additional UI strings
+    toggleToolbar: 'إظهار/إخفاء شريط الأدوات',
+    showTracks: 'إظهار المسارات',
+    hideTracks: 'إخفاء المسارات',
+    countInDelay: 'تأخير 3 ثوانٍ',
+    volume: 'الصوت',
+    cifrado: 'مخطط الأوتار',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: 'طباعة / PDF',
 } as const;

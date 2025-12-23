@@ -93,7 +93,7 @@ export function Header({
                     <button
                         className="header-btn header-back-btn"
                         onClick={handleBackClick}
-                        title="Back / Volver"
+                        title={t.back}
                     >
                         <ArrowLeft size={18} />
                     </button>
@@ -114,7 +114,7 @@ export function Header({
                         <button
                             className="header-btn header-info-btn"
                             onClick={onShowInfo}
-                            title="Información del MIDI"
+                            title={t.midiInfo}
                         >
                             <Info size={14} />
                         </button>
@@ -129,7 +129,7 @@ export function Header({
                     <button
                         className={`header-btn header-toggle-btn ${showToolbar ? 'active' : ''}`}
                         onClick={onToggleToolbar}
-                        title="Mostrar/Ocultar Barra de Herramientas"
+                        title={t.toggleToolbar}
                     >
                         <SlidersHorizontal size={16} />
                         {showToolbar ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -143,35 +143,35 @@ export function Header({
                         <button
                             className="header-btn header-export-btn"
                             onClick={() => setShowExportMenu(!showExportMenu)}
-                            title="Exportar"
+                            title={t.export}
                         >
                             <FileDown size={16} />
-                            <span>Exportar</span>
+                            <span>{t.export}</span>
                             <ChevronDown size={14} />
                         </button>
 
                         {showExportMenu && (
                             <div className="header-export-menu">
-                                <div className="export-menu-title">Exportar como...</div>
+                                <div className="export-menu-title">{t.exportAs}</div>
                                 <button onClick={() => { onExportTxt(); setShowExportMenu(false); }}>
-                                    <ListMusic size={14} /> Cifrado (Notas)
+                                    <ListMusic size={14} /> {t.cifrado}
                                 </button>
                                 <button onClick={() => { onExportTab(); setShowExportMenu(false); }}>
-                                    <Download size={14} /> Tablatura (.tab)
+                                    <Download size={14} /> {t.exportTablature}
                                 </button>
                                 {onExportWord && (
                                     <button onClick={() => { onExportWord(); setShowExportMenu(false); }}>
-                                        <FileText size={14} /> Word / Doc (.doc)
+                                        <FileText size={14} /> {t.word}
                                     </button>
                                 )}
                                 {onExportMusicXML && (
                                     <button onClick={() => { onExportMusicXML(); setShowExportMenu(false); }}>
-                                        <FileCode size={14} /> MusicXML (GP/MuseScore)
+                                        <FileCode size={14} /> {t.musicxml}
                                     </button>
                                 )}
                                 <div className="export-menu-divider" />
                                 <button onClick={() => { onExportPdf(); setShowExportMenu(false); }}>
-                                    <Printer size={14} /> Imprimir / PDF
+                                    <Printer size={14} /> {t.printPdf}
                                 </button>
                             </div>
                         )}

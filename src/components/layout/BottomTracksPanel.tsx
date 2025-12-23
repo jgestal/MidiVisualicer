@@ -99,7 +99,7 @@ export function BottomTracksPanel({
                   className={`bottom-track-item ${isSelected ? 'selected' : ''} ${isMuted ? 'muted' : ''} ${isActive ? 'playing' : ''}`}
                 >
                   {/* Instrument Emoji - top right */}
-                  <span className="bottom-track-emoji" title={track.instrument || 'Instrumento'}>
+                  <span className="bottom-track-emoji" title={track.instrument || t.instrument}>
                     {emoji}
                   </span>
 
@@ -137,7 +137,7 @@ export function BottomTracksPanel({
                       value={isMuted ? 0 : volume}
                       onChange={(e) => onVolumeChange(index, parseInt(e.target.value))}
                       className="bottom-track-volume"
-                      title={`Volumen: ${volume}%`}
+                      title={`${t.volume}: ${volume}%`}
                     />
                   </div>
                 </div>

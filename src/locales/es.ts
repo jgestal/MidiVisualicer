@@ -47,19 +47,19 @@ export const es = {
     autoFit: 'Auto-adaptar al instrumento',
     undoTranspose: 'Deshacer transposición',
     redoTranspose: 'Rehacer transposición',
-    resetTranspose: 'Reset',
+    resetTranspose: 'Restablecer',
     minus1: '-1 semitono',
     plus1: '+1 semitono',
     minus8va: '-1 octava',
     plus8va: '+1 octava',
 
     // Loop
-    loop: 'Loop',
+    loop: 'Bucle',
     loopA: 'Punto A',
     loopB: 'Punto B',
-    enableLoop: 'Activar loop',
-    disableLoop: 'Desactivar loop',
-    clearLoop: 'Borrar loop',
+    enableLoop: 'Activar bucle',
+    disableLoop: 'Desactivar bucle',
+    clearLoop: 'Borrar bucle',
 
     // Metronome
     metronome: 'Metrónomo',
@@ -136,7 +136,7 @@ export const es = {
     processing: 'Procesando partitura...',
 
     // Piano Roll hints
-    pianoRollHint: 'Arrastrar: Desplazar | Click: Ir a posición | Ctrl+Click: Loop A | Shift+Click: Loop B',
+    pianoRollHint: 'Arrastrar: Desplazar | Clic: Ir a posición | Ctrl+Clic: Bucle A | Shift+Clic: Bucle B',
 
     // Tablature
     pauseMarker: 'Pausa',
@@ -154,6 +154,17 @@ export const es = {
     // Errors
     error: 'Error',
     loadingError: 'Error al cargar',
+
+    // Additional UI strings
+    toggleToolbar: 'Mostrar/Ocultar Barra de Herramientas',
+    showTracks: 'Mostrar pistas',
+    hideTracks: 'Ocultar pistas',
+    countInDelay: 'Retardo 3s',
+    volume: 'Volumen',
+    cifrado: 'Cifrado (notas)',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: 'Imprimir / PDF',
 } as const;
 
 export type TranslationKeys = typeof es;

@@ -153,4 +153,15 @@ export const de = {
     // Errors
     error: 'Fehler',
     loadingError: 'Ladefehler',
+
+    // Additional UI strings
+    toggleToolbar: 'Werkzeugleiste ein/ausblenden',
+    showTracks: 'Spuren anzeigen',
+    hideTracks: 'Spuren ausblenden',
+    countInDelay: 'Verzögerung 3s',
+    volume: 'Lautstärke',
+    cifrado: 'Akkorde (Noten)',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: 'Drucken / PDF',
 } as const;

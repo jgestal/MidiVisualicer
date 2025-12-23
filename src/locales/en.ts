@@ -153,4 +153,15 @@ export const en = {
     // Errors
     error: 'Error',
     loadingError: 'Loading error',
+
+    // Additional UI strings
+    toggleToolbar: 'Show/Hide Toolbar',
+    showTracks: 'Show tracks',
+    hideTracks: 'Hide tracks',
+    countInDelay: 'Delay 3s',
+    volume: 'Volume',
+    cifrado: 'Chord chart (notes)',
+    word: 'Word / Doc (.doc)',
+    musicxml: 'MusicXML (GP/MuseScore)',
+    printPdf: 'Print / PDF',
 } as const;
