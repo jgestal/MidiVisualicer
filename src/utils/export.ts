@@ -198,13 +198,129 @@ function formatTimeCode(seconds: number): string {
 /**
  * Descarga contenido como archivo de texto
  */
+/**
+ * Genera archivo MusicXML (.musicxml) compatible con Guitar Pro, MuseScore, etc.
+ */
+export function generateMusicXML(midi: ParsedMidi, trackIndex: number): string {
+  const track = midi.tracks[trackIndex];
+  if (!track) return '';
+
+  const bpm = midi.bpm || 120;
+  const numerator = midi.timeSignature?.numerator || 4;
+  const denominator = midi.timeSignature?.denominator || 4;
+
+  // Header standard
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+<score-partwise version="3.1">
+  <work>
+    <work-title>${midi.name}</work-title>
+  </work>
+  <part-list>
+    <score-part id="P1">
+      <part-name>${track.name || 'Guitar'}</part-name>
+    </score-part>
+  </part-list>
+  <part id="P1">
+    <measure number="1">
+      <attributes>
+        <divisions>480</divisions>
+        <key>
+          <fifths>0</fifths>
+        </key>
+        <time>
+          <beats>${numerator}</beats>
+          <beat-type>${denominator}</beat-type>
+        </time>
+        <clef>
+          <sign>TAB</sign>
+          <line>5</line>
+        </clef>
+        <staff-details>
+          <staff-lines>6</staff-lines>
+        </staff-details>
+      </attributes>
+      <direction placement="above">
+        <direction-type>
+          <metronome>
+            <beat-unit>quarter</beat-unit>
+            <per-minute>${bpm}</per-minute>
+          </metronome>
+        </direction-type>
+      </direction>
+`;
+
+  // Calcular notas
+  // Nota: Para una exportación perfecta se necesitaría cuantización y detección de compases.
+  // Aquí haremos una aproximación lista secuencial de notas en un solo compás largo (muchos lectores lo aceptan y reputean)
+  // O mejor, intentamos dividir por beats simples.
+
+  track.notes.forEach((note) => {
+    // Determinar paso y octava
+    const noteName = midiToNote(note.midi); // e.g., "C#4"
+    const step = noteName.charAt(0);
+    const alter = noteName.includes('#') ? 1 : 0;
+    const octave = parseInt(noteName.slice(-1), 10);
+
+    // Duración en divisiones (480 ticks por negra)
+    // duration (sec) * (bpm / 60) * 480
+    const durationTicks = Math.round(note.duration * (bpm / 60) * 480);
+
+    // Tipo de nota aproximado
+    let type = 'quarter';
+    if (durationTicks >= 1920) type = 'whole';
+    else if (durationTicks >= 960) type = 'half';
+    else if (durationTicks >= 480) type = 'quarter';
+    else if (durationTicks >= 240) type = 'eighth';
+    else if (durationTicks >= 120) type = '16th';
+
+    xml += `      <note>
+        <pitch>
+          <step>${step}</step>
+          ${alter ? `<alter>${alter}</alter>` : ''}
+          <octave>${octave}</octave>
+        </pitch>
+        <duration>${durationTicks}</duration>
+        <type>${type}</type>
+      </note>
+`;
+  });
+
+  xml += `    </measure>
+  </part>
+</score-partwise>`;
+
+  return xml;
+}
+
+/**
+ * Genera JSON raw de la pista
+ */
+export function generateJson(midi: ParsedMidi, trackIndex: number): string {
+  const track = midi.tracks[trackIndex];
+  if (!track) return '{}';
+
+  return JSON.stringify({
+    metadata: {
+      name: midi.name,
+      bpm: midi.bpm,
+      timeSignature: midi.timeSignature,
+      duration: midi.duration
+    },
+    track: track
+  }, null, 2);
+}
+
+/**
+ * Descarga contenido como archivo
+ */
 export function downloadAsTextFile(content: string, filename: string): void {
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement('a');
   link.href = url;
-  link.download = filename.endsWith('.txt') ? filename : `${filename}.txt`;
+  link.download = filename;
 
   document.body.appendChild(link);
   link.click();
@@ -213,4 +329,4 @@ export function downloadAsTextFile(content: string, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-export default { generateCifrado, generateTablatureText, downloadAsTextFile };
+export default { generateCifrado, generateTablatureText, generateMusicXML, generateJson, downloadAsTextFile };

@@ -4,7 +4,13 @@
  */
 import { useCallback } from 'react';
 import type { ParsedMidi } from '../types/midi';
-import { generateCifrado, generateTablatureText, downloadAsTextFile } from '../utils/export';
+import {
+    generateCifrado,
+    generateTablatureText,
+    generateMusicXML,
+    generateJson,
+    downloadAsTextFile
+} from '../utils/export';
 
 interface UseExportOptions {
     parsedMidi: ParsedMidi | null;
@@ -31,6 +37,18 @@ export function useExport({ parsedMidi, selectedTrack, selectedInstrumentId }: U
         downloadAsTextFile(cifrado, `${parsedMidi.name || 'midi'}.txt`);
     }, [parsedMidi, selectedTrack]);
 
+    const exportMusicXML = useCallback(() => {
+        if (!parsedMidi) return;
+        const xml = generateMusicXML(parsedMidi, selectedTrack);
+        downloadAsTextFile(xml, `${parsedMidi.name || 'midi'}.musicxml`);
+    }, [parsedMidi, selectedTrack]);
+
+    const exportJson = useCallback(() => {
+        if (!parsedMidi) return;
+        const json = generateJson(parsedMidi, selectedTrack);
+        downloadAsTextFile(json, `${parsedMidi.name || 'midi'}.json`);
+    }, [parsedMidi, selectedTrack]);
+
     const exportPdf = useCallback(() => {
         if (!parsedMidi) return;
 
@@ -46,13 +64,46 @@ export function useExport({ parsedMidi, selectedTrack, selectedInstrumentId }: U
         <head>
           <title>${parsedMidi.name || 'Tablatura'}</title>
           <style>
-            body { font-family: 'Courier New', monospace; font-size: 12px; padding: 20px; }
+            body { font-family: 'Courier New', monospace; font-size: 11px; padding: 20px; color: #000; }
             pre { white-space: pre-wrap; word-wrap: break-word; }
+            .no-print { display: none; }
+            @media print {
+              .no-print { display: none; }
+              body { padding: 0; }
+            }
+            .controls {
+                margin-bottom: 20px;
+                padding: 10px;
+                background: #f0f0f0;
+                border-bottom: 1px solid #ccc;
+                display: flex;
+                gap: 10px;
+            }
+            button {
+                padding: 8px 16px;
+                cursor: pointer;
+                background: #333;
+                color: white;
+                border: none;
+                border-radius: 4px;
+            }
+            button:hover { background: #555; }
           </style>
         </head>
         <body>
+          <div class="controls no-print">
+            <button onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+            <button onclick="window.close()">Cerrar</button>
+          </div>
           <pre>${tablature}</pre>
-          <script>window.print(); window.close();</script>
+          <script>
+            // Try to print automatically after load
+            window.onload = function() {
+                setTimeout(() => {
+                    try { window.print(); } catch(e) { console.error(e); }
+                }, 500);
+            };
+          </script>
         </body>
         </html>
       `);
@@ -64,6 +115,8 @@ export function useExport({ parsedMidi, selectedTrack, selectedInstrumentId }: U
         exportTablature,
         exportTxt,
         exportPdf,
+        exportMusicXML,
+        exportJson,
         canExport: !!parsedMidi,
     };
 }

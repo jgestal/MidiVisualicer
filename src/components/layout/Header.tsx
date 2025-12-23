@@ -20,6 +20,8 @@ import {
     ListMusic,
     Printer,
     HelpCircle,
+    FileCode,
+    Braces,
 } from 'lucide-react';
 import { useTheme } from '../../shared/context/ThemeContext';
 import { useI18n, LANGUAGES, type Language } from '../../shared/context/I18nContext';
@@ -42,9 +44,12 @@ interface HeaderProps {
     onExportTxt: () => void;
     onExportTab: () => void;
     onExportPdf: () => void;
+    onExportMusicXML?: () => void;
+    onExportJson?: () => void;
 
     // Info
     onShowInfo: () => void;
+
 
     // About & Help
     onShowAbout: () => void;
@@ -62,6 +67,8 @@ export function Header({
     onExportTxt,
     onExportTab,
     onExportPdf,
+    onExportMusicXML,
+    onExportJson,
     onShowInfo,
     onShowAbout,
     onShowHelp,
@@ -153,6 +160,16 @@ export function Header({
                                 <button onClick={() => { onExportTab(); setShowExportMenu(false); }}>
                                     <Download size={14} /> Tablatura (.tab)
                                 </button>
+                                {onExportMusicXML && (
+                                    <button onClick={() => { onExportMusicXML(); setShowExportMenu(false); }}>
+                                        <FileCode size={14} /> MusicXML (GP/MuseScore)
+                                    </button>
+                                )}
+                                {onExportJson && (
+                                    <button onClick={() => { onExportJson(); setShowExportMenu(false); }}>
+                                        <Braces size={14} /> JSON Raw Data
+                                    </button>
+                                )}
                                 <div className="export-menu-divider" />
                                 <button onClick={() => { onExportPdf(); setShowExportMenu(false); }}>
                                     <Printer size={14} /> Imprimir / PDF
