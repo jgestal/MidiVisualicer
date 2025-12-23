@@ -7,6 +7,7 @@ import TransposeControls from '../TransposeControls';
 import LoopControls from '../LoopControls';
 import { useI18n } from '../../shared/context/I18nContext';
 import type { MidiNote } from '../../types/midi';
+import './Toolbar.css';
 
 interface ToolbarProps {
     // Transpose
@@ -116,72 +117,6 @@ export function Toolbar({
                 </>
             )}
 
-            <style>{`
-                .toolbar-instrument-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    background: var(--color-bg-tertiary);
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-md);
-                    color: var(--color-text-primary);
-                    font-size: 12px;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: all var(--transition-fast);
-                }
-
-                .toolbar-instrument-btn:hover {
-                    background: var(--color-bg-hover);
-                    border-color: var(--color-accent-primary);
-                }
-
-                .metronome-section {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-
-                .metronome-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    background: var(--color-bg-tertiary);
-                    border: 1px solid var(--color-border);
-                    border-radius: var(--radius-md);
-                    color: var(--color-text-secondary);
-                    font-size: 12px;
-                    cursor: pointer;
-                    transition: all var(--transition-fast);
-                    position: relative;
-                }
-
-                .metronome-btn:hover {
-                    background: var(--color-bg-hover);
-                    color: var(--color-text-primary);
-                }
-
-                .metronome-btn.active {
-                    background: var(--color-accent-primary);
-                    color: white;
-                    border-color: var(--color-accent-primary);
-                }
-                
-                .metronome-active-dot {
-                    width: 6px;
-                    height: 6px;
-                    background: #22c55e;
-                    border-radius: 50%;
-                    animation: metronomePulse 0.5s ease-in-out infinite;
-                }
-                
-                @keyframes metronomePulse {
-                    0%, 100% { opacity: 1; transform: scale(1); }
-                    50% { opacity: 0.5; transform: scale(1.2); }
-                }
-            `}</style>
         </div>
     );
 }

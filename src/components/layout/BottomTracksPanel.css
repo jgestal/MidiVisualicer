@@ -1,0 +1,229 @@
+/**
+ * BottomTracksPanel Component Styles
+ * Extracted from inline styles for better maintainability
+ */
+
+.bottom-tracks-panel {
+    background: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.bottom-tracks-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 16px;
+    background: var(--color-bg-tertiary);
+    border: none;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.bottom-tracks-toggle:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+}
+
+.bottom-tracks-content {
+    padding: 8px 12px;
+    max-height: 140px;
+    overflow: hidden;
+}
+
+.bottom-tracks-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.bottom-tracks-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+
+.bottom-tracks-scroll::-webkit-scrollbar-track {
+    background: var(--color-bg-tertiary);
+    border-radius: 3px;
+}
+
+.bottom-tracks-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-text-muted);
+    border-radius: 3px;
+}
+
+.bottom-track-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    max-width: 160px;
+    padding: 10px;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+    position: relative;
+}
+
+.bottom-track-emoji {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0.8;
+}
+
+.bottom-track-item.selected .bottom-track-emoji {
+    opacity: 1;
+}
+
+.bottom-track-item:hover {
+    background: var(--color-bg-hover);
+}
+
+.bottom-track-item.selected {
+    background: var(--color-accent-primary);
+}
+
+.bottom-track-item.muted {
+    opacity: 0.6;
+}
+
+.bottom-track-select {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    margin-bottom: 8px;
+}
+
+.bottom-track-index {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+}
+
+.bottom-track-item.selected .bottom-track-index {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.bottom-track-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+    padding-right: 22px;
+    /* Space for emoji */
+    max-width: calc(100% - 28px);
+    /* Account for index + gap */
+}
+
+.bottom-track-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    display: block;
+}
+
+.bottom-track-item.selected .bottom-track-name {
+    color: white;
+}
+
+.bottom-track-notes {
+    font-size: 9px;
+    color: var(--color-text-muted);
+}
+
+.bottom-track-item.selected .bottom-track-notes {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.bottom-track-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bottom-track-mute {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.bottom-track-mute:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+}
+
+.bottom-track-item.muted .bottom-track-mute {
+    color: var(--color-error);
+}
+
+.bottom-track-item.selected .bottom-track-mute {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.bottom-track-volume {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+}
+
+.bottom-track-volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.bottom-track-item.selected .bottom-track-volume {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.bottom-track-item.selected .bottom-track-volume::-webkit-slider-thumb {
+    background: white;
+}
+
+.bottom-tracks-panel.collapsed .bottom-tracks-content {
+    display: none;
+}
