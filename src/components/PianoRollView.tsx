@@ -75,7 +75,7 @@ export function PianoRollView({
       ctx.fillRect(0, y, width, NOTE_HEIGHT);
 
       if (midi % 12 === 0) {
-        ctx.fillStyle = '#4a4a5a';
+        ctx.fillStyle = '#b0b0c0';
         ctx.font = '9px Inter, sans-serif';
         ctx.fillText(`C${Math.floor(midi / 12) - 1}`, 2, y + NOTE_HEIGHT - 1);
       }
