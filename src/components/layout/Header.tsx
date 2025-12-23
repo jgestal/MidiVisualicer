@@ -12,8 +12,8 @@ import {
     Sun,
     Moon,
     Download,
-    Wand2,
-    Repeat,
+    SlidersHorizontal,
+    ChevronUp,
     ChevronDown,
     Info,
     FileDown,
@@ -131,8 +131,8 @@ export function Header({
                         onClick={onToggleToolbar}
                         title="Mostrar/Ocultar Barra de Herramientas"
                     >
-                        <Wand2 size={16} />
-                        <Repeat size={14} />
+                        <SlidersHorizontal size={16} />
+                        {showToolbar ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                     </button>
 
                     {/* Divider */}
