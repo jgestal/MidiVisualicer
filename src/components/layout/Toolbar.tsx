@@ -2,7 +2,7 @@
  * Toolbar Component - Barra de herramientas con Transpose, Loop, Instrumento y Metrónomo
  * Aparece debajo del header cuando está activada
  */
-import { Timer, ChevronDown, Guitar } from 'lucide-react';
+import { Timer, ChevronDown, Guitar, Hourglass } from 'lucide-react';
 import TransposeControls from '../TransposeControls';
 import LoopControls from '../LoopControls';
 import { useI18n } from '../../shared/context/I18nContext';
@@ -32,6 +32,10 @@ interface ToolbarProps {
     selectedInstrumentName: string;
     onOpenInstrumentMenu: () => void;
 
+    // Delay / Count In
+    isCountInEnabled?: boolean;
+    onToggleCountIn?: () => void;
+
     // Metronome
     isMetronomeEnabled?: boolean;
     onToggleMetronome?: () => void;
@@ -55,6 +59,8 @@ export function Toolbar({
     onOpenInstrumentMenu,
     isMetronomeEnabled = false,
     onToggleMetronome,
+    isCountInEnabled = false,
+    onToggleCountIn,
 }: ToolbarProps) {
     const { t } = useI18n();
     const instrument = getAllInstruments()[instrumentId];
@@ -113,6 +119,23 @@ export function Toolbar({
                     <ChevronDown size={14} />
                 </button>
             </div>
+
+            {onToggleCountIn && (
+                <>
+                    <div className="toolbar-divider" />
+                    <div className="toolbar-section">
+                        <button
+                            className={`metronome-btn ${isCountInEnabled ? 'active' : ''}`}
+                            onClick={onToggleCountIn}
+                            title="Delay 3s"
+                        >
+                            <Hourglass size={16} />
+                            <span>Delay</span>
+                            {isCountInEnabled && <span className="metronome-active-dot" />}
+                        </button>
+                    </div>
+                </>
+            )}
 
             {onToggleMetronome && (
                 <>

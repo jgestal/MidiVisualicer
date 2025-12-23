@@ -20,6 +20,8 @@ interface PianoRollScrollResult {
     handlePointerDown: (e: React.PointerEvent<HTMLCanvasElement>) => void;
     handlePointerMove: (e: React.PointerEvent<HTMLCanvasElement>) => void;
     handlePointerUp: (e: React.PointerEvent<HTMLCanvasElement>) => void;
+    handlePointerLeave: () => void;
+    hoverInfoRef: React.MutableRefObject<{ time: number; isCtrl: boolean; active: boolean }>;
 }
 
 export function usePianoRollScroll({
@@ -115,13 +117,29 @@ export function usePianoRollScroll({
         []
     );
 
-    // Pointer move - drag to scroll
+    // Hover state for custom drawing (Cursor feedback)
+    const hoverInfoRef = useRef({ time: 0, isCtrl: false, active: false });
+
+    // Pointer move - drag to scroll OR track hover
     const handlePointerMove = useCallback(
         (e: React.PointerEvent<HTMLCanvasElement>) => {
-            if (!isDraggingRef.current) return;
-
             const container = containerRef.current;
-            if (!container) return;
+            const canvas = canvasRef.current || e.currentTarget;
+            if (!container || !canvas) return;
+
+            // Track hover state for visual feedback (Ctrl+Hover loop marker)
+            const rect = canvas.getBoundingClientRect();
+            const scrollLeft = container.scrollLeft;
+            const x = e.clientX - rect.left + scrollLeft;
+            const time = Math.max(0, Math.min(duration, (x - leftMargin) / pixelsPerSecond));
+
+            hoverInfoRef.current = {
+                time,
+                isCtrl: e.ctrlKey || e.altKey,
+                active: true
+            };
+
+            if (!isDraggingRef.current) return;
 
             const deltaX = dragStartXRef.current - e.clientX;
 
@@ -134,8 +152,13 @@ export function usePianoRollScroll({
                 container.scrollLeft = scrollStartRef.current + deltaX;
             }
         },
-        []
+        [duration, leftMargin, pixelsPerSecond]
     );
+
+    const handlePointerLeave = useCallback(() => {
+        hoverInfoRef.current.active = false;
+        isDraggingRef.current = false;
+    }, []);
 
     // Pointer up - end drag or perform seek/loop action
     const handlePointerUp = useCallback(
@@ -143,7 +166,7 @@ export function usePianoRollScroll({
             const canvas = canvasRef.current || e.currentTarget;
             if (!canvas) return;
 
-            // Release pointer capture
+            // ... (existing pointer release code) ...
             try {
                 canvas.releasePointerCapture(e.pointerId);
             } catch {
@@ -151,6 +174,9 @@ export function usePianoRollScroll({
             }
             canvas.style.cursor = 'grab';
             isDraggingRef.current = false;
+
+            // Reset hover ctrl state on click to prevent stuck visual
+            // hoverInfoRef.current.isCtrl = false; // Optional, move handles it
 
             // If we didn't drag, it's a click - perform action
             if (!hasDraggedRef.current) {
@@ -179,5 +205,7 @@ export function usePianoRollScroll({
         handlePointerDown,
         handlePointerMove,
         handlePointerUp,
+        handlePointerLeave,
+        hoverInfoRef,
     };
 }

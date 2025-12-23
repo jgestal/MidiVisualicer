@@ -4,7 +4,7 @@
  */
 
 .tab-container-multiline {
-    background: #181818; /* Neutral dark gray background */
+    background: var(--color-bg-tertiary);
     overflow: hidden;
     height: 100%;
     display: flex;
@@ -12,7 +12,7 @@
     /* Prevent text selection */
     user-select: none;
     -webkit-user-select: none;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
 }
 
 .tab-scroll-vertical {
@@ -26,10 +26,10 @@
     margin-bottom: 16px;
     padding: 8px;
     border-radius: var(--radius-md);
-    background: #ffffff; /* White card background */
+    background: var(--color-bg-secondary);
     transition: all 0.3s ease-out;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
 }
 
 .tab-line.past {
@@ -39,8 +39,8 @@
 }
 
 .tab-line.current {
-    background: #f8fafc; /* Slightly off-white for current */
-    box-shadow: 0 0 0 2px var(--color-accent-primary), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: var(--color-bg-elevated);
+    box-shadow: 0 0 0 2px var(--color-accent-primary), var(--shadow-md);
     transform: scale(1);
     z-index: 10;
 }
@@ -60,8 +60,8 @@
 .tab-line-time {
     font-size: 10px;
     font-family: var(--font-mono);
-    color: #64748b;
-    background: #f1f5f9;
+    color: var(--color-text-muted);
+    background: var(--color-bg-tertiary);
     padding: 2px 6px;
     border-radius: var(--radius-sm);
     font-weight: 500;
@@ -77,7 +77,7 @@
     background: transparent;
     border: none;
     border-radius: var(--radius-sm);
-    color: #94a3b8;
+    color: var(--color-text-muted);
     font-size: 12px;
     cursor: pointer;
     opacity: 0;
@@ -90,8 +90,8 @@
 
 .tab-copy-btn:hover {
     opacity: 1 !important;
-    background: #f1f5f9;
-    color: #0f172a;
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
 }
 
 .tab-grid-line {
@@ -132,8 +132,8 @@
     height: 22px;
     font-family: 'Fira Code', 'Consolas', monospace;
     font-size: 12px;
-    color: #94a3b8; /* Light gray for empty strings */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Light border */
+    color: var(--color-text-muted);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .tab-string-row:last-child {
@@ -160,12 +160,12 @@
 }
 
 .tab-cell.has-note {
-    color: #0f172a; /* Dark text for notes */
+    color: var(--color-text-primary);
     font-weight: 700;
 }
 
 .tab-cell.active {
-    background: linear-gradient(180deg, rgba(99, 102, 241, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%);
+    background: var(--color-accent-gradient);
     color: #ffffff;
     font-weight: 800;
     box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4);
@@ -174,12 +174,12 @@
 }
 
 .tab-cell.tab-pause {
-    color: #cbd5e1;
+    color: var(--color-text-muted);
     opacity: 0.8;
 }
 
 .tab-empty {
-    color: #cbd5e1;
+    color: var(--color-text-muted);
     opacity: 0.3;
 }
 

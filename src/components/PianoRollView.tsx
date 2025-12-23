@@ -66,6 +66,8 @@ export function PianoRollView({
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
+    handlePointerLeave,
+    hoverInfoRef,
   } = usePianoRollScroll({
     currentTime,
     isPlaying,
@@ -185,6 +187,20 @@ export function PianoRollView({
         ctx.shadowBlur = 0;
       });
 
+      // Draw hover feedback (Loop/Seek marker)
+      const hoverInfo = hoverInfoRef.current;
+      if (hoverInfo.active && hoverInfo.isCtrl) {
+        const hoverX = hoverInfo.time * PIXELS_PER_SECOND + LEFT_MARGIN;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(hoverX, 0);
+        ctx.lineTo(hoverX, currentHeight);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
       // Draw playhead
       const playheadX = playTime * PIXELS_PER_SECOND + LEFT_MARGIN;
       ctx.strokeStyle = PLAYHEAD_COLOR;
@@ -226,7 +242,7 @@ export function PianoRollView({
           {onToggle && <ChevronUp size={14} />}
         </span>
         <span className="piano-roll-hint">
-          Arrastrar: Desplazar | Click: Ir a posición | Ctrl+Click: Loop A | Shift+Click: Loop B
+          Arrastrar: Desplazar | Click: Ir a posición | Ctrl+Click: Loop A | Shift+Click: Loop B | Alt+Click: Loop A
         </span>
       </button>
 
@@ -244,6 +260,7 @@ export function PianoRollView({
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
+          onPointerLeave={handlePointerLeave}
           style={{ cursor: 'grab', touchAction: 'none' }}
         />
       </div>

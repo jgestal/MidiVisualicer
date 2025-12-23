@@ -2,7 +2,7 @@
  * Controles de Transposición - VERSIÓN COMPACTA CON HISTORIAL
  */
 import { useMemo, useState, useCallback } from 'react';
-import { ArrowUp, ArrowDown, RotateCcw, Wand2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUp, ArrowDown, RotateCcw, Wand2, ChevronLeft, ChevronRight, Music } from 'lucide-react';
 import { getAllInstruments } from '../config/instruments';
 import { useI18n } from '../shared/context/I18nContext';
 import type { MidiNote } from '../types/midi';
@@ -144,15 +144,18 @@ export function TransposeControls({
         </button>
       </div>
 
-      <div className="transpose-bar">
-        <div
-          className="transpose-fill"
-          style={{ width: `${inRangePercent}%`, background: rangeColor }}
-        />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <Music size={12} style={{ color: rangeColor, opacity: 0.8 }} />
+        <div className="transpose-bar">
+          <div
+            className="transpose-fill"
+            style={{ width: `${inRangePercent}%`, background: rangeColor }}
+          />
+        </div>
+        <span className="transpose-percent" style={{ color: rangeColor }}>
+          {inRangePercent}%
+        </span>
       </div>
-      <span className="transpose-percent" style={{ color: rangeColor }}>
-        {inRangePercent}%
-      </span>
     </div>
   );
 }
@@ -202,7 +205,7 @@ const styles = `
   min-width: 30px;
   text-align: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .transpose-actions {
@@ -253,9 +256,10 @@ const styles = `
 }
 
 .transpose-percent {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  min-width: 28px;
+  min-width: 30px;
+  text-align: right;
 }
 
 .transpose-history {

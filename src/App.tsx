@@ -64,6 +64,7 @@ function App() {
     clearLoop,
     setTrackVolume,
     setTrackMuted,
+    toggleCountIn,
   } = usePlayback();
   const { state: tracksState, toggleMute, resetTracks } = useTracks();
   const { state: instrumentState, selectInstrument, setTranspose } = useInstrument();
@@ -248,6 +249,8 @@ function App() {
           onOpenInstrumentMenu={ui.openInstrumentModal}
           isMetronomeEnabled={isMetronomeEnabled}
           onToggleMetronome={toggleMetronome}
+          isCountInEnabled={playbackState.isCountInEnabled}
+          onToggleCountIn={toggleCountIn}
         />
       )}
 
