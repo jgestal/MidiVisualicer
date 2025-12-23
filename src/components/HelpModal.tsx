@@ -3,6 +3,7 @@
  */
 import { X } from 'lucide-react';
 import { useI18n, type Language } from '@/shared/context/I18nContext';
+import './HelpModal.css';
 
 interface HelpModalProps {
     onClose: () => void;
@@ -413,97 +414,6 @@ export function HelpModal({ onClose }: HelpModalProps) {
                 </div>
             </div>
 
-            <style>{`
-        .help-modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.6);
-          backdrop-filter: blur(4px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: var(--z-modal);
-          animation: fadeIn var(--transition-fast) forwards;
-        }
-
-        .help-modal {
-          width: 90%;
-          max-width: 600px;
-          max-height: 80vh;
-          background: var(--color-bg-secondary);
-          border-radius: var(--radius-lg);
-          border: 1px solid var(--color-border);
-          box-shadow: var(--shadow-xl);
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-        }
-
-        .help-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 16px 20px;
-          border-bottom: 1px solid var(--color-border);
-          flex-shrink: 0;
-        }
-
-        .help-header h2 {
-          font-size: 16px;
-          font-weight: 600;
-          margin: 0;
-          color: var(--color-text-primary);
-        }
-
-        .help-close-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 32px;
-          height: 32px;
-          background: transparent;
-          border: none;
-          border-radius: var(--radius-sm);
-          color: var(--color-text-muted);
-          cursor: pointer;
-          transition: all var(--transition-fast);
-        }
-
-        .help-close-btn:hover {
-          background: var(--color-bg-hover);
-          color: var(--color-text-primary);
-        }
-
-        .help-content {
-          flex: 1;
-          overflow-y: auto;
-          padding: 20px;
-        }
-
-        .help-section {
-          margin-bottom: 20px;
-        }
-
-        .help-section:last-child {
-          margin-bottom: 0;
-        }
-
-        .help-section h3 {
-          font-size: 14px;
-          font-weight: 600;
-          color: var(--color-text-primary);
-          margin: 0 0 8px 0;
-        }
-
-        .help-section p {
-          font-size: 13px;
-          line-height: 1.6;
-          color: var(--color-text-secondary);
-          margin: 0;
-          padding-left: 16px;
-          border-left: 2px solid var(--color-accent-primary);
-        }
-      `}</style>
         </div>
     );
 }
