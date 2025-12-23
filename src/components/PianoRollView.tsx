@@ -16,6 +16,7 @@ interface PianoRollViewProps {
   duration: number;
   loopStart: number | null;
   loopEnd: number | null;
+  transpose?: number;
   onSetLoopStart: (time: number) => void;
   onSetLoopEnd: (time: number) => void;
   onSeek?: (time: number) => void;
@@ -29,6 +30,7 @@ export function PianoRollView({
   duration,
   loopStart,
   loopEnd,
+  transpose = 0,
   onSetLoopStart,
   onSetLoopEnd,
   onSeek,
@@ -43,6 +45,7 @@ export function PianoRollView({
     duration,
     loopStart,
     loopEnd,
+    transpose,
   });
 
   // Scroll and interaction logic
@@ -65,7 +68,7 @@ export function PianoRollView({
   // Draw when data changes
   useEffect(() => {
     draw(canvasRef.current);
-  }, [draw]);
+  }, [draw, notes, currentTime]);
 
   return (
     <div className="piano-roll-container">

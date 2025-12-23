@@ -219,6 +219,7 @@ function App() {
                 isPlaying={playbackState.isPlaying}
                 loopStart={playbackState.loopStart}
                 loopEnd={playbackState.loopEnd}
+                transpose={transpose}
                 onSetLoopStart={setLoopStart}
                 onSetLoopEnd={setLoopEnd}
                 onSeek={seekTo}

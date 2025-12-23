@@ -17,6 +17,7 @@ interface UsePianoRollCanvasOptions {
     duration: number;
     loopStart: number | null;
     loopEnd: number | null;
+    transpose?: number;
 }
 
 interface PianoRollCanvasResult {
@@ -36,16 +37,17 @@ export function usePianoRollCanvas({
     duration,
     loopStart,
     loopEnd,
+    transpose = 0,
 }: UsePianoRollCanvasOptions): PianoRollCanvasResult {
-    // Calculate note range
+    // Calculate note range (with transpose applied)
     const noteRange = useMemo(() => {
         if (notes.length === 0) return { min: 48, max: 84 };
-        const midiNotes = notes.map((n) => n.midi);
+        const transposedMidiNotes = notes.map((n) => n.midi + transpose);
         return {
-            min: Math.min(...midiNotes) - 2,
-            max: Math.max(...midiNotes) + 2,
+            min: Math.min(...transposedMidiNotes) - 2,
+            max: Math.max(...transposedMidiNotes) + 2,
         };
-    }, [notes]);
+    }, [notes, transpose]);
 
     // Calculate dimensions
     const height = (noteRange.max - noteRange.min + 1) * NOTE_HEIGHT + 30;
@@ -133,8 +135,9 @@ export function usePianoRollCanvas({
 
             // Draw notes
             notes.forEach((note) => {
+                const transposedMidi = note.midi + transpose;
                 const x = note.time * PIXELS_PER_SECOND + LEFT_MARGIN;
-                const y = (noteRange.max - note.midi) * NOTE_HEIGHT + 15;
+                const y = (noteRange.max - transposedMidi) * NOTE_HEIGHT + 15;
                 const noteWidth = Math.max(3, note.duration * PIXELS_PER_SECOND);
 
                 const isActive =
@@ -176,7 +179,7 @@ export function usePianoRollCanvas({
             ctx.closePath();
             ctx.fill();
         },
-        [notes, currentTime, duration, noteRange, loopStart, loopEnd, width, height]
+        [notes, currentTime, duration, noteRange, loopStart, loopEnd, width, height, transpose]
     );
 
     return {
