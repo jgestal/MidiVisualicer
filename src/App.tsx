@@ -220,6 +220,7 @@ function App() {
                 loopStart={playbackState.loopStart}
                 loopEnd={playbackState.loopEnd}
                 transpose={transpose}
+                trackId={selectedTrack}
                 onSetLoopStart={setLoopStart}
                 onSetLoopEnd={setLoopEnd}
                 onSeek={seekTo}
