@@ -128,14 +128,7 @@ function App() {
           if (playbackState.isPlaying) {
             pause();
           } else {
-            // Needed to pass args if play requires them, though pause/resume might be simpler if play supports no-args resume
-            // Looking at context, play requires midi. If paused, we want to resume.
-            // If we have midi, we can call play. existing play function restarts transport if not paused?
-            // Actually play() in context takes (midi, muted, volumes).
-            // A simple togglePlay would be better in context, but let's use what we have.
             if (parsedMidi) {
-              // If paused, Tone.Transport.start() is handled inside play? 
-              // Context implementation says: if paused, continues. 
               play(parsedMidi, mutedTracks, trackVolumes);
             }
           }
@@ -147,22 +140,55 @@ function App() {
           if (selectedTrack >= 0) {
             const wasMuted = mutedTracks.has(selectedTrack);
             setTrackMuted(selectedTrack, !wasMuted);
-            toggleMute(selectedTrack); // Update local track context too
+            toggleMute(selectedTrack);
           }
           break;
         case 'ArrowLeft':
-          seekTo(Math.max(0, playbackState.currentTime - 5));
+          // Seek backward 5 seconds (or 1 with Shift)
+          seekTo(Math.max(0, playbackState.currentTime - (e.shiftKey ? 1 : 5)));
           break;
         case 'ArrowRight':
-          // No hard max implemented in seekTo, but safely guarded usually
-          seekTo(playbackState.currentTime + 5);
+          // Seek forward 5 seconds (or 1 with Shift)
+          seekTo(playbackState.currentTime + (e.shiftKey ? 1 : 5));
+          break;
+        case 'ArrowUp':
+          // Transpose up (semitone, or octave with Shift)
+          e.preventDefault();
+          setTranspose(transpose + (e.shiftKey ? 12 : 1));
+          break;
+        case 'ArrowDown':
+          // Transpose down (semitone, or octave with Shift)
+          e.preventDefault();
+          setTranspose(transpose - (e.shiftKey ? 12 : 1));
+          break;
+        case 'Home':
+          // Go to beginning
+          seekTo(0);
+          break;
+        case 'End':
+          // Go to end
+          if (parsedMidi) {
+            seekTo(parsedMidi.duration);
+          }
+          break;
+        case 'Digit1':
+          setSpeed(0.25);
+          break;
+        case 'Digit2':
+          setSpeed(0.5);
+          break;
+        case 'Digit3':
+          setSpeed(0.75);
+          break;
+        case 'Digit4':
+          setSpeed(1.0);
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [playbackState.isPlaying, playbackState.currentTime, parsedMidi, mutedTracks, trackVolumes, selectedTrack, play, pause, seekTo, setTrackMuted, toggleMute]);
+  }, [playbackState.isPlaying, playbackState.currentTime, parsedMidi, mutedTracks, trackVolumes, selectedTrack, play, pause, seekTo, setTrackMuted, toggleMute, transpose, setTranspose, setSpeed]);
 
   // Auto-transposición (via custom hook)
   const selectedInstrument = useMemo(() => getAllInstruments()[selectedInstrumentId], [selectedInstrumentId]);
