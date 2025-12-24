@@ -5,6 +5,7 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { ChevronUp } from 'lucide-react';
 import { usePianoRollScroll } from '../hooks/usePianoRollScroll';
+import { midiToOctave } from '../utils/midiUtils';
 import type { MidiNote } from '../types/midi';
 import './PianoRollView.css';
 
@@ -123,7 +124,7 @@ export function PianoRollView({
         if (midi % 12 === 0) {
           ctx.fillStyle = '#b0b0c0';
           ctx.font = '9px Inter, sans-serif';
-          ctx.fillText(`C${Math.floor(midi / 12) - 1}`, 2, y + NOTE_HEIGHT - 1);
+          ctx.fillText(`C${midiToOctave(midi)}`, 2, y + NOTE_HEIGHT - 1);
         }
       }
 
