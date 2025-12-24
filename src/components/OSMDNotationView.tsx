@@ -127,9 +127,9 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
       drawingParameters: 'compacttight', // More compact for performance
       followCursor: false, // We handle scrolling ourselves
       cursorsOptions: [{
-        type: CursorType.Standard,
+        type: CursorType.ThinLeft, // Vertical line cursor instead of rectangle
         color: '#ef4444', // Red for visibility
-        alpha: 0.6,
+        alpha: 0.9,
         follow: false,
       }],
     });
