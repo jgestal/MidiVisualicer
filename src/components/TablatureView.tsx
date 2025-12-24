@@ -8,6 +8,7 @@
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import { getAllInstruments, getOptimalPosition, midiToNoteName } from '../config/instruments';
 import { useI18n } from '../shared/context/I18nContext';
+import { CELL_WIDTH, MARGIN_LEFT, CHORD_TIME_TOLERANCE } from '../shared/constants/tablature';
 import type { MidiNote } from '../types/midi';
 import './TablatureView.css';
 
@@ -30,10 +31,8 @@ interface TabNote {
   slotIndex: number;
 }
 
-const CHORD_THRESHOLD = 0.05; // 50ms window to group simultaneous notes
 const PAUSE_THRESHOLD_SECONDS = 0.5; // Gap to show pause
-const CELL_WIDTH = 28;
-const MARGIN_LEFT = 30; // space for string labels
+const SCROLL_THROTTLE_MS = 100;
 
 export function TablatureView({
   notes,
@@ -99,7 +98,7 @@ export function TablatureView({
 
     rawNotes.forEach(({ note, position, transposedMidi }) => {
       // If note is far enough from current slot, start new slot
-      if (Math.abs(note.time - currentSlotTime) > CHORD_THRESHOLD) {
+      if (Math.abs(note.time - currentSlotTime) > CHORD_TIME_TOLERANCE) {
         currentSlotIndex++;
         currentSlotTime = note.time;
         slots.set(currentSlotIndex, []);
@@ -289,9 +288,9 @@ export function TablatureView({
   useEffect(() => {
     if (!isPlaying || !scrollContainerRef.current) return;
 
-    // Throttle scroll updates to max once per 100ms
+    // Throttle scroll updates
     const now = Date.now();
-    if (now - lastScrollRef.current < 100) return;
+    if (now - lastScrollRef.current < SCROLL_THROTTLE_MS) return;
     lastScrollRef.current = now;
 
     const container = scrollContainerRef.current;
