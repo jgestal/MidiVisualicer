@@ -12,6 +12,8 @@ interface TransposeControlsProps {
   notes: MidiNote[];
   transpose: number;
   onTransposeChange: (semitones: number) => void;
+  isAutoEnabled?: boolean;
+  onToggleAuto?: () => void;
 }
 
 export function TransposeControls({
@@ -19,6 +21,8 @@ export function TransposeControls({
   notes,
   transpose,
   onTransposeChange,
+  isAutoEnabled = true,
+  onToggleAuto,
 }: TransposeControlsProps) {
   const instrument = getAllInstruments()[instrumentId];
   const { t } = useI18n();
@@ -59,9 +63,9 @@ export function TransposeControls({
     }
   }, [canRedo, historyIndex, history, onTransposeChange]);
 
-  const { inRangePercent, suggestedTranspose } = useMemo(() => {
+  const { inRangePercent } = useMemo(() => {
     if (!instrument || notes.length === 0) {
-      return { inRangePercent: 100, suggestedTranspose: 0 };
+      return { inRangePercent: 100 };
     }
 
     const instMin = Math.min(...instrument.midiNotes);
@@ -78,13 +82,8 @@ export function TransposeControls({
       if (midi >= instMin && midi <= instMax) inRange++;
     });
 
-    const noteCenter = (minNote + maxNote) / 2;
-    const instCenter = (instMin + instMax) / 2;
-    const suggested = Math.round((instCenter - noteCenter) / 12) * 12 + transpose;
-
     return {
       inRangePercent: Math.round((inRange / notes.length) * 100),
-      suggestedTranspose: suggested,
     };
   }, [instrument, notes, transpose]);
 
@@ -133,10 +132,11 @@ export function TransposeControls({
 
       <div className="transpose-actions">
         <button
-          className="btn-auto"
-          onClick={() => handleTransposeChange(suggestedTranspose)}
-          title={t.autoFit}
+          className={`btn-auto ${isAutoEnabled ? 'active' : ''}`}
+          onClick={onToggleAuto}
+          title={isAutoEnabled ? 'Desactivar auto-transposición' : 'Activar auto-transposición'}
         >
+          {isAutoEnabled && <Wand2 size={10} style={{ marginRight: 4 }} />}
           Auto
         </button>
         <button onClick={() => handleTransposeChange(0)} disabled={transpose === 0} title={t.resetTranspose}>
@@ -198,7 +198,7 @@ const styles = `
 
 .transpose-controls button:hover {
   background: var(--color-bg-hover);
-  color: var(--color-text-primary);
+  color: var(--color-text-on-hover);
 }
 
 .transpose-value {
@@ -228,6 +228,7 @@ const styles = `
 
 .transpose-actions button:hover:not(:disabled) {
   background: var(--color-bg-hover);
+  color: var(--color-text-on-hover);
 }
 
 .transpose-actions button:disabled {
@@ -236,8 +237,15 @@ const styles = `
 }
 
 .btn-auto {
+  background: var(--color-bg-tertiary) !important;
+  color: var(--color-text-secondary) !important;
+  border-color: var(--color-border) !important;
+  transition: all 0.2s ease;
+}
+
+.btn-auto.active {
   background: var(--color-accent-primary) !important;
-  color: white !important;
+  color: var(--color-text-on-accent) !important;
   border-color: transparent !important;
 }
 
@@ -282,7 +290,7 @@ const styles = `
 
 .transpose-history button:hover:not(:disabled) {
   background: var(--color-bg-hover);
-  color: var(--color-text-primary);
+  color: var(--color-text-on-hover);
 }
 
 .transpose-history button:disabled {

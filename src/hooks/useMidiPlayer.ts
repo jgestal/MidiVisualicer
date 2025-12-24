@@ -12,6 +12,9 @@ export function useMidiPlayer() {
     currentTime: 0,
     duration: 0,
     speed: 1.0,
+    isLoopEnabled: false,
+    isCountInEnabled: false,
+    activeNotes: [],
   });
 
   const [currentNoteIndex, setCurrentNoteIndex] = useState(-1);

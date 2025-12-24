@@ -38,9 +38,12 @@ interface ToolbarProps {
     isCountInEnabled?: boolean;
     onToggleCountIn?: () => void;
 
-    // Metronome
     isMetronomeEnabled?: boolean;
     onToggleMetronome?: () => void;
+
+    // Auto Transpose
+    isAutoTransposeEnabled?: boolean;
+    onToggleAutoTranspose?: () => void;
 }
 
 export function Toolbar({
@@ -63,6 +66,8 @@ export function Toolbar({
     onToggleMetronome,
     isCountInEnabled = false,
     onToggleCountIn,
+    isAutoTransposeEnabled = true,
+    onToggleAutoTranspose,
 }: ToolbarProps) {
     const { t } = useI18n();
     const [showShortcuts, setShowShortcuts] = useState(false);
@@ -76,6 +81,8 @@ export function Toolbar({
                     notes={notes}
                     transpose={transpose}
                     onTransposeChange={onTransposeChange}
+                    isAutoEnabled={isAutoTransposeEnabled}
+                    onToggleAuto={onToggleAutoTranspose}
                 />
             </div>
 

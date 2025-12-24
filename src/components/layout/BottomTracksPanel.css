@@ -75,9 +75,8 @@
     padding: 10px;
     background: var(--color-bg-tertiary);
     border-radius: var(--radius-md);
-    border-radius: var(--radius-md);
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid transparent;
+    border: 1px solid var(--color-border);
     flex-shrink: 0;
     position: relative;
 }
@@ -97,10 +96,11 @@
 
 .bottom-track-item:hover {
     background: var(--color-bg-hover);
+    color: var(--color-text-on-hover);
 }
 
 .bottom-track-item.selected {
-    background: var(--color-bg-hover);
+    background: var(--color-accent-primary);
     border-color: var(--color-accent-primary);
 }
 
@@ -111,8 +111,7 @@
 /* Estado ACTIVO (reproduciendo) */
 .bottom-track-item.playing {
     border-color: var(--color-accent-primary);
-    box-shadow: 0 0 12px rgba(168, 85, 247, 0.4); /* Fallback hardcoded for alpha, or use variable if available */
-    /* Ideally we would use "color-mix(in srgb, var(--color-accent-primary), transparent 60%)" but safe for now */
+    box-shadow: 0 0 12px var(--color-accent-glow);
     animation: pulse-border 1.5s infinite ease-in-out;
 }
 
@@ -159,8 +158,8 @@
 }
 
 .bottom-track-item.selected .bottom-track-index {
-    background: var(--color-accent-primary);
-    color: white;
+    background: rgba(0, 0, 0, 0.15);
+    color: var(--color-text-on-accent);
 }
 
 .bottom-track-info {
@@ -187,7 +186,7 @@
 }
 
 .bottom-track-item.selected .bottom-track-name {
-    color: var(--color-text-primary);
+    color: var(--color-text-on-accent);
 }
 
 .bottom-track-notes {
@@ -196,7 +195,9 @@
 }
 
 .bottom-track-item.selected .bottom-track-notes {
-    color: var(--color-text-secondary);
+    color: var(--color-text-on-accent);
+    opacity: 1;
+    font-weight: 600;
 }
 
 .bottom-track-controls {
@@ -221,7 +222,7 @@
 
 .bottom-track-mute:hover {
     background: var(--color-bg-hover);
-    color: var(--color-text-primary);
+    color: var(--color-text-on-hover);
 }
 
 .bottom-track-item.muted .bottom-track-mute {
@@ -229,7 +230,7 @@
 }
 
 .bottom-track-item.selected .bottom-track-mute {
-    color: var(--color-text-primary);
+    color: var(--color-text-on-accent);
 }
 
 .bottom-track-volume {
@@ -257,7 +258,7 @@
 }
 
 .bottom-track-item.selected .bottom-track-volume::-webkit-slider-thumb {
-    background: var(--color-accent-primary);
+    background: var(--color-text-on-accent);
 }
 
 .bottom-tracks-panel.collapsed .bottom-tracks-content {

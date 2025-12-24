@@ -1,0 +1,131 @@
+/* Retro & Tech Themes */
+
+[data-theme='vhs'] {
+  --color-bg-primary: #0b0b1a;
+  --color-bg-secondary: #14142b;
+  --color-bg-tertiary: #1c1c3d;
+  --color-bg-elevated: #25254d;
+  --color-bg-hover: #ff00ff;
+  --color-accent-primary: #00ffff;
+  --color-accent-secondary: #ff00ff;
+  --color-accent-gradient: linear-gradient(90deg, #00ffff, #ff00ff);
+  --color-accent-glow: rgba(0, 255, 255, 0.4);
+  --color-text-primary: #e0e0f0;
+  --color-text-secondary: #00ffff;
+  --color-text-muted: #7070a0;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #e0e0f0;
+  --color-border: #303060;
+  --notation-bg: #0b0b1a;
+  --notation-line-bg: #14142b;
+  --notation-line-active: rgba(0, 255, 255, 0.2);
+  --font-family: 'VCR OSD Mono', monospace;
+}
+[data-theme='vhs']::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+[data-theme='nokia'] {
+  --color-bg-primary: #c7cebc;
+  --color-bg-secondary: #b7beab;
+  --color-bg-tertiary: #a7ae9a;
+  --color-bg-elevated: #b7beab;
+  --color-bg-hover: #43523d;
+  --color-accent-primary: #43523d;
+  --color-accent-secondary: #43523d;
+  --color-accent-gradient: none;
+  --color-accent-glow: transparent;
+  --color-text-primary: #43523d;
+  --color-text-secondary: #43523d;
+  --color-text-muted: #6e7e68;
+  --color-text-inverse: #c7cebc;
+  --color-text-on-hover: #c7cebc;
+  --color-text-on-accent: #c7cebc;
+  --color-text-on-elevated: #43523d;
+  --color-border: #43523d;
+  --notation-bg: #c7cebc;
+  --notation-line-bg: #b7beab;
+  --notation-paper: #c7cebc;
+  --radius-sm: 0; --radius-md: 0; --radius-lg: 0;
+  --font-family: 'Nokia Cellphone FC', monospace;
+}
+
+[data-theme='msdos'] {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0a0a0a;
+  --color-bg-tertiary: #111111;
+  --color-bg-elevated: #1a1a1a;
+  --color-bg-hover: #ffffff;
+  --color-accent-primary: #ffffff;
+  --color-accent-secondary: #ffffff;
+  --color-accent-gradient: var(--color-accent-primary);
+  --color-accent-glow: transparent;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ffffff;
+  --color-text-muted: #888888;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #ffffff;
+  --color-border: #cccccc;
+  --notation-bg: #000000;
+  --notation-border: #ffffff;
+  --font-family: 'Consolas', 'Courier New', monospace;
+}
+
+[data-theme='win95'] {
+  --color-bg-primary: #008080;
+  --color-bg-secondary: #c0c0c0;
+  --color-bg-tertiary: #dfdfdf;
+  --color-bg-elevated: #c0c0c0;
+  --color-bg-hover: #e0e0e0;
+  --color-accent-primary: #000080;
+  --color-accent-secondary: #1084d0;
+  --color-accent-gradient: var(--color-accent-primary);
+  --color-accent-glow: rgba(0, 0, 128, 0.15);
+  --color-text-primary: #000000;
+  --color-text-secondary: #000000;
+  --color-text-muted: #404040;
+  --color-text-inverse: #ffffff;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #ffffff;
+  --color-text-on-elevated: #000000;
+  --color-border: #000000;
+  --color-border-active: #000080;
+  --notation-bg: #ffffff;
+  --notation-line-bg: #c0c0c0;
+  --notation-line-active: rgba(0, 0, 128, 0.1);
+  --notation-paper: #ffffff;
+  --notation-border: #000000;
+  --radius-sm: 0px; --radius-md: 0px; --radius-lg: 0px; --radius-xl: 0px; --radius-2xl: 0px;
+  --font-family: 'MS Sans Serif', 'Tahoma', 'Segoe UI', sans-serif;
+}
+
+[data-theme='floppy'] {
+  --color-bg-primary: #e0dcd0;
+  --color-bg-secondary: #cec9b8;
+  --color-bg-tertiary: #505050;
+  --color-bg-elevated: #ffffff;
+  --color-bg-hover: #3b78ff;
+  --color-accent-primary: #3b78ff;
+  --color-accent-secondary: #ff4b4b;
+  --color-accent-gradient: var(--color-accent-primary);
+  --color-text-primary: #333333;
+  --color-text-secondary: #505050;
+  --color-text-muted: #888888;
+  --color-text-inverse: #ffffff;
+  --color-text-on-hover: #ffffff;
+  --color-text-on-accent: #ffffff;
+  --color-text-on-elevated: #333333;
+  --color-border: #a0a0a0;
+  --notation-bg: #ffffff;
+  --radius-md: 4px;
+}

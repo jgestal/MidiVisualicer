@@ -43,10 +43,10 @@
     gap: 8px;
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
-    border: 2px dashed rgba(16, 185, 129, 0.5);
+    background: var(--color-bg-tertiary);
+    border: 2px dashed var(--color-border);
     border-radius: 10px;
-    color: #10b981;
+    color: var(--color-accent-primary);
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
@@ -97,6 +97,7 @@
 
 .template-option:hover {
     background: var(--color-bg-hover);
+    color: var(--color-text-on-hover);
 }
 
 .template-divider {
@@ -163,13 +164,19 @@
 
 .instrument-card:hover {
     background: var(--color-bg-hover);
+    color: var(--color-text-on-hover);
     transform: translateY(-1px);
 }
 
 .instrument-card.active {
-    background: rgba(99, 102, 241, 0.15);
+    background: var(--color-accent-primary);
     border-color: var(--color-accent-primary);
-    box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 12px var(--color-accent-glow);
+}
+
+.instrument-card.active .instrument-name,
+.instrument-card.active .instrument-icon {
+    color: var(--color-text-on-accent);
 }
 
 .instrument-card.custom {

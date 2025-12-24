@@ -26,6 +26,7 @@ interface PlaybackState {
   loopEnd: number | null;
   isLoopEnabled: boolean;
   isCountInEnabled: boolean;
+  activeNotes: number[]; // MIDI note values currently playing
 }
 
 // Actions
@@ -39,7 +40,8 @@ type PlaybackAction =
   | { type: 'SET_LOOP_END'; payload: number | null }
   | { type: 'TOGGLE_LOOP' }
   | { type: 'CLEAR_LOOP' }
-  | { type: 'TOGGLE_COUNT_IN' };
+  | { type: 'TOGGLE_COUNT_IN' }
+  | { type: 'SET_ACTIVE_NOTES'; payload: number[] };
 
 // Initial state
 const initialState: PlaybackState = {
@@ -52,6 +54,7 @@ const initialState: PlaybackState = {
   loopEnd: null,
   isLoopEnabled: false,
   isCountInEnabled: false,
+  activeNotes: [],
 };
 
 // Reducer
@@ -92,6 +95,10 @@ function playbackReducer(state: PlaybackState, action: PlaybackAction): Playback
       return { ...state, loopStart: null, loopEnd: null, isLoopEnabled: false };
     case 'TOGGLE_COUNT_IN':
       return { ...state, isCountInEnabled: !state.isCountInEnabled };
+    case 'SET_ACTIVE_NOTES':
+      // Only update if notes have changed to avoid unnecessary re-renders
+      if (JSON.stringify(state.activeNotes) === JSON.stringify(action.payload)) return state;
+      return { ...state, activeNotes: action.payload };
     default:
       return state;
   }
@@ -260,6 +267,22 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
         if (Tone.Transport.state === 'started') {
           const currentTime = Tone.Transport.seconds * speed;
           dispatch({ type: 'SET_TIME', payload: currentTime });
+
+          // Calculate active notes for chord detection
+          const activeNotes: number[] = [];
+          if (midi) {
+            midi.tracks.forEach((track, trackIdx) => {
+              if (!mutedTracksRef.current.has(trackIdx)) {
+                // Find notes active at current time
+                track.notes.forEach(note => {
+                  if (currentTime >= note.time && currentTime <= note.time + note.duration) {
+                    activeNotes.push(note.midi);
+                  }
+                });
+              }
+            });
+          }
+          dispatch({ type: 'SET_ACTIVE_NOTES', payload: activeNotes });
 
           // Check for loop end
           if (isLoopEnabledRef.current && loopEndRef.current !== null && loopStartRef.current !== null) {

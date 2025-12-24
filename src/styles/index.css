@@ -7,145 +7,7 @@
 /* ============================================
    CSS Variables - Design Tokens
    ============================================ */
-:root,
-[data-theme='dark'] {
-  /* Colors - Dark Theme */
-  --color-bg-primary: #0a0a0f;
-  --color-bg-secondary: #12121a;
-  --color-bg-tertiary: #1a1a25;
-  --color-bg-elevated: #22222f;
-  --color-bg-hover: #2a2a3a;
-
-  /* Accent Colors */
-  --color-accent-primary: #6366f1;
-  --color-accent-secondary: #8b5cf6;
-  --color-accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  --color-accent-glow: rgba(99, 102, 241, 0.3);
-
-  /* Semantic Colors */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
-
-  /* Text Colors */
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
-  --color-text-inverse: #0a0a0f;
-
-  /* Border Colors */
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-hover: rgba(255, 255, 255, 0.15);
-  --color-border-active: rgba(99, 102, 241, 0.5);
-
-  /* Glassmorphism */
-  --glass-bg: rgba(18, 18, 26, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-blur: 20px;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px var(--color-accent-glow);
-
-  /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 2rem;
-  --font-size-4xl: 2.5rem;
-
-  /* Spacing */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-
-  /* Border Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
-
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
-  --transition-slow: 400ms ease;
-
-  /* Z-Index */
-  --z-dropdown: 100;
-  --z-modal: 200;
-  --z-tooltip: 300;
-
-  /* Theme-specific */
-  --theme-transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-
-  /* Notation View - Dark mode: parchment-like dark */
-  --notation-bg: #1a1915;
-  --notation-line-bg: #252218;
-  --notation-line-active: rgba(99, 102, 241, 0.2);
-  --notation-paper: #2a2720;
-  --notation-border: rgba(255, 255, 255, 0.1);
-}
-
-/* Light Theme */
-[data-theme='light'] {
-  /* Colors - Light Theme */
-  --color-bg-primary: #f8fafc;
-  --color-bg-secondary: #ffffff;
-  --color-bg-tertiary: #f1f5f9;
-  --color-bg-elevated: #ffffff;
-  --color-bg-hover: #e2e8f0;
-
-  /* Accent Colors - Same but adjusted glow */
-  --color-accent-primary: #6366f1;
-  --color-accent-secondary: #8b5cf6;
-  --color-accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  --color-accent-glow: rgba(99, 102, 241, 0.2);
-
-  /* Text Colors */
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #94a3b8;
-  --color-text-inverse: #f8fafc;
-
-  /* Border Colors */
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-border-hover: rgba(0, 0, 0, 0.12);
-  --color-border-active: rgba(99, 102, 241, 0.5);
-
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.9);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-blur: 20px;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 30px var(--color-accent-glow);
-
-  /* Notation View - Light mode: cream/sepia */
-  --notation-bg: #f8f6f0;
-  --notation-line-bg: #f0ebe0;
-  --notation-line-active: rgba(99, 102, 241, 0.12);
-  --notation-paper: #fffdf5;
-  --notation-border: rgba(0, 0, 0, 0.1);
-}
+@import './themes/index.css';
 
 /* ============================================
    Reset & Base Styles
@@ -570,6 +432,43 @@ a:hover {
   backdrop-filter: blur(var(--glass-blur));
 }
 
+.chord-display-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px;
+  margin-bottom: var(--space-2);
+}
+
+.chord-badge {
+  background: var(--color-bg-elevated);
+  color: var(--color-accent-primary);
+  padding: var(--space-2) var(--space-6);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  border: 2px solid var(--color-accent-primary);
+  box-shadow: var(--shadow-glow);
+  text-shadow: 0 0 10px var(--color-accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chord-badge-placeholder {
+  height: 40px;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 .player-buttons {
   display: flex;
   align-items: center;
@@ -954,6 +853,7 @@ a:hover {
   border-color: var(--color-accent-primary);
   background: rgba(99, 102, 241, 0.05);
 }
+
 
 .drop-zone-icon {
   font-size: 48px;
@@ -1463,6 +1363,7 @@ a:hover {
   border: 1px solid var(--color-accent-primary);
   border-radius: var(--radius-xl);
 }
+
 
 .current-note {
   font-size: var(--font-size-2xl);

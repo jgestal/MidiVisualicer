@@ -47,18 +47,6 @@ function isCompoundMeter(beats: number, beatType: number): boolean {
 }
 
 /**
- * Get the number of eighth notes per beam group based on time signature
- * Simple meter (x/4): 2 eighths per beat
- * Compound meter (x/8): 3 eighths per beat
- */
-function getEighthsPerBeamGroup(beats: number, beatType: number): number {
-  if (isCompoundMeter(beats, beatType)) {
-    return 3; // Compound: group by 3 (dotted quarter pulse)
-  }
-  return 2; // Simple: group by 2 (quarter note pulse)
-}
-
-/**
  * Calculate beam groups for a measure
  * Follows standard engraving rules:
  * - Group by beat in simple meters

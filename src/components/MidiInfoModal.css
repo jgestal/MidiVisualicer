@@ -61,7 +61,7 @@
 
 .midi-info-close:hover {
     background: var(--color-bg-hover);
-    color: var(--color-text-primary);
+    color: var(--color-text-on-hover);
 }
 
 .midi-info-content {
@@ -133,7 +133,7 @@
     align-items: center;
     justify-content: center;
     background: var(--color-accent-primary);
-    color: white;
+    color: var(--color-text-on-accent);
     border-radius: var(--radius-sm);
     font-size: 10px;
     font-weight: 600;

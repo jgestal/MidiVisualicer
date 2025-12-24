@@ -1,0 +1,175 @@
+/* Pop Culture & Gaming Themes */
+
+[data-theme='wesanderson'] {
+  --color-bg-primary: #f2c1b0;
+  --color-bg-secondary: #a8d5BA;
+  --color-bg-tertiary: #f9d978;
+  --color-bg-elevated: #ffffff;
+  --color-bg-hover: #e07a5f;
+  --color-accent-primary: #e07a5f;
+  --color-accent-secondary: #3d405b;
+  --color-accent-gradient: var(--color-accent-primary);
+  --color-text-primary: #3d405b;
+  --color-text-secondary: #e07a5f;
+  --color-text-muted: #81b29a;
+  --color-text-inverse: #ffffff;
+  --color-text-on-hover: #ffffff;
+  --color-text-on-accent: #ffffff;
+  --color-text-on-elevated: #3d405b;
+  --color-border: #ffffff;
+  --notation-bg: #f2c1b0;
+  --font-family: 'Futura', sans-serif;
+}
+
+[data-theme='bladerunner'] {
+  --color-bg-primary: #1a0b00;
+  --color-bg-secondary: #2b1200;
+  --color-bg-tertiary: #000b1a;
+  --color-bg-elevated: #3b1900;
+  --color-bg-hover: #ff6600;
+  --color-accent-primary: #ff6600;
+  --color-accent-secondary: #00ccff;
+  --color-accent-gradient: linear-gradient(135deg, #ff6600, #00ccff);
+  --color-accent-glow: rgba(255, 102, 0, 0.6);
+  --color-text-primary: #ffcc99;
+  --color-text-secondary: #00ccff;
+  --color-text-muted: #aa5500;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #ffcc99;
+  --color-border: #442200;
+  --notation-bg: #1a0b00;
+}
+
+[data-theme='ghibli'] {
+  --color-bg-primary: #e0f4ff;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #c8e6c9;
+  --color-bg-elevated: #ffffff;
+  --color-bg-hover: #81c784;
+  --color-accent-primary: #4caf50;
+  --color-accent-secondary: #ffeb3b;
+  --color-text-primary: #657b83;
+  --color-text-secondary: #586e75;
+  --color-text-muted: #93a1a1;
+  --color-text-inverse: #fdf6e3;
+  --color-text-on-hover: #657b83;
+  --color-text-on-accent: #ffffff;
+  --color-text-on-elevated: #657b83;
+  --color-border: rgba(0, 0, 0, 0.05);
+  --notation-bg: #ffffff;
+  --radius-xl: 20px;
+}
+
+[data-theme='sincity'] {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0a0a0a;
+  --color-bg-tertiary: #111111;
+  --color-bg-elevated: #222222;
+  --color-bg-hover: #ff0000;
+  --color-accent-primary: #ff0000;
+  --color-accent-secondary: #ff0000;
+  --color-accent-gradient: var(--color-accent-primary);
+  --color-accent-glow: rgba(255, 0, 0, 0.4);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ff0000;
+  --color-text-muted: #777777;
+  --color-text-on-hover: #ffffff;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #ffffff;
+  --color-border: #333333;
+  --notation-bg: #000000;
+  --notation-border: #ffffff;
+}
+
+[data-theme='pipboy'] {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0a0a0a;
+  --color-bg-tertiary: #002200;
+  --color-bg-elevated: #003300;
+  --color-bg-hover: #22ff22;
+  --color-accent-primary: #1aff1a;
+  --color-accent-secondary: #008800;
+  --color-accent-glow: rgba(26, 255, 26, 0.5);
+  --color-text-primary: #1aff1a;
+  --color-text-secondary: #1aff1a;
+  --color-text-muted: #008800;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #1aff1a;
+  --color-border: #1aff1a;
+  --notation-bg: #000000;
+  --font-family: 'Monospace', 'Courier New', monospace;
+}
+[data-theme='pipboy']::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+[data-theme='minecraft'] {
+  --color-bg-primary: #7a7a7a;
+  --color-bg-secondary: #4a4a4a;
+  --color-bg-tertiary: #8b4513;
+  --color-bg-elevated: #c6c6c6;
+  --color-bg-hover: #3c3c3c;
+  --color-accent-primary: #3c8527;
+  --color-accent-secondary: #5a5a5a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e0e0e0;
+  --color-text-muted: #a0a0a0;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #ffffff;
+  --color-text-on-accent: #ffffff;
+  --color-border: #000000;
+  --notation-bg: #ffffff;
+  --radius-sm: 0; --radius-md: 0;
+  --font-family: 'Minecraftia', 'Courier New', monospace;
+}
+
+[data-theme='cyberpunk'] {
+  --color-bg-primary: #020202; /* Almost Black */
+  --color-bg-secondary: #0a0a0a;
+  --color-bg-tertiary: #141414;
+  --color-bg-elevated: #1f1f1f;
+  --color-bg-hover: #33e6ff; /* Cyan hover */
+  --color-accent-primary: #fcee0a; /* Signature Yellow */
+  --color-accent-secondary: #33e6ff; /* Cyan */
+  --color-accent-gradient: linear-gradient(90deg, #fcee0a, #33e6ff);
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #fcee0a; /* Yellow text for secondary info */
+  --color-text-muted: #6e7e85;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #fcee0a;
+  --color-border: #33e6ff; /* Cyan borders for tech look */
+  --notation-bg: #050505;
+  --notation-border: #fcee0a;
+  --font-family: 'Rajdhani', 'Segoe UI', sans-serif; /* Tech font if available */
+}
+
+[data-theme='rpg'] {
+  --color-bg-primary: #000080;
+  --color-bg-secondary: #000000;
+  --color-bg-tertiary: #1a1a1a;
+  --color-bg-elevated: #000080;
+  --color-bg-hover: #ffffff;
+  --color-accent-primary: #ffffff;
+  --color-accent-secondary: #888888;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ffffff;
+  --color-text-muted: #888888;
+  --color-text-inverse: #000080;
+  --color-text-on-hover: #000080;
+  --color-text-on-accent: #000080;
+  --color-text-on-elevated: #ffffff;
+  --color-border: #ffffff;
+  --notation-bg: #000000;
+  --radius-sm: 0; --radius-md: 0;
+}

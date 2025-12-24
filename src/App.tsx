@@ -69,7 +69,7 @@ function App() {
     toggleCountIn,
   } = usePlayback();
   const { state: tracksState, toggleMute, resetTracks } = useTracks();
-  const { state: instrumentState, selectInstrument, setTranspose } = useInstrument();
+  const { state: instrumentState, selectInstrument, setTranspose, toggleAutoTranspose } = useInstrument();
   const { t } = useI18n();
 
   // ===== UI STATE (via custom hook) =====
@@ -135,6 +135,7 @@ function App() {
     setTranspose,
     setTrackMuted,
     toggleMute,
+    toggleAutoTranspose,
   });
 
   // Auto-transposición (via custom hook)
@@ -143,6 +144,7 @@ function App() {
     notes: selectedTrackNotes,
     instrument: selectedInstrument,
     onTransposeChange: setTranspose,
+    enabled: instrumentState.autoTranspose,
   });
 
   // ===== EXPORT (via custom hook) =====
@@ -235,6 +237,8 @@ function App() {
           onToggleMetronome={toggleMetronome}
           isCountInEnabled={playbackState.isCountInEnabled}
           onToggleCountIn={toggleCountIn}
+          isAutoTransposeEnabled={instrumentState.autoTranspose}
+          onToggleAutoTranspose={toggleAutoTranspose}
         />
       )}
 

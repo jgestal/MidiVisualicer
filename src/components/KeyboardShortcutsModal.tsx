@@ -33,6 +33,7 @@ const SHORTCUTS = [
       { keys: ['↓'], action: 'transposeDown' },
       { keys: ['Shift', '↑'], action: 'transposeUpOctave' },
       { keys: ['Shift', '↓'], action: 'transposeDownOctave' },
+      { keys: ['A'], action: 'toggleAuto' },
     ]
   },
   {
@@ -75,6 +76,7 @@ const SHORTCUT_LABELS: Record<string, Record<string, string>> = {
     speed050: 'Speed 0.5x',
     speed075: 'Speed 0.75x',
     speed100: 'Speed 1x (normal)',
+    toggleAuto: 'Toggle Auto-transpose',
     muteTrack: 'Mute/Unmute selected track',
   },
   es: {
@@ -100,6 +102,7 @@ const SHORTCUT_LABELS: Record<string, Record<string, string>> = {
     speed050: 'Velocidad 0.5x',
     speed075: 'Velocidad 0.75x',
     speed100: 'Velocidad 1x (normal)',
+    toggleAuto: 'Alternar auto-transposición',
     muteTrack: 'Silenciar/Activar pista seleccionada',
   },
 };

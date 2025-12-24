@@ -25,6 +25,7 @@ export type { InstrumentConfig };
 interface InstrumentState {
   selectedInstrumentId: string;
   transpose: number;
+  autoTranspose: boolean;
   customInstruments: Record<string, InstrumentConfig>;
 }
 
@@ -32,6 +33,7 @@ interface InstrumentState {
 type InstrumentAction =
   | { type: 'SELECT_INSTRUMENT'; payload: string }
   | { type: 'SET_TRANSPOSE'; payload: number }
+  | { type: 'TOGGLE_AUTO_TRANSPOSE' }
   | { type: 'ADD_CUSTOM_INSTRUMENT'; payload: InstrumentConfig }
   | { type: 'DELETE_CUSTOM_INSTRUMENT'; payload: string }
   | { type: 'LOAD_CUSTOM_INSTRUMENTS'; payload: Record<string, InstrumentConfig> };
@@ -42,6 +44,7 @@ const PREFS_KEY = 'midi-visualizer-prefs';
 interface UserPrefs {
   selectedInstrumentId?: string;
   transpose?: number;
+  autoTranspose?: boolean;
 }
 
 function loadPrefs(): UserPrefs {
@@ -67,6 +70,7 @@ const savedPrefs = loadPrefs();
 const initialState: InstrumentState = {
   selectedInstrumentId: savedPrefs.selectedInstrumentId || 'guitar',
   transpose: savedPrefs.transpose ?? 0,
+  autoTranspose: savedPrefs.autoTranspose ?? true, // ON by default
   customInstruments: {},
 };
 
@@ -80,6 +84,12 @@ function instrumentReducer(state: InstrumentState, action: InstrumentAction): In
     case 'SET_TRANSPOSE':
       savePrefs({ transpose: action.payload });
       return { ...state, transpose: action.payload };
+
+    case 'TOGGLE_AUTO_TRANSPOSE': {
+      const newValue = !state.autoTranspose;
+      savePrefs({ autoTranspose: newValue });
+      return { ...state, autoTranspose: newValue };
+    }
 
     case 'ADD_CUSTOM_INSTRUMENT': {
       const newCustom = {
@@ -126,6 +136,7 @@ interface InstrumentContextType {
   state: InstrumentState;
   selectInstrument: (id: string) => void;
   setTranspose: (semitones: number) => void;
+  toggleAutoTranspose: () => void;
   addCustomInstrument: (instrument: InstrumentConfig) => void;
   deleteCustomInstrument: (id: string) => void;
   calculateOptimalTranspose: (notes: Array<{ midi: number }>, instrumentId: string) => number;
@@ -167,6 +178,10 @@ export function InstrumentProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_TRANSPOSE', payload: semitones });
   }, []);
 
+  const toggleAutoTranspose = useCallback(() => {
+    dispatch({ type: 'TOGGLE_AUTO_TRANSPOSE' });
+  }, []);
+
   const addCustomInstrument = useCallback((instrument: InstrumentConfig) => {
     dispatch({ type: 'ADD_CUSTOM_INSTRUMENT', payload: instrument });
   }, []);
@@ -204,6 +219,7 @@ export function InstrumentProvider({ children }: { children: ReactNode }) {
     state,
     selectInstrument,
     setTranspose,
+    toggleAutoTranspose,
     addCustomInstrument,
     deleteCustomInstrument,
     calculateOptimalTranspose,

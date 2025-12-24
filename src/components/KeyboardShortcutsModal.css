@@ -60,7 +60,7 @@
   gap: 10px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -75,7 +75,7 @@
 }
 
 .shortcuts-close-btn:hover {
-  color: var(--color-text);
+  color: var(--color-text-on-hover);
   background: var(--color-bg-hover);
 }
 
@@ -92,7 +92,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-primary);
+  color: var(--color-accent-primary);
   margin: 0 0 10px 0;
 }
 
@@ -137,7 +137,7 @@
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--color-text);
+  color: var(--color-text-primary);
   box-shadow: 0 2px 0 var(--color-border);
 }
 
@@ -170,6 +170,6 @@
 
 .shortcuts-btn:hover {
   background: var(--color-bg-hover);
-  color: var(--color-text);
-  border-color: var(--color-primary);
+  color: var(--color-text-on-hover);
+  border-color: var(--color-accent-primary);
 }

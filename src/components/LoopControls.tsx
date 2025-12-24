@@ -103,11 +103,12 @@ const styles = `
 
 .loop-points button:hover {
   background: var(--color-bg-hover);
+  color: var(--color-text-on-hover);
 }
 
 .loop-points button.active {
   background: var(--color-accent-primary);
-  color: white;
+  color: var(--color-text-on-accent);
   border-color: transparent;
 }
 
@@ -126,7 +127,7 @@ const styles = `
 
 .loop-toggle:hover, .loop-clear:hover {
   background: var(--color-bg-hover);
-  color: var(--color-text-primary);
+  color: var(--color-text-on-hover);
 }
 
 .loop-toggle:disabled, .loop-clear:disabled {
@@ -136,7 +137,7 @@ const styles = `
 
 .loop-toggle.enabled {
   background: var(--color-accent-primary);
-  color: white;
+  color: var(--color-text-on-accent);
   border-color: transparent;
 }
 `;

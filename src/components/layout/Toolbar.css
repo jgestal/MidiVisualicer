@@ -20,6 +20,7 @@
 
 .toolbar-instrument-btn:hover {
     background: var(--color-bg-hover);
+    color: var(--color-text-on-hover);
     border-color: var(--color-accent-primary);
 }
 
@@ -53,19 +54,19 @@
 
 .metronome-btn:hover {
     background: var(--color-bg-hover);
-    color: var(--color-text-primary);
+    color: var(--color-text-on-hover);
 }
 
 .metronome-btn.active {
     background: var(--color-accent-primary);
-    color: white;
+    color: var(--color-text-on-accent);
     border-color: var(--color-accent-primary);
 }
 
 .metronome-active-dot {
     width: 6px;
     height: 6px;
-    background: #22c55e;
+    background: var(--color-success);
     border-radius: 50%;
     animation: metronomePulse 0.5s ease-in-out infinite;
 }

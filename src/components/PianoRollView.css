@@ -29,7 +29,7 @@
 
 .piano-roll-toggle-header:hover {
     background: var(--color-bg-hover);
-    color: var(--color-text-primary);
+    color: var(--color-text-on-hover);
 }
 
 .piano-roll-title {

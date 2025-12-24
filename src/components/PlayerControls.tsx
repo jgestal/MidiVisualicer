@@ -4,6 +4,7 @@
 import { Play, Pause, Square, SkipBack, SkipForward } from 'lucide-react';
 import { formatDuration } from '../utils/timeUtils';
 import type { PlaybackState, PlaybackSpeed } from '../types/midi';
+import { detectChord } from '../utils/chordUtils';
 
 interface PlayerControlsProps {
   playbackState: PlaybackState;
@@ -39,6 +40,17 @@ export function PlayerControls({
 
   return (
     <div className="player-controls animate-slide-up">
+      {/* Chord Display - Premium Feature */}
+      <div className="chord-display-container">
+        {detectChord(playbackState.activeNotes) ? (
+          <div className="chord-badge animate-scale-in">
+            {detectChord(playbackState.activeNotes)}
+          </div>
+        ) : (
+          <div className="chord-badge-placeholder" />
+        )}
+      </div>
+
       {/* Main Buttons */}
       <div className="player-buttons">
         <button

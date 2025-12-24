@@ -27,6 +27,7 @@ interface UseKeyboardShortcutsOptions {
   setTranspose: (semitones: number) => void;
   setTrackMuted: (trackIndex: number, muted: boolean) => void;
   toggleMute: (trackIndex: number) => void;
+  toggleAutoTranspose?: () => void;
 }
 
 export function useKeyboardShortcuts({
@@ -44,6 +45,7 @@ export function useKeyboardShortcuts({
   setTranspose,
   setTrackMuted,
   toggleMute,
+  toggleAutoTranspose,
 }: UseKeyboardShortcutsOptions): void {
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -121,6 +123,10 @@ export function useKeyboardShortcuts({
       case 'Digit4':
         setSpeed(1.0);
         break;
+
+      case 'KeyA':
+        if (toggleAutoTranspose) toggleAutoTranspose();
+        break;
     }
   }, [
     isPlaying,
@@ -137,6 +143,7 @@ export function useKeyboardShortcuts({
     setTranspose,
     setTrackMuted,
     toggleMute,
+    toggleAutoTranspose,
   ]);
 
   useEffect(() => {

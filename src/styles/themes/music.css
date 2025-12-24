@@ -1,0 +1,78 @@
+/* Music & Style Themes */
+
+[data-theme='lofi'] {
+  --color-bg-primary: #2d1b4d;
+  --color-bg-secondary: #1a0f2e;
+  --color-bg-tertiary: #3e2b5c;
+  --color-bg-elevated: #4a346e;
+  --color-bg-hover: #ffa07a;
+  --color-accent-primary: #ffa07a;
+  --color-accent-secondary: #da70d6;
+  --color-accent-glow: rgba(255, 160, 122, 0.4);
+  --color-text-primary: #e6e6fa;
+  --color-text-secondary: #ffa07a;
+  --color-text-muted: #9370db;
+  --color-text-inverse: #2d1b4d;
+  --color-text-on-hover: #2d1b4d;
+  --color-text-on-accent: #2d1b4d;
+  --color-border: #4a346e;
+  --notation-bg: #2d1b4d;
+}
+
+[data-theme='industrial'] {
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #121212;
+  --color-bg-tertiary: #1a1a1a;
+  --color-bg-elevated: #222222;
+  --color-bg-hover: #ccff00;
+  --color-accent-primary: #ccff00;
+  --color-accent-secondary: #ccff00;
+  --color-accent-glow: rgba(204, 255, 0, 0.5);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ccff00;
+  --color-text-muted: #444444;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #ffffff;
+  --color-border: #222222;
+}
+
+[data-theme='reggae'] {
+  --color-bg-primary: #1a1a1a;
+  --color-bg-secondary: #000000;
+  --color-bg-tertiary: #2e7d32;
+  --color-bg-elevated: #1a1a1a;
+  --color-bg-hover: #fdd835;
+  --color-accent-primary: #e53935;
+  --color-accent-secondary: #fdd835;
+  --color-accent-gradient: linear-gradient(90deg, #2e7d32, #fdd835, #e53935);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #fdd835;
+  --color-text-muted: #2e7d32;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #ffffff;
+  --color-border: #333333;
+}
+
+[data-theme='disco'] {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #1a0033;
+  --color-bg-tertiary: #330066;
+  --color-bg-elevated: #1a0033;
+  --color-bg-hover: #ff00ff;
+  --color-accent-primary: #ff00ff;
+  --color-accent-secondary: #00ffff;
+  --color-accent-gradient: linear-gradient(45deg, #ff00ff, #00ffff, #fff000);
+  --color-accent-glow: rgba(255, 0, 255, 0.6);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ff00ff;
+  --color-text-muted: #00ffff;
+  --color-text-inverse: #000000;
+  --color-text-on-hover: #000000;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #ffffff;
+  --color-border: #ff00ff;
+}

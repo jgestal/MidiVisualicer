@@ -66,4 +66,7 @@ export interface PlaybackState {
   currentTime: number;
   duration: number;
   speed: PlaybackSpeed;
+  isLoopEnabled: boolean;
+  isCountInEnabled: boolean;
+  activeNotes: number[];
 }
