@@ -13,6 +13,7 @@
  */
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Music, X, ChevronDown } from 'lucide-react';
+import * as Tone from 'tone';
 
 // Context hooks
 import { useMidi } from './features/library/context/MidiContext';
@@ -73,6 +74,36 @@ function App() {
   // ===== UI STATE (via custom hook) =====
   const ui = useAppUI();
   const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
+
+  // ===== MASTER VOLUME =====
+  const [masterVolume, setMasterVolume] = useState(() => {
+    const saved = localStorage.getItem('midi-visualizer-volume');
+    return saved ? Number(saved) : 80;
+  });
+  const [isMasterMuted, setIsMasterMuted] = useState(false);
+
+  // Sync volume with Tone.js
+  useEffect(() => {
+    if (isMasterMuted) {
+      Tone.getDestination().volume.value = -Infinity;
+    } else {
+      // Convert 0-100 to dB (-40 to 0)
+      const db = masterVolume <= 0 ? -Infinity : (masterVolume / 100) * 40 - 40;
+      Tone.getDestination().volume.value = db;
+    }
+    localStorage.setItem('midi-visualizer-volume', String(masterVolume));
+  }, [masterVolume, isMasterMuted]);
+
+  const handleVolumeChange = useCallback((vol: number) => {
+    setMasterVolume(vol);
+    if (vol > 0 && isMasterMuted) {
+      setIsMasterMuted(false);
+    }
+  }, [isMasterMuted]);
+
+  const handleMasterMuteToggle = useCallback(() => {
+    setIsMasterMuted(prev => !prev);
+  }, []);
 
   // ===== REF FOR NOTATION EXPORT =====
   const notationViewRef = useRef<OSMDNotationViewRef>(null);
@@ -394,6 +425,10 @@ function App() {
             onStop={stop}
             onSeek={seekTo}
             onSpeedChange={setSpeed}
+            volume={masterVolume}
+            isMuted={isMasterMuted}
+            onVolumeChange={handleVolumeChange}
+            onToggleMute={handleMasterMuteToggle}
           />
         </>
       ) : (

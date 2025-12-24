@@ -539,6 +539,14 @@
     opacity: 1;
 }
 
+.footer-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--color-border);
+    margin: 0 12px;
+    flex-shrink: 0;
+}
+
 .footer-speed {
     display: flex;
     align-items: center;
@@ -574,6 +582,80 @@
     background: var(--color-accent-primary);
     border-color: var(--color-accent-primary);
     color: white;
+}
+
+/* Volume Control */
+.footer-volume {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volume-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+.volume-btn:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text);
+}
+
+.volume-btn.muted {
+    color: var(--color-error);
+}
+
+.footer-volume-slider {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-bg-tertiary);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.footer-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--color-bg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+.footer-volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.footer-volume-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--color-bg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.footer-volume-slider:focus {
+    outline: none;
+}
+
+.footer-volume-slider::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(to right, var(--color-accent-primary), var(--color-bg-tertiary));
+    border-radius: 2px;
 }
 
 /* ============================================

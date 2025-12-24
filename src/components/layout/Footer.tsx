@@ -2,7 +2,7 @@
  * Footer Component - Controles del reproductor
  * Barra fija en la parte inferior con play/pause, progreso y velocidad
  */
-import { Play, Pause, Square, SkipBack, SkipForward, RotateCcw } from 'lucide-react';
+import { Play, Pause, Square, SkipBack, SkipForward, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { useI18n } from '../../shared/context/I18nContext';
 import { formatDuration } from '../../utils/timeUtils';
 import type { PlaybackSpeed } from '../../types/midi';
@@ -19,6 +19,12 @@ interface FooterProps {
     onStop: () => void;
     onSeek: (time: number) => void;
     onSpeedChange: (speed: PlaybackSpeed) => void;
+
+    // Volume
+    volume: number;
+    isMuted: boolean;
+    onVolumeChange: (volume: number) => void;
+    onToggleMute: () => void;
 }
 
 const SPEED_OPTIONS: PlaybackSpeed[] = [0.25, 0.5, 0.75, 1.0];
@@ -34,6 +40,10 @@ export function Footer({
     onStop,
     onSeek,
     onSpeedChange,
+    volume,
+    isMuted,
+    onVolumeChange,
+    onToggleMute,
 }: FooterProps) {
     const { t } = useI18n();
     const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -124,6 +134,8 @@ export function Footer({
                 <span className="footer-time">{formatDuration(duration)}</span>
             </div>
 
+            <div className="footer-divider" />
+
             {/* Speed Controls */}
             <div className="footer-speed">
                 <span className="footer-speed-label">{t.speed}:</span>
@@ -138,6 +150,28 @@ export function Footer({
                         </button>
                     ))}
                 </div>
+            </div>
+
+            <div className="footer-divider" />
+
+            {/* Volume Control */}
+            <div className="footer-volume">
+                <button
+                    className={`footer-btn volume-btn ${isMuted ? 'muted' : ''}`}
+                    onClick={onToggleMute}
+                    title={isMuted ? t.unmute : t.mute}
+                >
+                    {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                </button>
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={isMuted ? 0 : volume}
+                    onChange={(e) => onVolumeChange(Number(e.target.value))}
+                    className="footer-volume-slider"
+                    title={`${Math.round(volume)}%`}
+                />
             </div>
         </footer>
     );
