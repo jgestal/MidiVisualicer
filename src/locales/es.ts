@@ -33,8 +33,8 @@ export const es = {
     sheetSvg: 'Partitura (SVG)',
 
     // Playback controls
-    play: 'Reproducir',
-    pause: 'Pausar',
+    play: 'Play',
+    pause: 'Pause',
     stop: 'Detener',
     restart: 'Reiniciar',
     rewind5s: 'Retroceder 5s',

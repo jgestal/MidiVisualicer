@@ -1,6 +1,6 @@
 /**
- * Contexto para la gestión de la reproducción de MIDI
- * Maneja play, pause, stop, velocidad, loops, tiempo actual y volúmenes por pista
+ * MIDI playback context
+ * Handles play, pause, stop, speed, loops, current time and track volumes
  */
 import {
   createContext,
@@ -14,7 +14,7 @@ import {
 import * as Tone from 'tone';
 import type { ParsedMidi, MidiTrack, PlaybackSpeed } from '@/shared/types/midi';
 
-// Estado del contexto
+// Context state
 interface PlaybackState {
   isPlaying: boolean;
   isPaused: boolean;
@@ -27,7 +27,7 @@ interface PlaybackState {
   isCountInEnabled: boolean;
 }
 
-// Acciones
+// Actions
 type PlaybackAction =
   | { type: 'PLAY'; payload: { duration: number } }
   | { type: 'PAUSE'; payload: { currentTime: number } }
@@ -40,7 +40,7 @@ type PlaybackAction =
   | { type: 'CLEAR_LOOP' }
   | { type: 'TOGGLE_COUNT_IN' };
 
-// Estado inicial
+// Initial state
 const initialState: PlaybackState = {
   isPlaying: false,
   isPaused: false,
@@ -141,7 +141,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const countInTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isCountInEnabledRef = useRef(false);
 
-  // Inicializar Tone.js
+  // Initialize Tone.js
   const initialize = useCallback(async () => {
     if (isInitializedRef.current) return;
     await Tone.start();
@@ -159,7 +159,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     loopEndRef.current = state.loopEnd;
   }, [state.isLoopEnabled, state.loopStart, state.loopEnd]);
 
-  // Crear sintetizadores
+  // Create synthesizers
   const createSynths = useCallback((trackCount: number) => {
     synthsRef.current.forEach((synth) => synth.dispose());
     synthsRef.current = Array.from({ length: trackCount }, (_, index) => {
@@ -181,7 +181,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  // Programar una pista
+  // Schedule a track
   const scheduleTrack = useCallback(
     (track: MidiTrack, synthIndex: number, speed: number, isMuted: boolean) => {
       if (isMuted) return;
@@ -202,7 +202,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  // Reproducir
+  // Play
   const play = useCallback(
     async (
       midi: ParsedMidi,
@@ -242,7 +242,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
       // Configurar transporte
       Tone.Transport.bpm.value = midi.bpm * speed;
 
-      // Si estaba pausado, continuar desde donde se quedó
+      // If paused, resume from where it left off
       if (state.isPaused && pauseTimeRef.current > 0) {
         Tone.Transport.seconds = pauseTimeRef.current / speed;
       } else {
@@ -319,7 +319,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     [initialize, createSynths, scheduleTrack, state.speed, state.isPaused]
   );
 
-  // Pausar
+  // Pause
   const pause = useCallback(() => {
     if (state.isPlaying) {
       pauseTimeRef.current = Tone.Transport.seconds * state.speed;
@@ -371,7 +371,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'STOP' });
   }, []);
 
-  // Ir a tiempo específico
+  // Seek to specific time
   const seekTo = useCallback(
     (time: number) => {
       const adjustedTime = time / state.speed;

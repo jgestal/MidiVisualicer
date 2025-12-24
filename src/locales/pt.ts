@@ -33,7 +33,7 @@ export const pt = {
 
     // Playback controls
     play: 'Reproduzir',
-    pause: 'Pausar',
+    pause: 'Pause',
     stop: 'Parar',
     restart: 'Reiniciar',
     rewind5s: 'Recuar 5s',

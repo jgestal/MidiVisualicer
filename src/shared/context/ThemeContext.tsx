@@ -49,7 +49,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     root.setAttribute('data-theme', resolved);
 
-    // También actualizar meta theme-color para móviles
+    // Also update meta theme-color for mobile
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
       metaThemeColor.setAttribute('content', resolved === 'dark' ? '#0f0f23' : '#ffffff');

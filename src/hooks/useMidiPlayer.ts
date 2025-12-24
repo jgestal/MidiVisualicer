@@ -23,7 +23,7 @@ export function useMidiPlayer() {
   const startTimeRef = useRef<number>(0);
   const pauseTimeRef = useRef<number>(0);
 
-  // Inicializar Tone.js
+  // Initialize Tone.js
   const initialize = useCallback(async () => {
     if (isInitialized) return;
 
@@ -31,7 +31,7 @@ export function useMidiPlayer() {
     setIsInitialized(true);
   }, [isInitialized]);
 
-  // Crear sintetizadores para las pistas
+  // Create synthesizers para las pistas
   const createSynths = useCallback((trackCount: number) => {
     // Limpiar sintetizadores anteriores
     synthsRef.current.forEach((synth) => synth.dispose());
@@ -76,7 +76,7 @@ export function useMidiPlayer() {
     []
   );
 
-  // Reproducir MIDI
+  // Play MIDI
   const play = useCallback(
     async (
       midi: ParsedMidi,
@@ -102,7 +102,7 @@ export function useMidiPlayer() {
       // Configurar transporte
       Tone.Transport.bpm.value = midi.bpm * speed;
 
-      // Si estaba pausado, continuar desde donde se quedó
+      // If paused, resume from where it left off
       if (playbackState.isPaused && pauseTimeRef.current > 0) {
         Tone.Transport.seconds = pauseTimeRef.current / speed;
       } else {
@@ -144,7 +144,7 @@ export function useMidiPlayer() {
     [initialize, createSynths, scheduleTrack, playbackState.speed, playbackState.isPaused]
   );
 
-  // Pausar reproducción
+  // Pause reproducción
   const pause = useCallback(() => {
     if (playbackState.isPlaying) {
       pauseTimeRef.current = Tone.Transport.seconds * playbackState.speed;
@@ -163,7 +163,7 @@ export function useMidiPlayer() {
     }
   }, [playbackState.isPlaying, playbackState.speed]);
 
-  // Detener reproducción
+  // Stop playback
   const stop = useCallback(() => {
     Tone.Transport.stop();
     Tone.Transport.cancel();
@@ -198,7 +198,7 @@ export function useMidiPlayer() {
     [playbackState.isPlaying, playbackState.speed]
   );
 
-  // Ir a tiempo específico
+  // Seek to specific time
   const seekTo = useCallback(
     (time: number) => {
       const adjustedTime = time / playbackState.speed;

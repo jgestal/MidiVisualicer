@@ -20,7 +20,7 @@ export function useMidiLoader() {
       const arrayBuffer = await file.arrayBuffer();
       const midi = new Midi(arrayBuffer);
 
-      // Extraer información del tempo
+      // Extract tempo information
       const tempos = midi.header.tempos.map((t) => ({
         bpm: t.bpm,
         time: t.time ?? 0,

@@ -5,7 +5,7 @@
 import { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import type { MidiTrack } from '@/shared/types/midi';
 
-// Análisis de pista para detectar melodía
+// Track analysis to detect melody
 interface TrackAnalysis {
   trackIndex: number;
   melodyScore: number;
@@ -20,7 +20,7 @@ interface TrackAnalysis {
   };
 }
 
-// Estado del contexto
+// Context state
 interface TracksState {
   selectedTrackIndex: number;
   mutedTracks: Set<number>;
@@ -28,7 +28,7 @@ interface TracksState {
   autoSelectMelody: boolean;
 }
 
-// Acciones
+// Actions
 type TracksAction =
   | { type: 'SELECT_TRACK'; payload: number }
   | { type: 'TOGGLE_MUTE'; payload: number }
@@ -36,7 +36,7 @@ type TracksAction =
   | { type: 'RESET'; payload?: { selectedTrack?: number } }
   | { type: 'SET_AUTO_SELECT_MELODY'; payload: boolean };
 
-// Estado inicial
+// Initial state
 const initialState: TracksState = {
   selectedTrackIndex: 0,
   mutedTracks: new Set(),
@@ -61,7 +61,7 @@ function tracksReducer(state: TracksState, action: TracksAction): TracksState {
     }
 
     case 'SET_SOLO': {
-      // Si ya está en solo, quitarlo
+      // If already solo, remove it
       if (state.soloTrack === action.payload) {
         return { ...state, soloTrack: null };
       }
@@ -83,7 +83,7 @@ function tracksReducer(state: TracksState, action: TracksAction): TracksState {
   }
 }
 
-// Función para analizar una pista
+// Function to analyze a track
 function analyzeTrack(track: MidiTrack): TrackAnalysis {
   const notes = track.notes;
   if (notes.length === 0) {
@@ -102,7 +102,7 @@ function analyzeTrack(track: MidiTrack): TrackAnalysis {
     };
   }
 
-  // Calcular características
+  // Calculate characteristics
   const pitches = notes.map((n) => n.midi);
   const minPitch = Math.min(...pitches);
   const maxPitch = Math.max(...pitches);
@@ -111,11 +111,11 @@ function analyzeTrack(track: MidiTrack): TrackAnalysis {
   const durations = notes.map((n) => n.duration);
   const avgNoteDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
 
-  // Variedad de notas (notas únicas / total)
+  // Note variety (notas únicas / total)
   const uniqueNotes = new Set(pitches);
   const noteVariety = uniqueNotes.size / notes.length;
 
-  // Detectar acordes (notas simultáneas)
+  // Detect chords (notas simultáneas)
   const sortedByTime = [...notes].sort((a, b) => a.time - b.time);
   let chordCount = 0;
   const tolerance = 0.05; // 50ms
@@ -131,21 +131,21 @@ function analyzeTrack(track: MidiTrack): TrackAnalysis {
   const duration = notes[notes.length - 1].time - notes[0].time;
   const avgNoteCount = duration > 0 ? notes.length / duration : 0;
 
-  // Calcular score de melodía
-  // Mayor score = más probable que sea melodía
+  // Calculate melody score
+  // Higher score = more likely to be melody
   let melodyScore = 0;
 
   // Pitch alto contribuye positivamente
   if (avgPitch > 60) melodyScore += 0.2;
   if (avgPitch > 72) melodyScore += 0.1;
 
-  // Variedad de notas contribuye positivamente
+  // Note variety contribuye positivamente
   melodyScore += noteVariety * 0.3;
 
-  // Menos acordes es mejor para melodía
+  // Fewer chords is better for melody
   if (!hasChords) melodyScore += 0.2;
 
-  // Nombre de pista puede indicar melodía
+  // Track name may indicate melody
   const name = track.name.toLowerCase();
   if (
     name.includes('melody') ||
@@ -177,21 +177,21 @@ function analyzeTrack(track: MidiTrack): TrackAnalysis {
   };
 }
 
-// Detectar la pista de melodía - retorna el ÍNDICE DEL ARRAY (no track.index)
+// Detect melody track - retorna el ÍNDICE DEL ARRAY (no track.index)
 export function detectMelodyTrack(tracks: MidiTrack[]): number {
   if (tracks.length === 0) return 0;
   if (tracks.length === 1) return 0;
 
-  // Analizar cada pista y guardar el índice del array
+  // Analyze each track y guardar el índice del array
   const analyses = tracks.map((track, arrayIndex) => ({
     ...analyzeTrack(track),
-    arrayIndex, // Guardamos el índice del array
+    arrayIndex, // Store the index del array
   }));
 
   // Ordenar por melodyScore
   const sorted = [...analyses].sort((a, b) => b.melodyScore - a.melodyScore);
 
-  // Retornar el índice del array, no track.index
+  // Return the index del array, no track.index
   return sorted[0].arrayIndex;
 }
 
@@ -290,7 +290,7 @@ export function useSelectedTrack() {
   return state.selectedTrackIndex;
 }
 
-// Hook para verificar si una pista está muteada
+// Hook to check si una pista está muteada
 export function useIsTrackMuted(trackIndex: number) {
   const { state } = useTracks();
   return state.mutedTracks.has(trackIndex);

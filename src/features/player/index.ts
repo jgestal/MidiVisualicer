@@ -1,5 +1,5 @@
 /**
- * Exportaciones del feature player
+ * Exports del feature player
  */
 
 // Context

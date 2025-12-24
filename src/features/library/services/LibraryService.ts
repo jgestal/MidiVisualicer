@@ -108,7 +108,7 @@ export const LibraryService = {
       const request = store.getAll();
 
       request.onsuccess = () => {
-        // Ordenar por fecha de importación (más recientes primero)
+        // Sort by date de importación (más recientes primero)
         const files = request.result.sort(
           (a: StoredMidiFile, b: StoredMidiFile) => b.importedAt - a.importedAt
         );

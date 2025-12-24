@@ -1,5 +1,5 @@
 /**
- * Exportaciones del feature tracks
+ * Exports del feature tracks
  */
 
 // Context

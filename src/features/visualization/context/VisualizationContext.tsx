@@ -4,22 +4,22 @@
  */
 import { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 
-// Tipos de visualización disponibles
+// Available visualization types
 export type VisualizationType = 'tablature' | 'pianoroll' | 'notation';
 
-// Estado del contexto
+// Context state
 interface VisualizationState {
   activeView: VisualizationType;
   isMaximized: boolean;
 }
 
-// Acciones
+// Actions
 type VisualizationAction =
   | { type: 'SET_VIEW'; payload: VisualizationType }
   | { type: 'TOGGLE_MAXIMIZE' }
   | { type: 'SET_MAXIMIZED'; payload: boolean };
 
-// Estado inicial
+// Initial state
 const initialState: VisualizationState = {
   activeView: 'tablature',
   isMaximized: false,
@@ -94,7 +94,7 @@ export function useActiveView() {
   return state.activeView;
 }
 
-// Hook para verificar si está maximizado
+// Hook to check si está maximizado
 export function useIsMaximized() {
   const { state } = useVisualization();
   return state.isMaximized;

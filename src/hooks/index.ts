@@ -8,4 +8,5 @@ export { useAppUI } from './useAppUI';
 export { useExport } from './useExport';
 export { useAutoTranspose } from './useAutoTranspose';
 export { usePianoRollScroll } from './usePianoRollScroll';
+export { useKeyboardShortcuts } from './useKeyboardShortcuts';
 

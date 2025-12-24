@@ -1,5 +1,5 @@
 /**
- * Sistema de Configuración Modular de Instrumentos
+ * Sistema de Configuration Modular de Instrumentos
  *
  * Incluye instrumentos predefinidos + soporte para instrumentos personalizados
  * guardados en localStorage

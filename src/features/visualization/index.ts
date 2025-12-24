@@ -1,5 +1,5 @@
 /**
- * Exportaciones del feature visualization
+ * Exports del feature visualization
  */
 
 // Context

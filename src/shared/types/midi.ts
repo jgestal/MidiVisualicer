@@ -26,18 +26,18 @@ export interface MidiTrack {
 }
 
 export interface MidiNote {
-  midi: number; // Número MIDI (0-127)
+  midi: number; // MIDI number (0-127)
   name: string; // Nombre de la nota (ej: "C4")
   time: number; // Tiempo de inicio en segundos
-  duration: number; // Duración en segundos
+  duration: number; // Duration in seconds
   velocity: number; // Velocidad (0-1)
   ticks: number; // Tiempo en ticks
-  durationTicks: number; // Duración en ticks
+  durationTicks: number; // Duration in ticks
 }
 
 export interface ParsedMidi {
   name: string;
-  duration: number; // Duración total en segundos
+  duration: number; // Total duration in seconds
   bpm: number; // Tempo principal
   timeSignature: {
     numerator: number;
