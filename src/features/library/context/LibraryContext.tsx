@@ -18,7 +18,7 @@ export interface LibraryItem {
   isStored?: boolean; // Si está en IndexedDB
 }
 
-// Estado del contexto
+// Context state
 interface LibraryState {
   items: LibraryItem[];
   recentItems: LibraryItem[];
@@ -28,7 +28,7 @@ interface LibraryState {
   selectedCategory: 'all' | 'imported' | 'bundled' | 'recent';
 }
 
-// Acciones
+// Actions
 type LibraryAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
@@ -39,7 +39,7 @@ type LibraryAction =
   | { type: 'SET_SEARCH_QUERY'; payload: string }
   | { type: 'SET_CATEGORY'; payload: 'all' | 'imported' | 'bundled' | 'recent' };
 
-// Estado inicial
+// Initial state
 const initialState: LibraryState = {
   items: [],
   recentItems: [],

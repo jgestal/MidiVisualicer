@@ -1,15 +1,15 @@
 /**
- * MIDI Visualizer - App Principal (Refactorizado)
+ * MIDI Visualizer - Main App Component
  * 
  * Layout:
- * 1. Header - Barra de título con controles
- * 2. Toolbar - Controles de transponer y loop (toggleable)
- * 3. Piano Roll - Visualización del piano (toggleable)
+ * 1. Header - Title bar with controls
+ * 2. Toolbar - Transpose and loop controls (toggleable)
+ * 3. Piano Roll - Piano visualization (toggleable)
  * 4. Main Area:
- *    - Left Sidebar - Explorador de archivos (drawer)
- *    - Central Panel - Tablatura / Partitura con tabs
- *    - Right Sidebar - Pistas del MIDI (colapsable)
- * 5. Footer - Controles de reproducción
+ *    - Left Sidebar - File explorer (drawer)
+ *    - Central Panel - Tablature / Sheet music with tabs
+ *    - Right Sidebar - MIDI tracks (collapsible)
+ * 5. Footer - Playback controls
  */
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Music, X, ChevronDown } from 'lucide-react';
@@ -27,6 +27,7 @@ import { useMetronome } from './hooks/useMetronome';
 import { useAppUI } from './hooks/useAppUI';
 import { useExport } from './hooks/useExport';
 import { useAutoTranspose } from './hooks/useAutoTranspose';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Layout components
 import { Header } from './components/layout/Header';
@@ -141,85 +142,27 @@ function App() {
   // Siempre seleccionar la primera pista al cargar un MIDI
   useEffect(() => {
     if (parsedMidi && parsedMidi.tracks.length > 0) {
-      resetTracks(0); // Siempre pista 1 (índice 0)
+      resetTracks(0); // Always track 1 (index 0)
     }
   }, [parsedMidi, resetTracks]);
 
   // Global Keyboard Shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-        return;
-      }
-
-      switch (e.code) {
-        case 'Space':
-          e.preventDefault();
-          if (playbackState.isPlaying) {
-            pause();
-          } else {
-            if (parsedMidi) {
-              play(parsedMidi, mutedTracks, trackVolumes);
-            }
-          }
-          break;
-        case 'KeyR':
-          seekTo(0);
-          break;
-        case 'KeyM':
-          if (selectedTrack >= 0) {
-            const wasMuted = mutedTracks.has(selectedTrack);
-            setTrackMuted(selectedTrack, !wasMuted);
-            toggleMute(selectedTrack);
-          }
-          break;
-        case 'ArrowLeft':
-          // Seek backward 5 seconds (or 1 with Shift)
-          seekTo(Math.max(0, playbackState.currentTime - (e.shiftKey ? 1 : 5)));
-          break;
-        case 'ArrowRight':
-          // Seek forward 5 seconds (or 1 with Shift)
-          seekTo(playbackState.currentTime + (e.shiftKey ? 1 : 5));
-          break;
-        case 'ArrowUp':
-          // Transpose up (semitone, or octave with Shift)
-          e.preventDefault();
-          setTranspose(transpose + (e.shiftKey ? 12 : 1));
-          break;
-        case 'ArrowDown':
-          // Transpose down (semitone, or octave with Shift)
-          e.preventDefault();
-          setTranspose(transpose - (e.shiftKey ? 12 : 1));
-          break;
-        case 'Home':
-          // Go to beginning
-          seekTo(0);
-          break;
-        case 'End':
-          // Go to end
-          if (parsedMidi) {
-            seekTo(parsedMidi.duration);
-          }
-          break;
-        case 'Digit1':
-          setSpeed(0.25);
-          break;
-        case 'Digit2':
-          setSpeed(0.5);
-          break;
-        case 'Digit3':
-          setSpeed(0.75);
-          break;
-        case 'Digit4':
-          setSpeed(1.0);
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [playbackState.isPlaying, playbackState.currentTime, parsedMidi, mutedTracks, trackVolumes, selectedTrack, play, pause, seekTo, setTrackMuted, toggleMute, transpose, setTranspose, setSpeed]);
+  useKeyboardShortcuts({
+    isPlaying: playbackState.isPlaying,
+    currentTime: playbackState.currentTime,
+    parsedMidi,
+    selectedTrack,
+    mutedTracks,
+    trackVolumes,
+    transpose,
+    play,
+    pause,
+    seekTo,
+    setSpeed,
+    setTranspose,
+    setTrackMuted,
+    toggleMute,
+  });
 
   // Auto-transposición (via custom hook)
   const selectedInstrument = useMemo(() => getAllInstruments()[selectedInstrumentId], [selectedInstrumentId]);

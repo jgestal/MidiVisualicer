@@ -21,14 +21,14 @@ import {
 
 export type { InstrumentConfig };
 
-// Estado del contexto
+// Context state
 interface InstrumentState {
   selectedInstrumentId: string;
   transpose: number;
   customInstruments: Record<string, InstrumentConfig>;
 }
 
-// Acciones
+// Actions
 type InstrumentAction =
   | { type: 'SELECT_INSTRUMENT'; payload: string }
   | { type: 'SET_TRANSPOSE'; payload: number }
@@ -62,7 +62,7 @@ function savePrefs(prefs: Partial<UserPrefs>): void {
   }
 }
 
-// Estado inicial (cargado desde localStorage)
+// Initial state (cargado desde localStorage)
 const savedPrefs = loadPrefs();
 const initialState: InstrumentState = {
   selectedInstrumentId: savedPrefs.selectedInstrumentId || 'guitar',

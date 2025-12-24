@@ -1,5 +1,5 @@
 /**
- * Exportaciones compartidas principales
+ * Exports compartidas principales
  */
 
 // Contextos

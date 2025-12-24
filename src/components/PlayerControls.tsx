@@ -51,7 +51,7 @@ export function PlayerControls({
         </button>
 
         {isPlaying ? (
-          <button className="player-btn-main" onClick={onPause} disabled={disabled} title="Pausar">
+          <button className="player-btn-main" onClick={onPause} disabled={disabled} title="Pause">
             <Pause size={28} />
           </button>
         ) : (
@@ -59,7 +59,7 @@ export function PlayerControls({
             className="player-btn-main"
             onClick={onPlay}
             disabled={disabled}
-            title="Reproducir"
+            title="Play"
           >
             <Play size={28} style={{ marginLeft: 4 }} />
           </button>

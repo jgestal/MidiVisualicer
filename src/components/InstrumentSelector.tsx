@@ -86,7 +86,7 @@ export function InstrumentSelector({
       {/* Badge para personalizados */}
       {isCustom && <span className="custom-badge">✨</span>}
 
-      {/* Acciones para instrumentos personalizados */}
+      {/* Actions para instrumentos personalizados */}
       {isCustom && (
         <div className="instrument-actions">
           <button

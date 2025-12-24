@@ -181,10 +181,10 @@ export function TrackManager({
   onToggleSolo,
   compact = false,
 }: TrackManagerProps) {
-  // Ordenar pistas: melodía primero, luego por cantidad de notas
+  // Sort tracks: melodía primero, luego por cantidad de notas
   const sortedTracks = useMemo(() => {
     return [...tracks].sort((a, b) => {
-      // Melodía siempre primero
+      // Melody always first
       if (melodyTrack === a.index) return -1;
       if (melodyTrack === b.index) return 1;
       // Luego por cantidad de notas
@@ -231,7 +231,7 @@ export function TrackManager({
         ))}
       </div>
 
-      {/* Acciones rápidas */}
+      {/* Actions rápidas */}
       {!compact && tracks.length > 3 && (
         <div className="track-manager-actions">
           <button

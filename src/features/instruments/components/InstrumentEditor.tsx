@@ -169,7 +169,7 @@ export function InstrumentEditor({
     return errs;
   }, [name, strings, frets]);
 
-  // Añadir cuerda
+  // Add cuerda
   const addString = useCallback(() => {
     if (strings.length >= 12) return;
     setStrings((prev) => [...prev, { id: generateId(), note: 'E', octave: 4 }]);
@@ -402,7 +402,7 @@ export function InstrumentEditor({
                 disabled={strings.length >= 12}
               >
                 <Plus size={14} />
-                Añadir cuerda
+                Add cuerda
               </button>
             </div>
 

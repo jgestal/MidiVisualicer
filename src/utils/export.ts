@@ -5,12 +5,12 @@ import type { MidiNote, ParsedMidi, MidiTrack } from '../types/midi';
 import { midiToNote, INSTRUMENTS, getOptimalPosition } from '../config/instruments';
 
 /**
- * Detectar acordes a partir de notas simultáneas
+ * Detect chords a partir de notas simultáneas
  */
 function detectChord(notes: string[]): string {
   if (notes.length < 2) return notes[0] || '';
 
-  // Simplificación: usar la nota más baja como raíz
+  // Simplification: usar la nota más baja como raíz
   const sortedNotes = [...notes].sort();
   const root = sortedNotes[0].replace(/[0-9]/g, '');
 
@@ -41,7 +41,7 @@ export function generateCifrado(midi: ParsedMidi, trackIndex: number): string {
   output += `║  Compás: ${midi.timeSignature.numerator}/${midi.timeSignature.denominator}${' '.repeat(50)}║\n`;
   output += `╚══════════════════════════════════════════════════════════════╝\n\n`;
 
-  // Agrupar notas por tiempo (notas simultáneas = acordes)
+  // Group notes by time (notas simultáneas = acordes)
   const timeGroups: Map<number, MidiNote[]> = new Map();
   const timeQuantum = 0.05; // 50ms de tolerancia
 
@@ -76,7 +76,7 @@ export function generateCifrado(midi: ParsedMidi, trackIndex: number): string {
 
   output += `${'─'.repeat(64)}\n\n`;
 
-  // Estadísticas
+  // Statistics
   output += `ESTADÍSTICAS:\n`;
   output += `${'─'.repeat(32)}\n`;
   output += `Total de notas: ${track.noteCount}\n`;
@@ -105,7 +105,7 @@ export function generateTablatureText(track: MidiTrack, instrumentId: string): s
   output += `║  Notas: ${String(track.noteCount).padEnd(52)}║\n`;
   output += `╚══════════════════════════════════════════════════════════════╝\n\n`;
 
-  // Agrupar notas por tiempo
+  // Group notes by time
   const timeQuantum = 0.15;
   const timeSlots: Map<number, Array<{ string: number; fret: number; time: number }>> = new Map();
 
@@ -133,14 +133,14 @@ export function generateTablatureText(track: MidiTrack, instrumentId: string): s
   }
 
   sections.forEach((sectionSlots, sectionIdx) => {
-    // Número de compás aproximado
+    // Approximate bar number
     const startTime = sectionSlots[0] * timeQuantum;
     const timeStr = formatTimeCode(startTime);
 
     output += `── Sección ${sectionIdx + 1} ─ ${timeStr} ${'─'.repeat(40)}\n\n`;
 
-    // Generar líneas para esta sección
-    // Añadir separadores de compás cada 4 notas
+    // Generate lines for this section
+    // Add bar separators cada 4 notas
     const NOTES_PER_BAR = 4;
 
     for (let stringIdx = 0; stringIdx < stringCount; stringIdx++) {
@@ -157,7 +157,7 @@ export function generateTablatureText(track: MidiTrack, instrumentId: string): s
           line += '───';
         }
 
-        // Añadir separador de compás cada NOTES_PER_BAR notas
+        // Add separador de compás cada NOTES_PER_BAR notas
         if ((noteIdx + 1) % NOTES_PER_BAR === 0 && noteIdx < sectionSlots.length - 1) {
           line += '│';
         }
@@ -170,7 +170,7 @@ export function generateTablatureText(track: MidiTrack, instrumentId: string): s
     output += '\n';
   });
 
-  // Leyenda y estadísticas
+  // Legend and statistics
   output += `${'═'.repeat(64)}\n`;
   output += `LEYENDA:\n`;
   output += `  Números = traste donde pulsar\n`;
@@ -262,7 +262,7 @@ export function generateMusicXML(midi: ParsedMidi, trackIndex: number): string {
     const alter = noteName.includes('#') ? 1 : 0;
     const octave = parseInt(noteName.slice(-1), 10);
 
-    // Duración en divisiones (480 ticks por negra)
+    // Duration in divisions (480 ticks por negra)
     // duration (sec) * (bpm / 60) * 480
     const durationTicks = Math.round(note.duration * (bpm / 60) * 480);
 

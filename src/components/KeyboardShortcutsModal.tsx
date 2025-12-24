@@ -84,7 +84,7 @@ const SHORTCUT_LABELS: Record<string, Record<string, string>> = {
     transpose: 'Transposición',
     speed: 'Velocidad',
     tracks: 'Pistas',
-    playPause: 'Reproducir / Pausar',
+    playPause: 'Play / Pause',
     restart: 'Reiniciar desde el inicio',
     goToStart: 'Ir al inicio',
     goToEnd: 'Ir al final',

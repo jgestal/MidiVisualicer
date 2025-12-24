@@ -48,7 +48,7 @@ export function LibraryExplorer({ selectedItem, onSelectItem, onLoadMidi }: Libr
     [onSelectItem, getFileData, onLoadMidi, markAsPlayed]
   );
 
-  // Manejar eliminación
+  // Handle deletion
   const handleDelete = useCallback(
     async (e: React.MouseEvent, item: LibraryItem) => {
       e.stopPropagation();
@@ -111,7 +111,7 @@ export function LibraryExplorer({ selectedItem, onSelectItem, onLoadMidi }: Libr
     [importFile, handleItemClick]
   );
 
-  // Categorías
+  // Categories
   const categories: { id: CategoryFilter; icon: React.ReactNode; label: string }[] = [
     { id: 'all', icon: <Music2 size={14} />, label: 'Todos' },
     { id: 'recent', icon: <Clock size={14} />, label: 'Recientes' },

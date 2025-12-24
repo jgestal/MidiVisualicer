@@ -30,7 +30,7 @@ export function getInstrumentEmoji(instrumentName: string): string {
   if (name.includes('flute') || name.includes('piccolo') || name.includes('recorder')) return '🪈';
   if (name.includes('clarinet') || name.includes('oboe') || name.includes('bassoon')) return '🪈';
 
-  // Percusión
+  // Percussion
   if (name.includes('drum') || name.includes('percussion') || name.includes('kit')) return '🥁';
   if (name.includes('timpani') || name.includes('tom')) return '🥁';
   if (name.includes('cymbal') || name.includes('hi-hat')) return '🥁';

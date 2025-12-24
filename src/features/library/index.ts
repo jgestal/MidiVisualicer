@@ -1,5 +1,5 @@
 /**
- * Exportaciones del feature library
+ * Exports del feature library
  */
 
 // Contexts

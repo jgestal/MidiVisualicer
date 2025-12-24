@@ -8,7 +8,7 @@ import type { ParsedMidi, MidiTrack, MidiNote, MidiFile } from '@/shared/types/m
 import { getGMInstrumentName } from '@/shared/constants/gmInstruments';
 
 
-// Estado del contexto
+// Context state
 interface MidiState {
   parsedMidi: ParsedMidi | null;
   selectedFile: MidiFile | null;
@@ -16,14 +16,14 @@ interface MidiState {
   error: string | null;
 }
 
-// Acciones
+// Actions
 type MidiAction =
   | { type: 'LOAD_START' }
   | { type: 'LOAD_SUCCESS'; payload: { midi: ParsedMidi; file?: MidiFile } }
   | { type: 'LOAD_ERROR'; payload: string }
   | { type: 'CLEAR' };
 
-// Estado inicial
+// Initial state
 const initialState: MidiState = {
   parsedMidi: null,
   selectedFile: null,
@@ -68,12 +68,12 @@ const MidiContext = createContext<MidiContextType | null>(null);
 export function MidiProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(midiReducer, initialState);
 
-  // Función para parsear el MIDI desde ArrayBuffer
+  // Function to parse el MIDI desde ArrayBuffer
   const parseMidiBuffer = useCallback(
     async (arrayBuffer: ArrayBuffer, fileName: string): Promise<ParsedMidi> => {
       const midi = new Midi(arrayBuffer);
 
-      // Extraer información del tempo
+      // Extract tempo information
       const tempos = midi.header.tempos.map((t) => ({
         bpm: t.bpm,
         time: t.time ?? 0,
