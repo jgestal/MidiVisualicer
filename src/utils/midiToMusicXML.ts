@@ -26,6 +26,9 @@ interface NoteInfo {
   isRest: boolean;
 }
 
+// Beam position in a beamed group
+type BeamType = 'begin' | 'continue' | 'end' | null;
+
 function midiToNoteInfo(midi: number, durationSeconds: number, divisionsPerQuarter: number, tempo: number): NoteInfo {
   const step = NOTE_NAMES[midi % 12];
   const alter = NOTE_ALTERS[midi % 12];
@@ -55,7 +58,7 @@ function midiToNoteInfo(midi: number, durationSeconds: number, divisionsPerQuart
   };
 }
 
-function generateNoteXML(noteInfo: NoteInfo, voice: number = 1): string {
+function generateNoteXML(noteInfo: NoteInfo, voice: number = 1, beamType: BeamType = null): string {
   if (noteInfo.isRest) {
     return `
       <note>
@@ -73,6 +76,12 @@ function generateNoteXML(noteInfo: NoteInfo, voice: number = 1): string {
     accidentalXML = noteInfo.alter === 1 ? '<accidental>sharp</accidental>' : '<accidental>flat</accidental>';
   }
 
+  // Generate beam XML if applicable (for eighth notes and shorter)
+  let beamXML = '';
+  if (beamType && (noteInfo.type === 'eighth' || noteInfo.type === '16th')) {
+    beamXML = `<beam number="1">${beamType}</beam>`;
+  }
+
   return `
       <note>
         <pitch>
@@ -84,6 +93,7 @@ function generateNoteXML(noteInfo: NoteInfo, voice: number = 1): string {
         <voice>${voice}</voice>
         <type>${noteInfo.type}</type>
         ${accidentalXML}
+        ${beamXML}
       </note>`;
 }
 
@@ -227,9 +237,42 @@ export function midiNotesToMusicXML(
       // Limit to 8 notes per measure for readability
       const limitedNotes = measureNotes.slice(0, 8);
 
-      limitedNotes.forEach(note => {
-        const noteInfo = midiToNoteInfo(note.midi, note.duration, divisionsPerQuarter, tempo);
-        notesXML += generateNoteXML(noteInfo);
+      // Convert to note info array first to determine beaming
+      const noteInfos = limitedNotes.map(note =>
+        midiToNoteInfo(note.midi, note.duration, divisionsPerQuarter, tempo)
+      );
+
+      // Calculate beaming for eighth notes and shorter
+      // Group consecutive beamable notes (eighth/16th)
+      const beamTypes: BeamType[] = new Array(noteInfos.length).fill(null);
+
+      let beamStart = -1;
+      for (let i = 0; i <= noteInfos.length; i++) {
+        const isBeamable = i < noteInfos.length &&
+          (noteInfos[i].type === 'eighth' || noteInfos[i].type === '16th') &&
+          !noteInfos[i].isRest;
+
+        if (isBeamable && beamStart === -1) {
+          // Start of a potential beam group
+          beamStart = i;
+        } else if (!isBeamable && beamStart !== -1) {
+          // End of beam group
+          const beamLength = i - beamStart;
+          if (beamLength >= 2) {
+            // Only beam if 2+ notes
+            beamTypes[beamStart] = 'begin';
+            for (let j = beamStart + 1; j < i - 1; j++) {
+              beamTypes[j] = 'continue';
+            }
+            beamTypes[i - 1] = 'end';
+          }
+          beamStart = -1;
+        }
+      }
+
+      // Generate XML with beaming
+      noteInfos.forEach((noteInfo, idx) => {
+        notesXML += generateNoteXML(noteInfo, 1, beamTypes[idx]);
       });
     }
 
