@@ -39,6 +39,7 @@ export const bn = {
     rewind5s: '5 সেকেন্ড পিছনে',
     forward5s: '5 সেকেন্ড সামনে',
     speed: 'গতি',
+    keyboardShortcuts: 'Keyboard Shortcuts',
 
     // Transpose
     transpose: 'ট্রান্সপোজ',

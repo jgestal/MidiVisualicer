@@ -39,6 +39,7 @@ export const zh = {
     rewind5s: '后退5秒',
     forward5s: '前进5秒',
     speed: '速度',
+    keyboardShortcuts: 'Keyboard Shortcuts',
 
     // Transpose
     transpose: '移调',

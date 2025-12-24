@@ -39,6 +39,7 @@ export const hi = {
     rewind5s: '5 सेकंड पीछे',
     forward5s: '5 सेकंड आगे',
     speed: 'गति',
+    keyboardShortcuts: 'Keyboard Shortcuts',
 
     // Transpose
     transpose: 'ट्रांसपोज़',

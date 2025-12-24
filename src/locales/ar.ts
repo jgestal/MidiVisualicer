@@ -40,6 +40,7 @@ export const ar = {
     rewind5s: 'تراجع 5 ثوانٍ',
     forward5s: 'تقدم 5 ثوانٍ',
     speed: 'السرعة',
+    keyboardShortcuts: 'Keyboard Shortcuts',
 
     // Transpose
     transpose: 'تبديل النغمة',

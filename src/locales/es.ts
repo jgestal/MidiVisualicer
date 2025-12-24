@@ -40,6 +40,7 @@ export const es = {
     rewind5s: 'Retroceder 5s',
     forward5s: 'Avanzar 5s',
     speed: 'Velocidad',
+    keyboardShortcuts: 'Atajos de teclado',
 
     // Transpose
     transpose: 'Transponer',

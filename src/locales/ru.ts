@@ -39,6 +39,7 @@ export const ru = {
     rewind5s: 'Назад 5с',
     forward5s: 'Вперёд 5с',
     speed: 'Скорость',
+    keyboardShortcuts: 'Keyboard Shortcuts',
 
     // Transpose
     transpose: 'Транспонировать',

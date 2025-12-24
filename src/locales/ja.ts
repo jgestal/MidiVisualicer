@@ -39,6 +39,7 @@ export const ja = {
     rewind5s: '5秒戻る',
     forward5s: '5秒進む',
     speed: '速度',
+    keyboardShortcuts: 'Keyboard Shortcuts',
 
     // Transpose
     transpose: '移調',

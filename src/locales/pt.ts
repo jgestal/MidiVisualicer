@@ -39,6 +39,7 @@ export const pt = {
     rewind5s: 'Recuar 5s',
     forward5s: 'Avançar 5s',
     speed: 'Velocidade',
+    keyboardShortcuts: 'Keyboard Shortcuts',
 
     // Transpose
     transpose: 'Transpor',

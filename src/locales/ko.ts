@@ -39,6 +39,7 @@ export const ko = {
     rewind5s: '5초 뒤로',
     forward5s: '5초 앞으로',
     speed: '속도',
+    keyboardShortcuts: 'Keyboard Shortcuts',
 
     // Transpose
     transpose: '조옮김',
