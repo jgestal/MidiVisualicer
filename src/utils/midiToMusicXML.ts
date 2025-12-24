@@ -24,10 +24,123 @@ interface NoteInfo {
   duration: number;  // in divisions
   type: string;      // whole, half, quarter, eighth, 16th
   isRest: boolean;
+  beatPosition?: number; // which beat this note falls on (1-indexed)
 }
 
 // Beam position in a beamed group
 type BeamType = 'begin' | 'continue' | 'end' | null;
+
+/**
+ * Check if a note type is eligible for beaming
+ * Rule: Only eighth notes and shorter can be beamed
+ */
+function isBeamableType(type: string): boolean {
+  return type === 'eighth' || type === '16th' || type === '32nd';
+}
+
+/**
+ * Detect if meter is compound (6/8, 9/8, 12/8)
+ * Compound meters have 3 eighth notes per beat
+ */
+function isCompoundMeter(beats: number, beatType: number): boolean {
+  return beatType === 8 && (beats === 6 || beats === 9 || beats === 12);
+}
+
+/**
+ * Get the number of eighth notes per beam group based on time signature
+ * Simple meter (x/4): 2 eighths per beat
+ * Compound meter (x/8): 3 eighths per beat
+ */
+function getEighthsPerBeamGroup(beats: number, beatType: number): number {
+  if (isCompoundMeter(beats, beatType)) {
+    return 3; // Compound: group by 3 (dotted quarter pulse)
+  }
+  return 2; // Simple: group by 2 (quarter note pulse)
+}
+
+/**
+ * Calculate beam groups for a measure
+ * Follows standard engraving rules:
+ * - Group by beat in simple meters
+ * - Group by dotted quarter in compound meters
+ * - Never beam across the middle of 4/4 (the "imaginary line")
+ */
+function calculateBeamGroups(
+  noteInfos: NoteInfo[],
+  timeSignature: { beats: number; beatType: number },
+  divisionsPerQuarter: number
+): BeamType[] {
+  const beamTypes: BeamType[] = new Array(noteInfos.length).fill(null);
+
+  if (noteInfos.length === 0) return beamTypes;
+
+  const { beats, beatType } = timeSignature;
+  const isCompound = isCompoundMeter(beats, beatType);
+
+  // Calculate divisions per beat
+  let divisionsPerBeat: number;
+  if (isCompound) {
+    // In compound meter, beat = dotted quarter = 1.5 quarters
+    divisionsPerBeat = divisionsPerQuarter * 1.5;
+  } else {
+    // In simple meter with beat-type 4, beat = quarter
+    divisionsPerBeat = divisionsPerQuarter * (4 / beatType);
+  }
+
+  // The "imaginary line" for 4/4 - don't beam across beats 2-3 (index 1-2)
+  const halfMeasureBeat = beats === 4 ? 2 : -1;
+
+  // Group notes by their beat position
+  let currentPosition = 0;
+  const noteBeats: number[] = [];
+
+  for (const note of noteInfos) {
+    const beatNumber = Math.floor(currentPosition / divisionsPerBeat);
+    noteBeats.push(beatNumber);
+    currentPosition += note.duration;
+  }
+
+  // Find beam groups
+  let groupStart = -1;
+
+  for (let i = 0; i <= noteInfos.length; i++) {
+    const isBeamable = i < noteInfos.length &&
+      isBeamableType(noteInfos[i].type) &&
+      !noteInfos[i].isRest;
+
+    let shouldBreak = !isBeamable;
+    if (isBeamable && groupStart !== -1 && i > 0) {
+      const prevBeat = noteBeats[i - 1];
+      const currBeat = noteBeats[i];
+
+      // Break if on different beats in simple meter
+      if (!isCompound && currBeat !== prevBeat) {
+        shouldBreak = true;
+      }
+
+      // Imaginary line rule for 4/4 (break between beat 2 and 3)
+      if (halfMeasureBeat >= 0 && prevBeat < halfMeasureBeat && currBeat >= halfMeasureBeat) {
+        shouldBreak = true;
+      }
+    }
+
+    if (isBeamable && !shouldBreak && groupStart === -1) {
+      groupStart = i;
+    } else if (shouldBreak && groupStart !== -1) {
+      const groupLength = i - groupStart;
+      if (groupLength >= 2) {
+        beamTypes[groupStart] = 'begin';
+        for (let j = groupStart + 1; j < i - 1; j++) {
+          beamTypes[j] = 'continue';
+        }
+        beamTypes[i - 1] = 'end';
+      }
+      groupStart = isBeamable ? i : -1;
+    }
+  }
+
+  return beamTypes;
+}
 
 function midiToNoteInfo(midi: number, durationSeconds: number, divisionsPerQuarter: number, tempo: number): NoteInfo {
   const step = NOTE_NAMES[midi % 12];
@@ -58,7 +171,12 @@ function midiToNoteInfo(midi: number, durationSeconds: number, divisionsPerQuart
   };
 }
 
-function generateNoteXML(noteInfo: NoteInfo, voice: number = 1, beamType: BeamType = null): string {
+function generateNoteXML(
+  noteInfo: NoteInfo,
+  voice: number = 1,
+  beamType: BeamType = null,
+  clefThreshold: number = 71 // Default MIDI 71 (B4) for Treble Clef
+): string {
   if (noteInfo.isRest) {
     return `
       <note>
@@ -76,9 +194,14 @@ function generateNoteXML(noteInfo: NoteInfo, voice: number = 1, beamType: BeamTy
     accidentalXML = noteInfo.alter === 1 ? '<accidental>sharp</accidental>' : '<accidental>flat</accidental>';
   }
 
+  // Determine stem direction based on note height (Rule 3)
+  // Get MIDI note value from step/octave (approximation for stem logic)
+  const midiValue = (noteInfo.octave + 1) * 12 + NOTE_NAMES.indexOf(noteInfo.step);
+  const stemDirection = midiValue >= clefThreshold ? 'down' : 'up';
+
   // Generate beam XML if applicable (for eighth notes and shorter)
   let beamXML = '';
-  if (beamType && (noteInfo.type === 'eighth' || noteInfo.type === '16th')) {
+  if (beamType && isBeamableType(noteInfo.type)) {
     beamXML = `<beam number="1">${beamType}</beam>`;
   }
 
@@ -92,6 +215,7 @@ function generateNoteXML(noteInfo: NoteInfo, voice: number = 1, beamType: BeamTy
         <duration>${noteInfo.duration}</duration>
         <voice>${voice}</voice>
         <type>${noteInfo.type}</type>
+        <stem>${stemDirection}</stem>
         ${accidentalXML}
         ${beamXML}
       </note>`;
@@ -242,33 +366,8 @@ export function midiNotesToMusicXML(
         midiToNoteInfo(note.midi, note.duration, divisionsPerQuarter, tempo)
       );
 
-      // Calculate beaming for eighth notes and shorter
-      // Group consecutive beamable notes (eighth/16th)
-      const beamTypes: BeamType[] = new Array(noteInfos.length).fill(null);
-
-      let beamStart = -1;
-      for (let i = 0; i <= noteInfos.length; i++) {
-        const isBeamable = i < noteInfos.length &&
-          (noteInfos[i].type === 'eighth' || noteInfos[i].type === '16th') &&
-          !noteInfos[i].isRest;
-
-        if (isBeamable && beamStart === -1) {
-          // Start of a potential beam group
-          beamStart = i;
-        } else if (!isBeamable && beamStart !== -1) {
-          // End of beam group
-          const beamLength = i - beamStart;
-          if (beamLength >= 2) {
-            // Only beam if 2+ notes
-            beamTypes[beamStart] = 'begin';
-            for (let j = beamStart + 1; j < i - 1; j++) {
-              beamTypes[j] = 'continue';
-            }
-            beamTypes[i - 1] = 'end';
-          }
-          beamStart = -1;
-        }
-      }
+      // Calculate beaming using proper music notation rules
+      const beamTypes = calculateBeamGroups(noteInfos, timeSignature, divisionsPerQuarter);
 
       // Generate XML with beaming
       noteInfos.forEach((noteInfo, idx) => {
