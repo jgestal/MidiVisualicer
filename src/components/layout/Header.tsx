@@ -22,6 +22,7 @@ import {
     HelpCircle,
     FileCode,
     FileText,
+    FileImage,
 } from 'lucide-react';
 import { useTheme } from '../../shared/context/ThemeContext';
 import { useI18n, LANGUAGES, type Language } from '../../shared/context/I18nContext';
@@ -46,6 +47,7 @@ interface HeaderProps {
     onExportPdf: () => void;
     onExportMusicXML?: () => void;
     onExportWord?: () => void;
+    onExportSheetSVG?: () => void;
 
     // Info
     onShowInfo: () => void;
@@ -68,6 +70,7 @@ export function Header({
     onExportPdf,
     onExportMusicXML,
     onExportWord,
+    onExportSheetSVG,
     onShowInfo,
     onShowAbout,
     onShowHelp,
@@ -167,6 +170,11 @@ export function Header({
                                 {onExportMusicXML && (
                                     <button onClick={() => { onExportMusicXML(); setShowExportMenu(false); }}>
                                         <FileCode size={14} /> {t.musicxml}
+                                    </button>
+                                )}
+                                {onExportSheetSVG && (
+                                    <button onClick={() => { onExportSheetSVG(); setShowExportMenu(false); }}>
+                                        <FileImage size={14} /> {t.sheetSvg || 'Partitura (SVG)'}
                                     </button>
                                 )}
                                 <div className="export-menu-divider" />

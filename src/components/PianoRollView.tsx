@@ -106,7 +106,6 @@ export function PianoRollView({
     // Schedule draw on next animation frame
     rafIdRef.current = requestAnimationFrame(() => {
       if (!isCurrent) return;
-      console.log(`[PianoRoll] Drawing track ${trackId}:`, notesToDraw.length, 'notes');
 
       // Clear canvas
       ctx.fillStyle = '#0a0a0f';

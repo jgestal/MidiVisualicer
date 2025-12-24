@@ -1,0 +1,114 @@
+/**
+ * OSMD Notation View Styles
+ * Professional sheet music display styling
+ */
+
+.osmd-notation-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  height: 100%;
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.osmd-notation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.osmd-notation-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.osmd-notation-info {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.osmd-notation-scroll {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  min-height: 250px;
+  background: #fff;
+}
+
+.osmd-notation-container {
+  padding: 20px;
+  min-height: 300px;
+}
+
+/* OSMD renders to SVG, style the output */
+.osmd-notation-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.osmd-notation-empty,
+.osmd-notation-loading,
+.osmd-notation-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-text-muted);
+  gap: 12px;
+  background: var(--color-bg-secondary);
+}
+
+.osmd-notation-empty-icon,
+.osmd-notation-error-icon {
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+.osmd-notation-empty p,
+.osmd-notation-loading p,
+.osmd-notation-error p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.osmd-notation-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent-primary);
+  border-radius: 50%;
+  animation: osmd-spin 1s linear infinite;
+}
+
+@keyframes osmd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrollbar styling */
+.osmd-notation-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.osmd-notation-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.osmd-notation-scroll::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 4px;
+}
+
+.osmd-notation-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}

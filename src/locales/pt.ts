@@ -29,6 +29,7 @@ export const pt = {
     exportCifrado: 'Cifra (.txt)',
     exportTablature: 'Tablatura (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'Partitura (SVG)',
 
     // Playback controls
     play: 'Reproduzir',

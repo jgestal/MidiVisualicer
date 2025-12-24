@@ -29,6 +29,7 @@ export const zh = {
     exportCifrado: '和弦谱 (.txt)',
     exportTablature: '指法谱 (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: '乐谱 (SVG)',
 
     // Playback controls
     play: '播放',

@@ -30,6 +30,7 @@ export const es = {
     exportCifrado: 'Cifrado (.txt)',
     exportTablature: 'Tablatura (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'Partitura (SVG)',
 
     // Playback controls
     play: 'Reproducir',

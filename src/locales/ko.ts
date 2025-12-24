@@ -29,6 +29,7 @@ export const ko = {
     exportCifrado: '코드 차트 (.txt)',
     exportTablature: '타브악보 (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: '악보 (SVG)',
 
     // Playback controls
     play: '재생',

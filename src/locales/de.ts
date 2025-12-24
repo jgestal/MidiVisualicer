@@ -29,6 +29,7 @@ export const de = {
     exportCifrado: 'Akkorde (.txt)',
     exportTablature: 'Tabulatur (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'Notenblatt (SVG)',
 
     // Playback controls
     play: 'Abspielen',

@@ -29,6 +29,7 @@ export const ja = {
     exportCifrado: 'コード譜 (.txt)',
     exportTablature: 'タブ譜 (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: '楽譜 (SVG)',
 
     // Playback controls
     play: '再生',
