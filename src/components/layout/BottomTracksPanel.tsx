@@ -36,7 +36,7 @@ export function BottomTracksPanel({
 }: BottomTracksPanelProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { t } = useI18n();
-  const { scrollRef, isDragging, handlePointerDown, handlePointerMove, handlePointerUp, handleClick } = useDragScroll();
+  const { scrollRef, handlePointerDown, handlePointerMove, handlePointerUp, handleClick } = useDragScroll();
 
   // Helper to check if track is active (has notes playing now or fully coming soon)
   // Lookahead: 1.0s, Lookbehind: 0.1s

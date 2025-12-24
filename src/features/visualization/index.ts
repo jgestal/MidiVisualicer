@@ -6,8 +6,8 @@
 export { VisualizationProvider, useVisualization } from './context/VisualizationContext';
 
 // Components
-export { PianoRoll, Tablature, Notation } from './components';
+export { PianoRoll, Tablature } from './components';
 
 // Types
-export type { PianoRollProps, TablatureProps, NotationProps } from './components';
+export type { PianoRollProps, TablatureProps } from './components';
 export type { VisualizationType } from './context/VisualizationContext';

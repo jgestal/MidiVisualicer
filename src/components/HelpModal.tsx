@@ -40,6 +40,36 @@ const MANUALS: Record<Language, { title: string; sections: { heading: string; co
             },
         ],
     },
+    // en_us uses same content as en
+    en_us: {
+        title: 'User Manual',
+        sections: [
+            {
+                heading: '1. Getting Started',
+                content: 'Drag and drop a MIDI file onto the application or click to open a file browser. Once loaded, you will see the tablature and notation for your music.',
+            },
+            {
+                heading: '2. Selecting Instruments',
+                content: 'Click the instrument button in the toolbar to choose from various stringed instruments. You can also create custom instruments with your own tuning.',
+            },
+            {
+                heading: '3. Playback Controls',
+                content: 'Use the play, pause, and stop buttons to control playback. Adjust the speed using the speed dropdown. Enable the metronome for timing assistance.',
+            },
+            {
+                heading: '4. Transposition',
+                content: 'The transpose controls allow you to shift all notes up or down by semitones or octaves. Use "Auto" to automatically fit notes to your instrument range.',
+            },
+            {
+                heading: '5. Loop Function',
+                content: 'Use the Loop A-B controls to set start and end points for repeated practice of specific sections.',
+            },
+            {
+                heading: '6. Exporting',
+                content: 'Export your tablature as text (TXT), formatted tablature (TAB), or PDF for printing or sharing.',
+            },
+        ],
+    },
     es: {
         title: 'Manual de Usuario',
         sections: [

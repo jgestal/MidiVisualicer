@@ -3,7 +3,6 @@ export { TrackSelector } from './TrackSelector';
 export { InstrumentSelector } from './InstrumentSelector';
 export { FileUploader } from './FileUploader';
 export { TablatureView } from './TablatureView';
-export { NotationView } from './NotationView';
 export { FileExplorer, DEMO_FOLDERS } from './FileExplorer';
 export { PianoRollView } from './PianoRollView';
 export { LoopControls } from './LoopControls';
