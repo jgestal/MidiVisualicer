@@ -632,6 +632,7 @@
     border: 2px solid var(--color-bg);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     transition: transform 0.15s ease;
+    margin-top: -5px; /* Center thumb vertically on track */
 }
 
 .footer-volume-slider::-webkit-slider-thumb:hover {
