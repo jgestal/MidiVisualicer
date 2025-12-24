@@ -2,6 +2,7 @@
  * Componente de controles del reproductor MIDI
  */
 import { Play, Pause, Square, SkipBack, SkipForward } from 'lucide-react';
+import { formatDuration } from '../utils/timeUtils';
 import type { PlaybackState, PlaybackSpeed } from '../types/midi';
 
 interface PlayerControlsProps {
@@ -15,12 +16,6 @@ interface PlayerControlsProps {
 }
 
 const SPEED_OPTIONS: PlaybackSpeed[] = [0.25, 0.5, 0.75, 1.0];
-
-function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
 
 export function PlayerControls({
   playbackState,
@@ -91,11 +86,11 @@ export function PlayerControls({
 
       {/* Progress Bar */}
       <div className="progress-container">
-        <span className="progress-time">{formatTime(currentTime)}</span>
+        <span className="progress-time">{formatDuration(currentTime)}</span>
         <div className="progress-bar" onClick={handleProgressClick}>
           <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
         </div>
-        <span className="progress-time">{formatTime(duration)}</span>
+        <span className="progress-time">{formatDuration(duration)}</span>
       </div>
 
       {/* Speed Controls */}

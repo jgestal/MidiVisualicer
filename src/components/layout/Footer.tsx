@@ -4,6 +4,7 @@
  */
 import { Play, Pause, Square, SkipBack, SkipForward, RotateCcw } from 'lucide-react';
 import { useI18n } from '../../shared/context/I18nContext';
+import { formatDuration } from '../../utils/timeUtils';
 import type { PlaybackSpeed } from '../../types/midi';
 
 interface FooterProps {
@@ -21,12 +22,6 @@ interface FooterProps {
 }
 
 const SPEED_OPTIONS: PlaybackSpeed[] = [0.25, 0.5, 0.75, 1.0];
-
-function formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
 
 export function Footer({
     isPlaying,
@@ -115,7 +110,7 @@ export function Footer({
 
             {/* Progress Section */}
             <div className="footer-progress">
-                <span className="footer-time">{formatTime(currentTime)}</span>
+                <span className="footer-time">{formatDuration(currentTime)}</span>
                 <div className="footer-progress-bar" onClick={handleProgressClick}>
                     <div
                         className="footer-progress-fill"
@@ -126,7 +121,7 @@ export function Footer({
                         style={{ left: `${progress}%` }}
                     />
                 </div>
-                <span className="footer-time">{formatTime(duration)}</span>
+                <span className="footer-time">{formatDuration(duration)}</span>
             </div>
 
             {/* Speed Controls */}
