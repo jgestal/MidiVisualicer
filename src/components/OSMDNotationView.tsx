@@ -3,8 +3,14 @@
  * 
  * Features:
  * - Converts MIDI notes to MusicXML and renders with OSMD
- * - Cursor follows playback with auto-scroll
- * - Current note highlighting with color
+ * - Optimized cursor follows playback with auto-scroll
+ * - Export capability via ref
+ * 
+ * PERFORMANCE OPTIMIZATIONS:
+ * - Cursor updates only when note index changes (not every frame)
+ * - Uses cursor.next() incrementally instead of reset + loop
+ * - Throttled scroll updates
+ * - Memoized MusicXML generation
  */
 import { useRef, useEffect, useMemo, useState, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { OpenSheetMusicDisplay as OSMD, CursorType } from 'opensheetmusicdisplay';
@@ -42,6 +48,28 @@ function buildNoteTimeMap(notes: MidiNote[]): number[] {
   return timestamps;
 }
 
+// Find current note index using binary search for better performance
+function findNoteIndex(timestamps: number[], currentTime: number): number {
+  if (timestamps.length === 0) return -1;
+
+  // Binary search for the last note that started before or at currentTime
+  let left = 0;
+  let right = timestamps.length - 1;
+  let result = -1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (timestamps[mid] <= currentTime + 0.05) {
+      result = mid;
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  return result;
+}
+
 export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationViewProps>(({
   notes,
   currentTime,
@@ -59,8 +87,9 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
   const [isRendered, setIsRendered] = useState(false);
   const lastCursorIndexRef = useRef<number>(-1);
   const noteTimestampsRef = useRef<number[]>([]);
+  const lastScrollTimeRef = useRef<number>(0);
 
-  // Generate MusicXML from notes
+  // Generate MusicXML from notes - memoized for performance
   const musicXML = useMemo(() => {
     if (notes.length === 0) return null;
 
@@ -79,13 +108,13 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
     }
   }, [notes, trackName, bpm]);
 
-  // Initialize OSMD
+  // Initialize OSMD - only once
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Create OSMD instance with enhanced cursor options
+    // Create OSMD instance with performance-optimized settings
     const osmd = new OSMD(containerRef.current, {
-      autoResize: true,
+      autoResize: false, // Disable auto-resize for performance
       backend: 'svg',
       drawTitle: true,
       drawSubtitle: false,
@@ -95,13 +124,13 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
       drawPartAbbreviations: false,
       drawMeasureNumbers: true,
       drawTimeSignatures: true,
-      drawingParameters: 'default',
-      followCursor: true,
+      drawingParameters: 'compacttight', // More compact for performance
+      followCursor: false, // We handle scrolling ourselves
       cursorsOptions: [{
         type: CursorType.Standard,
-        color: '#ef4444', // Bright red for better visibility
-        alpha: 0.7,
-        follow: true,
+        color: '#ef4444', // Red for visibility
+        alpha: 0.6,
+        follow: false,
       }],
     });
 
@@ -148,7 +177,7 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
       });
   }, [musicXML]);
 
-  // Synchronize cursor with playback time and highlight notes
+  // OPTIMIZED: Synchronize cursor with playback - only when note changes
   useEffect(() => {
     const osmd = osmdRef.current;
     if (!osmd || !isRendered || !osmd.cursor) return;
@@ -156,48 +185,57 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
     const timestamps = noteTimestampsRef.current;
     if (timestamps.length === 0) return;
 
-    // Find the current note index based on time
-    let targetIndex = 0;
-    for (let i = 0; i < timestamps.length; i++) {
-      if (currentTime >= timestamps[i] - 0.05) {
-        targetIndex = i;
-      } else {
-        break;
-      }
-    }
+    // Use binary search for efficient lookup
+    const targetIndex = findNoteIndex(timestamps, currentTime);
 
-    // Only update cursor if position changed
-    if (targetIndex !== lastCursorIndexRef.current) {
-      // Reset and advance cursor to target position
+    // Only update if position actually changed
+    if (targetIndex === lastCursorIndexRef.current) return;
+
+    const previousIndex = lastCursorIndexRef.current;
+    lastCursorIndexRef.current = targetIndex;
+
+    // OPTIMIZATION: Use incremental cursor movement when possible
+    if (targetIndex < 0) {
+      osmd.cursor.reset();
+    } else if (previousIndex < 0 || targetIndex < previousIndex) {
+      // Need to reset and advance (going backwards or from start)
       osmd.cursor.reset();
       for (let i = 0; i < targetIndex && !osmd.cursor.Iterator.EndReached; i++) {
         osmd.cursor.next();
       }
+    } else {
+      // Moving forward - just advance
+      const steps = targetIndex - previousIndex;
+      for (let i = 0; i < steps && !osmd.cursor.Iterator.EndReached; i++) {
+        osmd.cursor.next();
+      }
+    }
 
-      lastCursorIndexRef.current = targetIndex;
+    // OPTIMIZED: Throttled auto-scroll (max once per 200ms during playback)
+    if (scrollContainerRef.current && osmd.cursor.cursorElement) {
+      const now = Date.now();
+      if (!isPlaying || (now - lastScrollTimeRef.current > 200)) {
+        lastScrollTimeRef.current = now;
 
-      // Auto-scroll to cursor
-      if (scrollContainerRef.current && osmd.cursor.cursorElement) {
         const cursorRect = osmd.cursor.cursorElement.getBoundingClientRect();
         const containerRect = scrollContainerRef.current.getBoundingClientRect();
 
-        // Check if cursor is outside visible area
         const cursorCenterY = cursorRect.top + cursorRect.height / 2;
-        const containerCenterY = containerRect.top + containerRect.height / 2;
 
-        if (cursorCenterY < containerRect.top + 50 || cursorCenterY > containerRect.bottom - 50) {
-          // Smooth scroll to center cursor
+        // Only scroll if cursor is outside safe zone
+        if (cursorCenterY < containerRect.top + 80 || cursorCenterY > containerRect.bottom - 80) {
+          const containerCenterY = containerRect.top + containerRect.height / 2;
           const scrollOffset = cursorCenterY - containerCenterY;
           scrollContainerRef.current.scrollBy({
             top: scrollOffset,
-            behavior: isPlaying ? 'auto' : 'smooth',
+            behavior: 'auto', // 'auto' is faster than 'smooth'
           });
         }
       }
     }
   }, [currentTime, isRendered, isPlaying]);
 
-  // Reset cursor when playback stops
+  // Reset cursor when playback stops at beginning
   useEffect(() => {
     const osmd = osmdRef.current;
     if (!osmd || !isRendered || !osmd.cursor) return;
@@ -212,11 +250,9 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
   const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onSeek || !containerRef.current) return;
 
-    // Get click position relative to the container
     const rect = containerRef.current.getBoundingClientRect();
     const clickY = e.clientY - rect.top + (scrollContainerRef.current?.scrollTop || 0);
 
-    // Estimate time based on vertical position (rough approximation)
     const totalHeight = containerRef.current.scrollHeight;
     const progress = clickY / totalHeight;
     const time = progress * duration;
