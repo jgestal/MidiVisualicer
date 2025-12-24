@@ -40,7 +40,7 @@ import { FileUploader } from './components/FileUploader';
 import { InstrumentSelector } from './components/InstrumentSelector';
 import { PianoRollView } from './components/PianoRollView';
 import { TablatureView } from './components/TablatureView';
-import { NotationView } from './components/NotationView';
+import { OSMDNotationView } from './components/OSMDNotationView';
 import { MidiInfoModal } from './components/MidiInfoModal';
 import { AboutModal } from './components/AboutModal';
 import { HelpModal } from './components/HelpModal';
@@ -309,12 +309,13 @@ function App() {
                   onSeek={seekTo}
                 />
               ) : (
-                <NotationView
+                <OSMDNotationView
                   notes={selectedTrackNotes}
                   currentTime={playbackState.currentTime}
                   isPlaying={playbackState.isPlaying}
+                  duration={parsedMidi?.duration || playbackState.duration}
                   bpm={parsedMidi?.header?.tempos?.[0]?.bpm || 120}
-                  timeSignature={{ numerator: 4, denominator: 4 }}
+                  trackName={parsedMidi?.tracks[selectedTrack]?.name}
                   onSeek={seekTo}
                 />
               )}
