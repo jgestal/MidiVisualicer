@@ -4,6 +4,13 @@
  */
 
 import type { MidiNote } from '../types/midi';
+import {
+  DEFAULT_TEMPO,
+  MAX_NOTES_FOR_MUSICXML,
+  DIVISIONS_PER_QUARTER,
+  DEFAULT_TIME_SIGNATURE,
+  CLEF_THRESHOLDS
+} from '../shared/constants/notation';
 
 // Note names for MusicXML (uses letter names)
 const NOTE_NAMES = ['C', 'C', 'D', 'D', 'E', 'F', 'F', 'G', 'G', 'A', 'A', 'B'];
@@ -89,16 +96,15 @@ export function midiNotesToMusicXML(
 ): string {
   const {
     title = 'MIDI Export',
-    tempo = 120,
-    timeSignature = { beats: 4, beatType: 4 },
+    tempo = DEFAULT_TEMPO,
+    timeSignature = DEFAULT_TIME_SIGNATURE,
   } = options;
 
-  const divisionsPerQuarter = 4; // Standard resolution
+  const divisionsPerQuarter = DIVISIONS_PER_QUARTER;
 
   // PERFORMANCE: Limit notes to prevent performance issues with very large files
-  const MAX_NOTES = 500; // Covers ~8 minutes of typical music at 120bpm
-  const notesToProcess = notes.length > MAX_NOTES
-    ? notes.slice(0, MAX_NOTES)
+  const notesToProcess = notes.length > MAX_NOTES_FOR_MUSICXML
+    ? notes.slice(0, MAX_NOTES_FOR_MUSICXML)
     : notes;
 
   // Sort notes by time
@@ -152,24 +158,21 @@ export function midiNotesToMusicXML(
       const allMidiValues = notes.map(n => n.midi);
       const avgMidi = allMidiValues.reduce((sum, m) => sum + m, 0) / allMidiValues.length;
 
-      // Choose clef based on note range:
-      // - Bass clef (F): for notes primarily below middle C (< 55)
-      // - Treble clef (G): for notes primarily above middle C (>= 55)
-      // For very wide ranges, we use the clef that fits the average better
+      // Choose clef based on note range using centralized thresholds
       let clefSign = 'G';
       let clefLine = 2;
       let clefOctaveChange = 0;
 
-      if (avgMidi < 48) {
+      if (avgMidi < CLEF_THRESHOLDS.BASS_8VB) {
         // Very low notes - Bass clef with 8vb
         clefSign = 'F';
         clefLine = 4;
         clefOctaveChange = -1;
-      } else if (avgMidi < 55) {
+      } else if (avgMidi < CLEF_THRESHOLDS.BASS_CLEF) {
         // Low to mid-low notes - Bass clef
         clefSign = 'F';
         clefLine = 4;
-      } else if (avgMidi > 84) {
+      } else if (avgMidi > CLEF_THRESHOLDS.TREBLE_8VA) {
         // Very high notes - Treble with 8va
         clefSign = 'G';
         clefLine = 2;

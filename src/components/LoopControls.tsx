@@ -2,6 +2,7 @@
  * Controles de Loop A-B - VERSIÓN COMPACTA
  */
 import { Repeat, X } from 'lucide-react';
+import { formatDuration } from '../utils/timeUtils';
 
 interface LoopControlsProps {
   loopStart: number | null;
@@ -15,9 +16,7 @@ interface LoopControlsProps {
   currentTime: number;
 }
 
-function formatTime(s: number): string {
-  return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-}
+
 
 export function LoopControls({
   loopStart,
@@ -43,13 +42,13 @@ export function LoopControls({
           className={loopStart !== null ? 'active' : ''}
           onClick={() => onSetLoopStart(loopStart !== null ? null : currentTime)}
         >
-          A: {loopStart !== null ? formatTime(loopStart) : '--:--'}
+          A: {loopStart !== null ? formatDuration(loopStart) : '--:--'}
         </button>
         <button
           className={loopEnd !== null ? 'active' : ''}
           onClick={() => onSetLoopEnd(loopEnd !== null ? null : currentTime)}
         >
-          B: {loopEnd !== null ? formatTime(loopEnd) : '--:--'}
+          B: {loopEnd !== null ? formatDuration(loopEnd) : '--:--'}
         </button>
       </div>
 

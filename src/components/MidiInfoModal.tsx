@@ -2,6 +2,7 @@
  * MidiInfoModal - Modal con información general del MIDI
  */
 import { X, Music, Clock, Layers, Zap, Hash, HardDrive } from 'lucide-react';
+import { formatDuration } from '../utils/timeUtils';
 import type { ParsedMidi } from '../types/midi';
 import './MidiInfoModal.css';
 
@@ -45,11 +46,7 @@ interface MidiInfoModalProps {
   onClose: () => void;
 }
 
-function formatDuration(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
+
 
 function formatFileSize(bytes: number | undefined): string {
   if (!bytes) return 'N/A';

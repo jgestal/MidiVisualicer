@@ -16,6 +16,9 @@ import { useRef, useEffect, useMemo, useState, useCallback, useImperativeHandle,
 import { OpenSheetMusicDisplay as OSMD, CursorType } from 'opensheetmusicdisplay';
 import type { MidiNote } from '../types/midi';
 import { midiNotesToMusicXML } from '../utils/midiToMusicXML';
+import { buildNoteTimestamps, findLastIndexBeforeTime } from '../utils/timeUtils';
+import { CHORD_TIME_TOLERANCE } from '../shared/constants/tablature';
+import { CURSOR_COLOR, SCROLL_THROTTLE_MS } from '../shared/constants/notation';
 import './OSMDNotationView.css';
 
 interface OSMDNotationViewProps {
@@ -31,43 +34,6 @@ interface OSMDNotationViewProps {
 // Expose export function via ref
 export interface OSMDNotationViewRef {
   exportToSVG: () => void;
-}
-
-// Build a time map from notes for cursor synchronization
-function buildNoteTimeMap(notes: MidiNote[]): number[] {
-  const sortedNotes = [...notes].sort((a, b) => a.time - b.time);
-  const timestamps: number[] = [];
-
-  sortedNotes.forEach(note => {
-    // Only add unique timestamps (group chords)
-    if (timestamps.length === 0 || Math.abs(timestamps[timestamps.length - 1] - note.time) > 0.05) {
-      timestamps.push(note.time);
-    }
-  });
-
-  return timestamps;
-}
-
-// Find current note index using binary search for better performance
-function findNoteIndex(timestamps: number[], currentTime: number): number {
-  if (timestamps.length === 0) return -1;
-
-  // Binary search for the last note that started before or at currentTime
-  let left = 0;
-  let right = timestamps.length - 1;
-  let result = -1;
-
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (timestamps[mid] <= currentTime + 0.05) {
-      result = mid;
-      left = mid + 1;
-    } else {
-      right = mid - 1;
-    }
-  }
-
-  return result;
 }
 
 export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationViewProps>(({
@@ -95,7 +61,7 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
 
     try {
       // Build time map for cursor synchronization
-      noteTimestampsRef.current = buildNoteTimeMap(notes);
+      noteTimestampsRef.current = buildNoteTimestamps(notes, CHORD_TIME_TOLERANCE);
 
       return midiNotesToMusicXML(notes, {
         title: trackName,
@@ -128,7 +94,7 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
       followCursor: false, // We handle scrolling ourselves
       cursorsOptions: [{
         type: CursorType.ThinLeft, // Vertical line cursor instead of rectangle
-        color: '#ef4444', // Red for visibility
+        color: CURSOR_COLOR, // Red for visibility
         alpha: 0.9,
         follow: false,
       }],
@@ -186,7 +152,7 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
     if (timestamps.length === 0) return;
 
     // Use binary search for efficient lookup
-    const targetIndex = findNoteIndex(timestamps, currentTime);
+    const targetIndex = findLastIndexBeforeTime(timestamps, currentTime, CHORD_TIME_TOLERANCE);
 
     // Only update if position actually changed
     if (targetIndex === lastCursorIndexRef.current) return;
@@ -211,10 +177,10 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
       }
     }
 
-    // OPTIMIZED: Throttled auto-scroll (max once per 200ms during playback)
+    // OPTIMIZED: Throttled auto-scroll
     if (scrollContainerRef.current && osmd.cursor.cursorElement) {
       const now = Date.now();
-      if (!isPlaying || (now - lastScrollTimeRef.current > 200)) {
+      if (!isPlaying || (now - lastScrollTimeRef.current > SCROLL_THROTTLE_MS)) {
         lastScrollTimeRef.current = now;
 
         const cursorRect = osmd.cursor.cursorElement.getBoundingClientRect();
