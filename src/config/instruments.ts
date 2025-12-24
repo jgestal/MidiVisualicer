@@ -55,11 +55,8 @@ export function midiToNote(midi: number): string {
   return `${NOTE_NAMES_SHARP[noteIndex]}${octave}`;
 }
 
-// Función para obtener el nombre de la nota sin octava
-export function midiToNoteName(midi: number): string {
-  const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-  return notes[midi % 12];
-}
+// Re-export from midiUtils for backward compatibility
+export { noteNameWithoutOctave as midiToNoteName } from '../utils/midiUtils';
 
 /**
  * INSTRUMENTOS PREDEFINIDOS

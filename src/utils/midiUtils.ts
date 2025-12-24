@@ -49,3 +49,14 @@ export function midiToNoteName(midiNote: number): string {
   const noteIndex = midiNoteIndex(midiNote);
   return `${NOTE_NAMES_SHARP[noteIndex]}${octave}`;
 }
+
+/**
+ * Get the note name without octave from a MIDI note number
+ * 
+ * @param midiNote - MIDI note number (0-127)
+ * @returns Note name without octave (e.g., "C", "F#")
+ */
+export function noteNameWithoutOctave(midiNote: number): string {
+  return NOTE_NAMES_SHARP[midiNote % 12];
+}
+

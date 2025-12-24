@@ -13,6 +13,7 @@ import {
 } from 'react';
 import * as Tone from 'tone';
 import type { ParsedMidi, MidiTrack, PlaybackSpeed } from '@/shared/types/midi';
+import { volumeToDb } from '@/utils/audioUtils';
 
 // Context state
 interface PlaybackState {
@@ -113,15 +114,8 @@ interface PlaybackContextType {
   setTrackMuted: (trackIndex: number, muted: boolean) => void;
 }
 
-// Contexto
+// Context
 const PlaybackContext = createContext<PlaybackContextType | null>(null);
-
-// Convert percentage (0-100) to dB for Tone.js (-Infinity to 0)
-function volumeToDb(volume: number): number {
-  if (volume <= 0) return -Infinity;
-  // Map 0-100 to -40dB to 0dB (with some headroom)
-  return (volume / 100) * 40 - 40;
-}
 
 // Provider
 export function PlaybackProvider({ children }: { children: ReactNode }) {
