@@ -169,12 +169,20 @@ export function TablatureView({
   }, [displayItems, cellsPerLine]);
 
   // Find the currently playing slot based on currentTime
-  // Find the currently playing slot based on currentTime
+  // Keep the last note active until the next note starts (not just during its duration)
   const activeSlotIndex = useMemo(() => {
-    // We want to highlight the note IF currentTime is within [noteStartTime, noteEndTime]
-    // Or if it's very close to start (e.g. 50ms tolerance for visual snappy-ness, but not too much)
+    if (sortedSlots.length === 0) return -1;
 
-    // Iterate slots to find the one matching current time
+    // Get the first slot's start time
+    const firstSlotNotes = timeSlots.get(sortedSlots[0]);
+    const firstNoteTime = firstSlotNotes?.[0]?.time ?? 0;
+
+    // If we haven't reached the first note yet, return -1 (no note active)
+    if (currentTime < firstNoteTime - 0.02) {
+      return -1;
+    }
+
+    // First, check if we're currently within a note's active duration (playing)
     for (const slotIdx of sortedSlots) {
       const notesInSlot = timeSlots.get(slotIdx);
       if (!notesInSlot || notesInSlot.length === 0) continue;
@@ -183,11 +191,25 @@ export function TablatureView({
       const start = firstNote.time;
       const end = start + firstNote.duration;
 
-      // Note is active if we are between start and end (with small tolerance for start)
+      // Note is actively playing
       if (currentTime >= start - 0.02 && currentTime <= end) {
         return slotIdx;
       }
     }
+
+    // If no note is actively playing, find the last note that started before currentTime
+    // This keeps the indicator on the last played note during pauses between notes
+    for (let i = sortedSlots.length - 1; i >= 0; i--) {
+      const slotIdx = sortedSlots[i];
+      const notesInSlot = timeSlots.get(slotIdx);
+      if (!notesInSlot || notesInSlot.length === 0) continue;
+
+      const start = notesInSlot[0].time;
+      if (start <= currentTime) {
+        return slotIdx;
+      }
+    }
+
     return -1;
   }, [sortedSlots, timeSlots, currentTime]);
 

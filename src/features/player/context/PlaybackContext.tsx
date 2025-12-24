@@ -139,6 +139,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const loopEndRef = useRef<number | null>(null);
   const isLoopEnabledRef = useRef(false);
   const countInTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isCountInEnabledRef = useRef(false);
 
   // Inicializar Tone.js
   const initialize = useCallback(async () => {
@@ -233,41 +234,23 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
       // Si estaba pausado, continuar desde donde se quedó
       if (state.isPaused && pauseTimeRef.current > 0) {
         Tone.Transport.seconds = pauseTimeRef.current / speed;
-        Tone.Transport.start();
       } else {
         Tone.Transport.seconds = 0;
-
-        // Count-in logic
-        if (state.isCountInEnabled) {
-          const now = Tone.now();
-          // Create a simple click synth
-          const clickSynth = new Tone.MembraneSynth({
-            envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
-          }).toDestination();
-          clickSynth.volume.value = -10; // Slightly quieter
-
-          // Schedule 3 clicks
-          for (let i = 0; i < 3; i++) {
-            // Higher pitch for count-in
-            clickSynth.triggerAttackRelease("C4", "32n", now + i);
-          }
-
-          // Cleanup synth after clicks
-          setTimeout(() => clickSynth.dispose(), 3500);
-
-          // Start transport after 3 seconds using setTimeout
-          countInTimerRef.current = setTimeout(() => {
-            Tone.Transport.start();
-            countInTimerRef.current = null;
-          }, 3000);
-        } else {
-          Tone.Transport.start();
-        }
       }
 
-      dispatch({ type: 'PLAY', payload: { duration: adjustedDuration } });
+      // Function to start playback and animation
+      const startPlayback = () => {
+        Tone.Transport.start();
+        dispatch({ type: 'PLAY', payload: { duration: adjustedDuration } });
+        animationFrameRef.current = requestAnimationFrame(updateTime);
 
-      // Actualizar tiempo actual
+        // Schedule stop at end
+        Tone.Transport.schedule(() => {
+          stop();
+        }, adjustedDuration);
+      };
+
+      // Update time function
       const updateTime = () => {
         if (Tone.Transport.state === 'started') {
           const currentTime = Tone.Transport.seconds * speed;
@@ -295,12 +278,32 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
         }
       };
 
-      animationFrameRef.current = requestAnimationFrame(updateTime);
+      // Count-in logic (applies to both fresh start and resume from pause)
+      if (isCountInEnabledRef.current) {
+        const now = Tone.now();
+        // Create a simple click synth
+        const clickSynth = new Tone.MembraneSynth({
+          envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
+        }).toDestination();
+        clickSynth.volume.value = -10; // Slightly quieter
 
-      // Programar parada al final
-      Tone.Transport.schedule(() => {
-        stop();
-      }, adjustedDuration);
+        // Schedule 3 clicks
+        for (let i = 0; i < 3; i++) {
+          // Higher pitch for count-in
+          clickSynth.triggerAttackRelease("C4", "32n", now + i);
+        }
+
+        // Cleanup synth after clicks
+        setTimeout(() => clickSynth.dispose(), 3500);
+
+        // Start transport after 3 seconds using setTimeout
+        countInTimerRef.current = setTimeout(() => {
+          startPlayback();
+          countInTimerRef.current = null;
+        }, 3000);
+      } else {
+        startPlayback();
+      }
     },
     [initialize, createSynths, scheduleTrack, state.speed, state.isPaused]
   );
@@ -429,6 +432,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleCountIn = useCallback(() => {
+    isCountInEnabledRef.current = !isCountInEnabledRef.current;
     dispatch({ type: 'TOGGLE_COUNT_IN' });
   }, []);
 

@@ -10,6 +10,7 @@
 
 import { es } from './es';
 import { en } from './en';
+import { en_us } from './en_us';
 import { pt } from './pt';
 import { fr } from './fr';
 import { de } from './de';
@@ -23,7 +24,7 @@ import { ar } from './ar';
 import { bn } from './bn';
 
 // Supported language codes
-export type Language = 'es' | 'en' | 'pt' | 'fr' | 'de' | 'it' | 'zh' | 'ja' | 'ru' | 'ko' | 'hi' | 'ar' | 'bn';
+export type Language = 'es' | 'en' | 'en_us' | 'pt' | 'fr' | 'de' | 'it' | 'zh' | 'ja' | 'ru' | 'ko' | 'hi' | 'ar' | 'bn';
 
 // Type for translation keys (based on Spanish file keys)
 export type TranslationKey = keyof typeof es;
@@ -35,6 +36,7 @@ export type Translations = { readonly [K in TranslationKey]: string };
 export const TRANSLATIONS: Record<Language, Translations> = {
     es,
     en,
+    en_us,
     pt,
     fr,
     de,
@@ -51,7 +53,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
 // Language metadata for UI display
 export const LANGUAGES: Record<Language, { name: string; nativeName: string; flag: string }> = {
     es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
-    en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
+    en: { name: 'English (UK)', nativeName: 'English (UK)', flag: '🇬🇧' },
+    en_us: { name: 'English (US)', nativeName: 'English (US)', flag: '🇺🇸' },
     pt: { name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹' },
     fr: { name: 'French', nativeName: 'Français', flag: '🇫🇷' },
     de: { name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
@@ -71,5 +74,5 @@ export function getTranslations(lang: Language): Translations {
 }
 
 // Re-export individual translations for direct access if needed
-export { es, en, pt, fr, de, it, zh, ja, ru, ko, hi, ar, bn };
+export { es, en, en_us, pt, fr, de, it, zh, ja, ru, ko, hi, ar, bn };
 
