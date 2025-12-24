@@ -6,6 +6,3 @@ export type { PianoRollProps } from './PianoRoll';
 
 export { Tablature } from './Tablature';
 export type { TablatureProps } from './Tablature';
-
-export { Notation } from './Notation';
-export type { NotationProps } from './Notation';
