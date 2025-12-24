@@ -168,8 +168,8 @@ export function TablatureView({
     return result;
   }, [displayItems, cellsPerLine]);
 
-  // Find the currently playing slot based on currentTime
-  // Keep the last note active until the next note starts (not just during its duration)
+  // OPTIMIZED: Find the currently playing slot using binary search
+  // Keep the last note active until the next note starts
   const activeSlotIndex = useMemo(() => {
     if (sortedSlots.length === 0) return -1;
 
@@ -182,54 +182,52 @@ export function TablatureView({
       return -1;
     }
 
-    // First, check if we're currently within a note's active duration (playing)
-    for (const slotIdx of sortedSlots) {
-      const notesInSlot = timeSlots.get(slotIdx);
-      if (!notesInSlot || notesInSlot.length === 0) continue;
+    // Binary search for the last slot that started before or at currentTime
+    let left = 0;
+    let right = sortedSlots.length - 1;
+    let result = -1;
 
-      const firstNote = notesInSlot[0];
-      const start = firstNote.time;
-      const end = start + firstNote.duration;
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      const slotIdx = sortedSlots[mid];
+      const slotNotes = timeSlots.get(slotIdx);
+      const slotTime = slotNotes?.[0]?.time ?? Infinity;
 
-      // Note is actively playing
-      if (currentTime >= start - 0.02 && currentTime <= end) {
-        return slotIdx;
+      if (slotTime <= currentTime + 0.02) {
+        result = slotIdx;
+        left = mid + 1;
+      } else {
+        right = mid - 1;
       }
     }
 
-    // If no note is actively playing, find the last note that started before currentTime
-    // This keeps the indicator on the last played note during pauses between notes
-    for (let i = sortedSlots.length - 1; i >= 0; i--) {
-      const slotIdx = sortedSlots[i];
-      const notesInSlot = timeSlots.get(slotIdx);
-      if (!notesInSlot || notesInSlot.length === 0) continue;
-
-      const start = notesInSlot[0].time;
-      if (start <= currentTime) {
-        return slotIdx;
-      }
-    }
-
-    return -1;
+    return result;
   }, [sortedSlots, timeSlots, currentTime]);
 
-  // Find the "current context" slot for scrolling (even if nothing is playing)
+  // OPTIMIZED: Find the "current context" slot for scrolling using binary search
   const scrollSlotIndex = useMemo(() => {
-    // Find last slot that started before or at currentTime
-    let lastStarted = -1;
-    for (const slotIdx of sortedSlots) {
-      const notesInSlot = timeSlots.get(slotIdx);
-      if (!notesInSlot || notesInSlot.length === 0) continue;
+    if (sortedSlots.length === 0) return -1;
 
-      const start = notesInSlot[0].time;
-      if (start <= currentTime + 0.1) {
-        lastStarted = slotIdx;
+    // Binary search for the last slot that started before or at currentTime
+    let left = 0;
+    let right = sortedSlots.length - 1;
+    let result = -1;
+
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      const slotIdx = sortedSlots[mid];
+      const slotNotes = timeSlots.get(slotIdx);
+      const slotTime = slotNotes?.[0]?.time ?? Infinity;
+
+      if (slotTime <= currentTime + 0.1) {
+        result = slotIdx;
+        left = mid + 1;
       } else {
-        // Since sorted, once we pass currentTime, we can stop
-        break;
+        right = mid - 1;
       }
     }
-    return lastStarted;
+
+    return result;
   }, [sortedSlots, timeSlots, currentTime]);
 
   // Find which line contains the current scroll slot
@@ -286,9 +284,15 @@ export function TablatureView({
     return { start: startLine, end: endLine };
   }, [currentLineIndex, lines.length]);
 
-  // Auto-scroll to current line - faster scroll to keep current in view
+  // Auto-scroll to current line - throttled for performance
+  const lastScrollRef = useRef(0);
   useEffect(() => {
     if (!isPlaying || !scrollContainerRef.current) return;
+
+    // Throttle scroll updates to max once per 100ms
+    const now = Date.now();
+    if (now - lastScrollRef.current < 100) return;
+    lastScrollRef.current = now;
 
     const container = scrollContainerRef.current;
     const lineHeight = instrument ? (instrument.strings.length * 22 + 40) : 150;
@@ -303,7 +307,7 @@ export function TablatureView({
       const newScroll = currentScroll + diff * 0.5;
       container.scrollTop = Math.max(0, newScroll);
     }
-  });
+  }, [isPlaying, currentLineIndex, instrument]);
 
   const handleNoteClick = useCallback(
     (time: number) => {

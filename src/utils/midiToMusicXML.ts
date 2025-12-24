@@ -95,8 +95,14 @@ export function midiNotesToMusicXML(
 
   const divisionsPerQuarter = 4; // Standard resolution
 
+  // PERFORMANCE: Limit notes to prevent performance issues with very large files
+  const MAX_NOTES = 500; // Covers ~8 minutes of typical music at 120bpm
+  const notesToProcess = notes.length > MAX_NOTES
+    ? notes.slice(0, MAX_NOTES)
+    : notes;
+
   // Sort notes by time
-  const sortedNotes = [...notes].sort((a, b) => a.time - b.time);
+  const sortedNotes = [...notesToProcess].sort((a, b) => a.time - b.time);
 
   if (sortedNotes.length === 0) {
     return generateEmptyMusicXML(title, tempo, timeSignature, divisionsPerQuarter);
