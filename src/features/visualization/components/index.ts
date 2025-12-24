@@ -1,8 +1,5 @@
 /**
  * Exportaciones de los componentes de visualización
+ * Los componentes principales ahora viven en src/components/
  */
-export { PianoRoll } from './PianoRoll';
-export type { PianoRollProps } from './PianoRoll';
-
-export { Tablature } from './Tablature';
-export type { TablatureProps } from './Tablature';
+// Legacy exports removed - use components/PianoRollView and components/TablatureView instead

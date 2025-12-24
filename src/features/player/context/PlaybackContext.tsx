@@ -148,6 +148,17 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     isInitializedRef.current = true;
   }, []);
 
+  // Sync refs with state (important for closures in callbacks)
+  useEffect(() => {
+    isCountInEnabledRef.current = state.isCountInEnabled;
+  }, [state.isCountInEnabled]);
+
+  useEffect(() => {
+    isLoopEnabledRef.current = state.isLoopEnabled;
+    loopStartRef.current = state.loopStart;
+    loopEndRef.current = state.loopEnd;
+  }, [state.isLoopEnabled, state.loopStart, state.loopEnd]);
+
   // Crear sintetizadores
   const createSynths = useCallback((trackCount: number) => {
     synthsRef.current.forEach((synth) => synth.dispose());
