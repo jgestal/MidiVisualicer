@@ -4,6 +4,7 @@
  */
 
 import type { MidiNote } from '../types/midi';
+import { midiToOctave } from './midiUtils';
 import {
   DEFAULT_TEMPO,
   MAX_NOTES_FOR_MUSICXML,
@@ -28,7 +29,7 @@ interface NoteInfo {
 function midiToNoteInfo(midi: number, durationSeconds: number, divisionsPerQuarter: number, tempo: number): NoteInfo {
   const step = NOTE_NAMES[midi % 12];
   const alter = NOTE_ALTERS[midi % 12];
-  const octave = Math.floor(midi / 12) - 1;
+  const octave = midiToOctave(midi);
 
   // Convert duration in seconds to duration in divisions
   const beatsPerSecond = tempo / 60;
