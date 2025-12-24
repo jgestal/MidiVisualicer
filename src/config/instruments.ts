@@ -4,6 +4,7 @@
  * Incluye instrumentos predefinidos + soporte para instrumentos personalizados
  * guardados en localStorage
  */
+import { midiToOctave, NOTE_NAMES_SHARP } from '../utils/midiUtils';
 
 export interface InstrumentConfig {
   id: string;
@@ -49,10 +50,9 @@ export function noteToMidi(note: string): number {
 
 // Función para obtener la nota desde número MIDI
 export function midiToNote(midi: number): string {
-  const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-  const octave = Math.floor(midi / 12) - 1;
+  const octave = midiToOctave(midi);
   const noteIndex = midi % 12;
-  return `${notes[noteIndex]}${octave}`;
+  return `${NOTE_NAMES_SHARP[noteIndex]}${octave}`;
 }
 
 // Función para obtener el nombre de la nota sin octava

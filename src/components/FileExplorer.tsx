@@ -135,9 +135,9 @@ export function FileExplorer({
                 <span className="file-name">{file.name}</span>
               </div>
             ))}
-            {(folder as any).moreFiles && (
+            {folder.moreFiles && (
               <div className="more-files" style={{ paddingLeft: `${(level + 1) * 12 + 8}px` }}>
-                +{(folder as any).moreFiles} archivos más...
+                +{folder.moreFiles} archivos más...
               </div>
             )}
           </div>

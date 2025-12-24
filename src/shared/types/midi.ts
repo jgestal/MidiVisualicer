@@ -13,6 +13,7 @@ export interface MidiFolder {
   path: string;
   files: MidiFile[];
   subfolders: MidiFolder[];
+  moreFiles?: number; // Number of additional files not shown (for UI display)
 }
 
 export interface MidiTrack {
