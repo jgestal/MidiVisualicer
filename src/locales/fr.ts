@@ -29,6 +29,7 @@ export const fr = {
     exportCifrado: 'Accords (.txt)',
     exportTablature: 'Tablature (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'Partition (SVG)',
 
     // Playback controls
     play: 'Lecture',

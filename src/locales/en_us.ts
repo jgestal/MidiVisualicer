@@ -30,6 +30,7 @@ export const en_us = {
   exportCifrado: 'Chord chart (.txt)',
   exportTablature: 'Tablature (.tab)',
   exportPdf: 'PDF (.pdf)',
+  sheetSvg: 'Sheet Music (SVG)',
 
   // Playback controls
   play: 'Play',

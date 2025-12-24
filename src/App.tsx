@@ -11,7 +11,7 @@
  *    - Right Sidebar - Pistas del MIDI (colapsable)
  * 5. Footer - Controles de reproducción
  */
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Music, X, ChevronDown } from 'lucide-react';
 
 // Context hooks
@@ -40,7 +40,7 @@ import { FileUploader } from './components/FileUploader';
 import { InstrumentSelector } from './components/InstrumentSelector';
 import { PianoRollView } from './components/PianoRollView';
 import { TablatureView } from './components/TablatureView';
-import { OSMDNotationView } from './components/OSMDNotationView';
+import { OSMDNotationView, type OSMDNotationViewRef } from './components/OSMDNotationView';
 import { MidiInfoModal } from './components/MidiInfoModal';
 import { AboutModal } from './components/AboutModal';
 import { HelpModal } from './components/HelpModal';
@@ -73,6 +73,9 @@ function App() {
   // ===== UI STATE (via custom hook) =====
   const ui = useAppUI();
   const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
+
+  // ===== REF FOR NOTATION EXPORT =====
+  const notationViewRef = useRef<OSMDNotationViewRef>(null);
 
   // ===== METRONOME =====
   const { isMetronomeEnabled, toggleMetronome } = useMetronome({
@@ -176,6 +179,11 @@ function App() {
     selectedInstrumentId,
   });
 
+  // Export sheet music as SVG
+  const exportSheetSVG = useCallback(() => {
+    notationViewRef.current?.exportToSVG();
+  }, []);
+
   // Sidebar effect removed
 
   // ===== HANDLERS =====
@@ -226,6 +234,7 @@ function App() {
         onExportPdf={exportPdf}
         onExportMusicXML={exportMusicXML}
         onExportWord={exportWord}
+        onExportSheetSVG={exportSheetSVG}
         onShowInfo={ui.openInfoModal}
         onShowAbout={ui.openAboutModal}
         onShowHelp={ui.openHelpModal}
@@ -310,6 +319,7 @@ function App() {
                 />
               ) : (
                 <OSMDNotationView
+                  ref={notationViewRef}
                   notes={selectedTrackNotes}
                   currentTime={playbackState.currentTime}
                   isPlaying={playbackState.isPlaying}

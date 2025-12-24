@@ -29,6 +29,7 @@ export const hi = {
     exportCifrado: 'कॉर्ड चार्ट (.txt)',
     exportTablature: 'टैबलेचर (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'संगीत पत्रक (SVG)',
 
     // Playback controls
     play: 'चलाएं',

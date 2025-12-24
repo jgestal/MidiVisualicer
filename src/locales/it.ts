@@ -29,6 +29,7 @@ export const it = {
     exportCifrado: 'Accordi (.txt)',
     exportTablature: 'Tablatura (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'Spartito (SVG)',
 
     // Playback controls
     play: 'Riproduci',

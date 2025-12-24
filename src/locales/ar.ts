@@ -30,6 +30,7 @@ export const ar = {
     exportCifrado: 'مخطط الأوتار (.txt)',
     exportTablature: 'تابلتشر (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'النوتة الموسيقية (SVG)',
 
     // Playback controls
     play: 'تشغيل',

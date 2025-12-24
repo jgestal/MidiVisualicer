@@ -29,6 +29,7 @@ export const bn = {
     exportCifrado: 'কর্ড চার্ট (.txt)',
     exportTablature: 'ট্যাবলেচার (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'সঙ্গীত পত্রক (SVG)',
 
     // Playback controls
     play: 'চালান',

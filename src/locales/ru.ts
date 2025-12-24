@@ -29,6 +29,7 @@ export const ru = {
     exportCifrado: 'Аккорды (.txt)',
     exportTablature: 'Табулатура (.tab)',
     exportPdf: 'PDF (.pdf)',
+    sheetSvg: 'Ноты (SVG)',
 
     // Playback controls
     play: 'Воспроизвести',
