@@ -42,6 +42,43 @@
             "tv": "📺 Series & Anime"
         }
     },
+    "whatIsTab": {
+        "title": "🎯 ¿Qué es la Tablatura? Tu Atajo para Tocar Música",
+        "subtitle": "La forma más fácil de aprender cualquier instrumento de cuerda — sin necesidad de saber leer partituras",
+        "example": "Ejemplo: Melodía simple en guitarra",
+        "benefits": {
+            "numbers": {
+                "title": "Solo Números",
+                "text": "Cada número indica en qué traste presionar. El \"0\" significa cuerda al aire. ¡Si sabes contar, sabes leer tablaturas!"
+            },
+            "strings": {
+                "title": "Líneas = Cuerdas",
+                "text": "Cada línea representa una cuerda de tu instrumento. La más alta es la cuerda más aguda (la más fina)."
+            },
+            "leftToRight": {
+                "title": "Izquierda a Derecha",
+                "text": "Lee como un libro: de izquierda a derecha. Los números alineados verticalmente se tocan a la vez (acorde)."
+            },
+            "fast": {
+                "title": "Aprende en Minutos",
+                "text": "Mientras aprender a leer partituras puede llevar meses, la tablatura se domina en minutos. ¡Estarás tocando canciones hoy mismo!"
+            }
+        },
+        "comparison": {
+            "notation": {
+                "title": "❌ Partitura Tradicional",
+                "item1": "Requiere meses de estudio",
+                "item2": "Conocer claves y escalas",
+                "item3": "No indica posición en el mástil"
+            },
+            "tab": {
+                "title": "✅ Tablatura",
+                "item1": "Aprende en 5 minutos",
+                "item2": "Solo necesitas saber contar",
+                "item3": "Posición exacta en el mástil"
+            }
+        }
+    },
     "features": {
         "title": "Potencia tu Práctica Musical",
         "subtitle": "Herramientas de nivel profesional diseñadas para acelerar tu aprendizaje",
@@ -79,8 +116,20 @@
                 "text": "Aísla la guitarra solista, silencia el bajo o escucha solo la melodía. Control total sobre la mezcla de tu práctica."
             },
             "darkMode": {
-                "title": "Modo Estudio",
-                "text": "Interfaz oscura 'Dark Mode' nativa diseñada para evitar la fatiga visual durante sesiones nocturnas o en el estudio."
+                "title": "Interfaz Moderna",
+                "text": "Diseño premium con modo oscuro por defecto que cuida tus ojos. Elige entre 30+ temas visuales para personalizar tu experiencia."
+            },
+            "simplify": {
+                "title": "Modo Simplificar",
+                "text": "¿Demasiados acordes? Activa \"Simplificar\" y la app conserva solo la nota más aguda, optimizando las posiciones para una ejecución más fácil. ¡Perfecto para principiantes!"
+            },
+            "themes": {
+                "title": "30+ Temas Visuales",
+                "text": "Desde modo oscuro hasta temáticas retro como MS-DOS, VHS, Windows 95, Vaporwave, Matrix, Minecraft y muchos más. ¡Personaliza la app a tu estilo!"
+            },
+            "shortcuts": {
+                "title": "Atajos de Teclado",
+                "text": "Controla la aplicación como un profesional. Play/Pause, navegación rápida, loop y más — todo accesible con el teclado."
             }
         }
     },
