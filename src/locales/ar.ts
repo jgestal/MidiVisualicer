@@ -17,6 +17,9 @@ export const ar = {
     tablature: 'تابلتشر',
     notation: 'النوتة الموسيقية',
     pianoRoll: 'لفة البيانو',
+    simplify: 'تبسيط',
+    simplified: 'مبسط',
+    simplifyTooltip: 'الاحتفاظ بالنوتة الأعلى فقط من الأوتار وتحسين قابلية العزف',
 
     // File operations
     openFile: 'فتح ملف',

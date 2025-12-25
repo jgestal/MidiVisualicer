@@ -16,6 +16,9 @@ export const zh = {
     tablature: '指法谱',
     notation: '乐谱',
     pianoRoll: '钢琴卷帘',
+    simplify: '简化',
+    simplified: '已简化',
+    simplifyTooltip: '只保留和弦中最高的音符并优化可演奏性',
 
     // File operations
     openFile: '打开文件',

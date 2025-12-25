@@ -236,6 +236,33 @@
     background: var(--color-bg-primary);
 }
 
+/* Simplify button - special styling */
+.main-panel-tab.simplify-btn {
+    margin-left: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 4px;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.main-panel-tab.simplify-btn:hover:not(:disabled) {
+    border-color: var(--color-accent-secondary);
+    background: var(--color-bg-hover);
+}
+
+.main-panel-tab.simplify-btn.active {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border-color: #f59e0b;
+}
+
+.main-panel-tab.simplify-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .main-panel-content {
     flex: 1;
     overflow: auto;

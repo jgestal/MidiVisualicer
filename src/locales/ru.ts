@@ -16,6 +16,9 @@ export const ru = {
     tablature: 'Табулатура',
     notation: 'Ноты',
     pianoRoll: 'Пианоролл',
+    simplify: 'Упростить',
+    simplified: 'Упрощено',
+    simplifyTooltip: 'Сохраняет только самую высокую ноту аккордов и оптимизирует для исполнения',
 
     // File operations
     openFile: 'Открыть файл',

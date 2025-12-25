@@ -16,6 +16,9 @@ export const ko = {
     tablature: '타브악보',
     notation: '악보',
     pianoRoll: '피아노 롤',
+    simplify: '단순화',
+    simplified: '단순화됨',
+    simplifyTooltip: '코드에서 가장 높은 음만 유지하고 연주성을 최적화합니다',
 
     // File operations
     openFile: '파일 열기',

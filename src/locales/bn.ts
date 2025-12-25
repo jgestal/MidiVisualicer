@@ -16,6 +16,9 @@ export const bn = {
     tablature: 'ট্যাবলেচার',
     notation: 'স্বরলিপি',
     pianoRoll: 'পিয়ানো রোল',
+    simplify: 'সরলীকরণ',
+    simplified: 'সরলীকৃত',
+    simplifyTooltip: 'কেবল সর্বোচ্চ নোট রাখুন এবং বাজানো সহজ করুন',
 
     // File operations
     openFile: 'ফাইল খুলুন',

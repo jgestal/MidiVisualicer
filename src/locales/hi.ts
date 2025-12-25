@@ -16,6 +16,9 @@ export const hi = {
     tablature: 'टैबलेचर',
     notation: 'संगीत लिपि',
     pianoRoll: 'पियानो रोल',
+    simplify: 'सरल करें',
+    simplified: 'सरलीकृत',
+    simplifyTooltip: 'केवल सबसे ऊंची नोट रखें और बजाने योग्य बनाएं',
 
     // File operations
     openFile: 'फ़ाइल खोलें',

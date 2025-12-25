@@ -16,6 +16,9 @@ export const ja = {
     tablature: 'タブ譜',
     notation: '楽譜',
     pianoRoll: 'ピアノロール',
+    simplify: '簡略化',
+    simplified: '簡略化済み',
+    simplifyTooltip: 'コードの最高音のみを保持し、演奏性を最適化します',
 
     // File operations
     openFile: 'ファイルを開く',

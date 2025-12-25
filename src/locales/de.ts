@@ -16,6 +16,9 @@ export const de = {
     tablature: 'Tabulatur',
     notation: 'Notation',
     pianoRoll: 'Piano Roll',
+    simplify: 'Vereinfachen',
+    simplified: 'Vereinfacht',
+    simplifyTooltip: 'Behält nur die höchste Note der Akkorde und optimiert für Spielbarkeit',
 
     // File operations
     openFile: 'Datei öffnen',

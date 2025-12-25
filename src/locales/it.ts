@@ -16,6 +16,9 @@ export const it = {
     tablature: 'Tablatura',
     notation: 'Spartito',
     pianoRoll: 'Piano Roll',
+    simplify: 'Semplifica',
+    simplified: 'Semplificato',
+    simplifyTooltip: 'Mantiene solo la nota più acuta degli accordi e ottimizza per la suonabilità',
 
     // File operations
     openFile: 'Apri file',

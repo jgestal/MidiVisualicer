@@ -17,6 +17,9 @@ export const en_us = {
   tablature: 'Tablature',
   notation: 'Notation',
   pianoRoll: 'Piano Roll',
+  simplify: 'Simplify',
+  simplified: 'Simplified',
+  simplifyTooltip: 'Keep only the highest note from chords and optimize for playability',
 
   // File operations
   openFile: 'Open file',

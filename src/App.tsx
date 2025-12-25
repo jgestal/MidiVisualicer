@@ -50,6 +50,9 @@ import { HelpModal } from './components/HelpModal';
 // Config
 import { getAllInstruments } from './config/instruments';
 
+// Utils
+import { simplifyNotes } from './utils/simplifyNotes';
+
 function App() {
   // ===== CONTEXTOS =====
   const { state: midiState, loadMidiFile, clearMidi } = useMidi();
@@ -97,11 +100,23 @@ function App() {
   const selectedInstrumentId = instrumentState.selectedInstrumentId;
   const transpose = instrumentState.transpose;
 
+  // ===== SIMPLIFY STATE =====
+  const [isSimplified, setIsSimplified] = useState(false);
+
   // Notas de la pista seleccionada
   const selectedTrackNotes = useMemo(() => {
     if (!parsedMidi || !parsedMidi.tracks[selectedTrack]) return [];
     return parsedMidi.tracks[selectedTrack].notes;
   }, [parsedMidi, selectedTrack]);
+
+  // Notas simplificadas (si está activado)
+  const notesToDisplay = useMemo(() => {
+    if (!isSimplified) return selectedTrackNotes;
+
+    const allInstruments = getAllInstruments();
+    const instrument = allInstruments[selectedInstrumentId];
+    return simplifyNotes(selectedTrackNotes, instrument);
+  }, [selectedTrackNotes, isSimplified, selectedInstrumentId]);
 
   // Nombre del instrumento seleccionado
   const selectedInstrumentName = useMemo(() => {
@@ -284,10 +299,16 @@ function App() {
           {/* Main Layout: Central Panel + Right Sidebar */}
           <div className="app-layout-content">
             {/* Central Panel with Tabs */}
-            <MainPanel activeView={ui.activeView} onViewChange={ui.setActiveView}>
+            <MainPanel
+              activeView={ui.activeView}
+              onViewChange={ui.setActiveView}
+              isSimplified={isSimplified}
+              onToggleSimplify={() => setIsSimplified(!isSimplified)}
+              hasNotes={notesToDisplay.length > 0}
+            >
               {ui.activeView === 'tablature' ? (
                 <TablatureView
-                  notes={selectedTrackNotes}
+                  notes={notesToDisplay}
                   instrumentId={selectedInstrumentId}
                   transpose={transpose}
                   currentTime={playbackState.currentTime}
@@ -297,7 +318,7 @@ function App() {
               ) : (
                 <OSMDNotationView
                   ref={notationViewRef}
-                  notes={selectedTrackNotes}
+                  notes={notesToDisplay}
                   currentTime={playbackState.currentTime}
                   isPlaying={playbackState.isPlaying}
                   duration={parsedMidi?.duration || playbackState.duration}
