@@ -1309,3 +1309,205 @@ img {
         justify-content: center;
     }
 }
+
+/* ============================================
+   What is Tablature Section - NEW
+   ============================================ */
+.what-is-tab {
+    padding: 100px 0;
+    background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+    position: relative;
+}
+
+.what-is-tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+}
+
+.tab-explanation {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+}
+
+.tab-visual {
+    display: flex;
+    justify-content: center;
+}
+
+.tab-example {
+    background: rgba(10, 10, 15, 0.9);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    max-width: 600px;
+    box-shadow: 
+        0 0 40px rgba(99, 102, 241, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.tab-code {
+    font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #22c55e;
+    background: transparent;
+    margin: 0;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+.tab-caption {
+    margin-top: 16px;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+}
+
+.tab-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+@media (max-width: 992px) {
+    .tab-benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .tab-benefits-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tab-benefit {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    text-align: center;
+    transition: all var(--transition-base);
+}
+
+.tab-benefit:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    background: rgba(99, 102, 241, 0.05);
+    transform: translateY(-4px);
+}
+
+.tab-benefit-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+}
+
+.tab-benefit h4 {
+    font-size: 1.125rem;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.tab-benefit p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.tab-comparison {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .tab-comparison {
+        grid-template-columns: 1fr;
+    }
+}
+
+.comparison-card {
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    backdrop-filter: blur(10px);
+}
+
+.comparison-card.bad {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.comparison-card.good {
+    background: rgba(34, 197, 94, 0.05);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.comparison-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    color: #fff;
+}
+
+.comparison-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.comparison-card li {
+    padding: 8px 0;
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comparison-card li:last-child {
+    border-bottom: none;
+}
+
+.comparison-card.bad li::before {
+    content: '✗ ';
+    color: #ef4444;
+}
+
+.comparison-card.good li::before {
+    content: '✓ ';
+    color: #22c55e;
+}
+
+/* Featured Feature Card */
+.feature-card.featured {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
+    border-color: rgba(245, 158, 11, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card.featured::before {
+    content: 'NUEVO';
+    position: absolute;
+    top: 16px;
+    right: -32px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 800;
+    padding: 4px 40px;
+    transform: rotate(45deg);
+    letter-spacing: 0.1em;
+}
+
+.feature-card.featured .feature-icon {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1));
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.feature-card.featured:hover .feature-icon {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
