@@ -152,6 +152,9 @@ export const en = {
     discoMode: 'Disco 70s mode',
     solarpunkMode: 'Solarpunk mode',
     lcarsMode: 'LCARS (Star Trek) mode',
+    walkmanMode: 'Sony Walkman mode',
+    ipodMode: 'iPod Classic mode',
+    snesMode: 'Super Nintendo mode',
 
     // Language
     language: 'Language',

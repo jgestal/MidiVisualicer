@@ -425,7 +425,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
     const manual = MANUALS[language] || MANUALS.en;
 
     return (
-        <div className="help-modal-overlay" onClick={onClose}>
+        <div className="help-modal-overlay" onClick={onClose} style={{ zIndex: 9999 }}>
             <div className="help-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="help-header">
                     <h2>{manual.title}</h2>

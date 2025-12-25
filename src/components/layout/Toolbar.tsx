@@ -2,11 +2,9 @@
  * Toolbar Component - Barra de herramientas con Transpose, Loop, Instrumento y Metrónomo
  * Aparece debajo del header cuando está activada
  */
-import { useState } from 'react';
-import { Timer, ChevronDown, Guitar, Hourglass, Keyboard } from 'lucide-react';
+import { Timer, ChevronDown, Guitar, Hourglass } from 'lucide-react';
 import TransposeControls from '../TransposeControls';
 import LoopControls from '../LoopControls';
-import KeyboardShortcutsModal from '../KeyboardShortcutsModal';
 import { useI18n } from '../../shared/context/I18nContext';
 import { getAllInstruments } from '../../config/instruments';
 import type { MidiNote } from '../../types/midi';
@@ -70,7 +68,6 @@ export function Toolbar({
     onToggleAutoTranspose,
 }: ToolbarProps) {
     const { t } = useI18n();
-    const [showShortcuts, setShowShortcuts] = useState(false);
     const instrument = getAllInstruments()[instrumentId];
 
     return (
@@ -164,24 +161,6 @@ export function Toolbar({
                     </div>
                 </>
             )}
-
-            {/* Keyboard Shortcuts Button */}
-            <div className="toolbar-divider" />
-            <div className="toolbar-section">
-                <button
-                    className="shortcuts-btn"
-                    onClick={() => setShowShortcuts(true)}
-                    title={t.keyboardShortcuts || 'Keyboard Shortcuts'}
-                >
-                    <Keyboard size={16} />
-                </button>
-            </div>
-
-            {/* Shortcuts Modal */}
-            {showShortcuts && (
-                <KeyboardShortcutsModal onClose={() => setShowShortcuts(false)} />
-            )}
-
         </div>
     );
 }

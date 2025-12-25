@@ -13,7 +13,7 @@ export function AboutModal({ onClose }: AboutModalProps) {
   const { t } = useI18n();
 
   return (
-    <div className="about-modal-overlay" onClick={onClose}>
+    <div className="about-modal-overlay" onClick={onClose} style={{ zIndex: 9999 }}>
       <div className="about-modal" onClick={(e) => e.stopPropagation()}>
         <div className="about-header">
           <h2>{t.about} Midi Tab Pro</h2>

@@ -74,13 +74,19 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
     }
   }, [notes, trackName, bpm]);
 
-  // Initialize OSMD - only once
+  // Initialize OSMD and load MusicXML - combined to prevent timing issues with StrictMode
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !musicXML) {
+      setIsRendered(false);
+      return;
+    }
+
+    // Clear any existing content BEFORE creating new OSMD instance
+    containerRef.current.innerHTML = '';
 
     // Create OSMD instance with performance-optimized settings
     const osmd = new OSMD(containerRef.current, {
-      autoResize: false, // Disable auto-resize for performance
+      autoResize: false,
       backend: 'svg',
       drawTitle: true,
       drawSubtitle: false,
@@ -90,11 +96,11 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
       drawPartAbbreviations: false,
       drawMeasureNumbers: true,
       drawTimeSignatures: true,
-      drawingParameters: 'compacttight', // More compact for performance
-      followCursor: false, // We handle scrolling ourselves
+      drawingParameters: 'compacttight',
+      followCursor: false,
       cursorsOptions: [{
-        type: CursorType.ThinLeft, // Vertical line cursor instead of rectangle
-        color: CURSOR_COLOR, // Red for visibility
+        type: CursorType.ThinLeft,
+        color: CURSOR_COLOR,
         alpha: 0.9,
         follow: false,
       }],
@@ -102,21 +108,8 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
 
     osmdRef.current = osmd;
 
-    return () => {
-      if (osmdRef.current?.cursor) {
-        osmdRef.current.cursor.hide();
-      }
-      osmdRef.current = null;
-    };
-  }, []);
-
-  // Load and render MusicXML
-  useEffect(() => {
-    const osmd = osmdRef.current;
-    if (!osmd || !musicXML) {
-      setIsRendered(false);
-      return;
-    }
+    // Track if this effect has been cleaned up (for async operations)
+    let isCancelled = false;
 
     setIsLoading(true);
     setError(null);
@@ -124,6 +117,8 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
 
     osmd.load(musicXML)
       .then(() => {
+        if (isCancelled) return; // Don't render if cleanup happened
+
         osmd.render();
 
         // Initialize cursor
@@ -136,11 +131,32 @@ export const OSMDNotationView = forwardRef<OSMDNotationViewRef, OSMDNotationView
         setIsLoading(false);
       })
       .catch((err: Error) => {
+        if (isCancelled) return;
         console.error('OSMD load error:', err);
         setError(`Error al cargar la partitura: ${err.message}`);
         setIsLoading(false);
         setIsRendered(false);
       });
+
+    return () => {
+      isCancelled = true;
+      // Hide cursor first
+      if (osmdRef.current?.cursor) {
+        osmdRef.current.cursor.hide();
+      }
+      // Clear OSMD instance
+      try {
+        osmdRef.current?.clear();
+      } catch {
+        // Ignore errors during cleanup
+      }
+      osmdRef.current = null;
+      setIsRendered(false);
+      // Clear the container DOM
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+      }
+    };
   }, [musicXML]);
 
   // OPTIMIZED: Synchronize cursor with playback - only when note changes

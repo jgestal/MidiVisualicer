@@ -1,4 +1,4 @@
-/**
+    /**
  * Custom hook for Piano Roll scroll and interaction
  * Handles auto-scroll during playback, drag-to-pan, and click-to-seek
  */

@@ -1,6 +1,7 @@
 /**
  * KeyboardShortcutsModal - Modal showing all keyboard shortcuts
  */
+import { createPortal } from 'react-dom';
 import { X, Keyboard } from 'lucide-react';
 import { useI18n } from '../shared/context/I18nContext';
 import './KeyboardShortcutsModal.css';
@@ -111,7 +112,8 @@ export function KeyboardShortcutsModal({ onClose }: KeyboardShortcutsModalProps)
   const { language } = useI18n();
   const labels = SHORTCUT_LABELS[language] || SHORTCUT_LABELS.en;
 
-  return (
+  // Use React Portal to render modal at document body level, bypassing header's stacking context
+  return createPortal(
     <div className="shortcuts-modal-overlay" onClick={onClose}>
       <div className="shortcuts-modal" onClick={(e) => e.stopPropagation()}>
         <div className="shortcuts-header">
@@ -147,7 +149,8 @@ export function KeyboardShortcutsModal({ onClose }: KeyboardShortcutsModalProps)
           ))}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

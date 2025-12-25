@@ -29,6 +29,9 @@ import {
   Leaf,
   Droplets,
   Terminal,
+  Disc3,
+  CircleDot,
+  Gamepad2,
   type LucideIcon
 } from 'lucide-react';
 
@@ -54,6 +57,9 @@ export const THEMES: ThemeConfig[] = [
   { id: 'msdos', name: 'msdosMode', icon: Command, category: 'Retro & Tech', primaryColor: '#000000' },
   { id: 'win95', name: 'win95Mode', icon: Layout, category: 'Retro & Tech', primaryColor: '#008080' },
   { id: 'floppy', name: 'floppyMode', icon: Save, category: 'Retro & Tech', primaryColor: '#e0dcd0' },
+  { id: 'walkman', name: 'walkmanMode', icon: Disc3, category: 'Retro & Tech', primaryColor: '#1a1a1a' },
+  { id: 'ipod', name: 'ipodMode', icon: CircleDot, category: 'Retro & Tech', primaryColor: '#ffffff' },
+  { id: 'snes', name: 'snesMode', icon: Gamepad2, category: 'Retro & Tech', primaryColor: '#d0d0d0' },
 
   // Art & Design
   { id: 'solarized', name: 'solarizedMode', icon: Coffee, category: 'Art & Design', primaryColor: '#fdf6e3' },

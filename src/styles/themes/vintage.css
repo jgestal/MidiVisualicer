@@ -63,19 +63,19 @@
   --color-bg-secondary: #0a0a0a;
   --color-bg-tertiary: #111111;
   --color-bg-elevated: #1a1a1a;
-  --color-bg-hover: #ffffff;
+  --color-bg-hover: #333333; /* Dark grey for hover - maintains MS-DOS aesthetic */
   --color-accent-primary: #ffffff;
-  --color-accent-secondary: #ffffff;
+  --color-accent-secondary: #aaaaaa;
   --color-accent-gradient: var(--color-accent-primary);
   --color-accent-glow: transparent;
   --color-text-primary: #ffffff;
-  --color-text-secondary: #ffffff;
+  --color-text-secondary: #cccccc;
   --color-text-muted: #888888;
   --color-text-inverse: #000000;
-  --color-text-on-hover: #000000;
+  --color-text-on-hover: #ffffff; /* White text on dark hover background */
   --color-text-on-accent: #000000;
   --color-text-on-elevated: #ffffff;
-  --color-border: #cccccc;
+  --color-border: #666666;
   --notation-bg: #000000;
   --notation-border: #ffffff;
   --font-family: 'Consolas', 'Courier New', monospace;
@@ -128,4 +128,90 @@
   --color-border: #a0a0a0;
   --notation-bg: #ffffff;
   --radius-md: 4px;
+}
+
+/* Sony Walkman Theme - Inspired by classic Sony audio equipment */
+[data-theme='walkman'] {
+  --color-bg-primary: #1a1a1a;
+  --color-bg-secondary: #2a2a2a;
+  --color-bg-tertiary: #3a3a3a;
+  --color-bg-elevated: #444444;
+  --color-bg-hover: #ff6b00;
+  --color-accent-primary: #ff6b00;
+  --color-accent-secondary: #ffa500;
+  --color-accent-gradient: linear-gradient(135deg, #ff6b00 0%, #ffa500 100%);
+  --color-accent-glow: rgba(255, 107, 0, 0.4);
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #ff6b00;
+  --color-text-muted: #888888;
+  --color-text-inverse: #1a1a1a;
+  --color-text-on-hover: #1a1a1a;
+  --color-text-on-accent: #000000;
+  --color-text-on-elevated: #e0e0e0;
+  --color-border: #555555;
+  --color-border-hover: #ff6b00;
+  --notation-bg: #1a1a1a;
+  --notation-line-bg: #2a2a2a;
+  --notation-paper: #222222;
+  --radius-md: 8px;
+  --font-family: 'Helvetica Neue', 'Arial', sans-serif;
+}
+
+/* iPod Classic Theme - Inspired by Apple's iconic MP3 player */
+[data-theme='ipod'] {
+  --color-bg-primary: #f5f5f7;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #e8e8ed;
+  --color-bg-elevated: #ffffff;
+  --color-bg-hover: #0071e3;
+  --color-accent-primary: #0071e3;
+  --color-accent-secondary: #147ce5;
+  --color-accent-gradient: linear-gradient(180deg, #68a4e8 0%, #0071e3 100%);
+  --color-accent-glow: rgba(0, 113, 227, 0.25);
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #515154;
+  --color-text-muted: #86868b;
+  --color-text-inverse: #ffffff;
+  --color-text-on-hover: #ffffff;
+  --color-text-on-accent: #ffffff;
+  --color-text-on-elevated: #1d1d1f;
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-border-hover: #0071e3;
+  --notation-bg: #ffffff;
+  --notation-line-bg: #f5f5f7;
+  --notation-paper: #ffffff;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+}
+
+/* SNES Theme - Inspired by Super Nintendo Entertainment System */
+[data-theme='snes'] {
+  --color-bg-primary: #d0d0d0;
+  --color-bg-secondary: #c0c0c0;
+  --color-bg-tertiary: #4f4f91;
+  --color-bg-elevated: #e0e0e0;
+  --color-bg-hover: #4040b0;
+  --color-accent-primary: #4040b0;
+  --color-accent-secondary: #8080c0;
+  --color-accent-gradient: linear-gradient(180deg, #6060c0 0%, #4040b0 50%, #303090 100%);
+  --color-accent-glow: rgba(64, 64, 176, 0.3);
+  --color-text-primary: #2e2e50;
+  --color-text-secondary: #4f4f91;
+  --color-text-muted: #707090;
+  --color-text-inverse: #e0e0e0;
+  --color-text-on-hover: #ffffff;
+  --color-text-on-accent: #ffffff;
+  --color-text-on-elevated: #2e2e50;
+  --color-border: #a0a0a0;
+  --color-border-hover: #4040b0;
+  --color-border-active: #8080c0;
+  --notation-bg: #e0e0e0;
+  --notation-line-bg: #d0d0d0;
+  --notation-paper: #f0f0f0;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --font-family: 'Verdana', 'Arial', sans-serif;
 }

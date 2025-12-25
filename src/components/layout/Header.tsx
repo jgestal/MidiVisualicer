@@ -22,7 +22,9 @@ import {
     FileText,
     FileImage,
     Palette,
+    Keyboard,
 } from 'lucide-react';
+import KeyboardShortcutsModal from '../KeyboardShortcutsModal';
 import { useTheme } from '../../shared/context/ThemeContext';
 import { useI18n, LANGUAGES, type Language } from '../../shared/context/I18nContext';
 import { THEMES, CATEGORIES } from '../../config/themes';
@@ -80,6 +82,7 @@ export function Header({
     const [showExportMenu, setShowExportMenu] = useState(false);
     const [showLangMenu, setShowLangMenu] = useState(false);
     const [showThemeMenu, setShowThemeMenu] = useState(false);
+    const [showShortcuts, setShowShortcuts] = useState(false);
 
     // Group themes by category for the menu
     const themesByCategory = useMemo(() => {
@@ -248,6 +251,15 @@ export function Header({
                     )}
                 </div>
 
+                {/* Keyboard Shortcuts Button */}
+                <button
+                    className="header-btn header-shortcuts-btn"
+                    onClick={() => setShowShortcuts(true)}
+                    title={t.keyboardShortcuts || 'Keyboard Shortcuts'}
+                >
+                    <Keyboard size={18} />
+                </button>
+
                 {/* Help Button */}
                 <button
                     className="header-btn header-help-btn"
@@ -271,7 +283,7 @@ export function Header({
                     <button
                         className="header-btn header-theme-btn"
                         onClick={() => setShowThemeMenu(!showThemeMenu)}
-                        title={t.language}
+                        title={t.darkMode?.replace(' mode', '') || 'Theme'}
                     >
                         <Palette size={18} />
                     </button>
@@ -279,6 +291,11 @@ export function Header({
                     {showThemeMenu && <ThemeMenu />}
                 </div>
             </div>
+
+            {/* Keyboard Shortcuts Modal */}
+            {showShortcuts && (
+                <KeyboardShortcutsModal onClose={() => setShowShortcuts(false)} />
+            )}
         </header>
     );
 }
