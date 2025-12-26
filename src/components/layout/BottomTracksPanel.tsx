@@ -7,49 +7,35 @@ import { Layers, ChevronDown, ChevronUp, Volume2, VolumeX } from 'lucide-react';
 import { useDragScroll } from '../../hooks/useDragScroll';
 import { useI18n } from '../../shared/context/I18nContext';
 import { getInstrumentEmoji } from '../../utils/instrumentEmoji';
+import { useTracks } from '@/features/tracks/context/TracksContext';
+import { usePlayback } from '@/features/player/context/PlaybackContext';
+import { useMidi } from '@/features/library/context/MidiContext';
 import type { MidiTrack } from '../../types/midi';
 import './BottomTracksPanel.css';
 
-interface BottomTracksPanelProps {
-  tracks: MidiTrack[];
-  selectedTrack: number;
-  mutedTracks: Set<number>;
-  trackVolumes: Map<number, number>;
-  onSelectTrack: (index: number) => void;
-  onToggleMute: (index: number) => void;
-  onVolumeChange: (index: number, volume: number) => void;
-  currentTime?: number;
-  isPlaying?: boolean;
-}
-
-
-export function BottomTracksPanel({
-  tracks,
-  selectedTrack,
-  mutedTracks,
-  trackVolumes,
-  onSelectTrack,
-  onToggleMute,
-  onVolumeChange,
-  currentTime = 0,
-  isPlaying = false,
-}: BottomTracksPanelProps) {
+export function BottomTracksPanel() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { t } = useI18n();
   const { scrollRef, handlePointerDown, handlePointerMove, handlePointerUp, handleClick } = useDragScroll();
 
+  const { state: midiState } = useMidi();
+  const { state: tracksState, toggleMute, resetTracks } = useTracks();
+  const { state: playbackState, setTrackVolume } = usePlayback();
+
+  const tracks = midiState.parsedMidi?.tracks || [];
+  const selectedTrack = tracksState.selectedTrackIndex;
+  const mutedTracks = tracksState.mutedTracks;
+  const trackVolumes = playbackState.trackVolumes;
+  const currentTime = playbackState.currentTime;
+  const isPlaying = playbackState.isPlaying;
+
   // Helper to check if track is active (has notes playing now or fully coming soon)
-  // Lookahead: 1.0s, Lookbehind: 0.1s
   const isTrackActive = (track: MidiTrack) => {
     if (!isPlaying || !track.notes) return false;
-    // Simple verification: is there any note overlapping the window [now - 0.1, now + 1.0]
     const windowStart = currentTime - 0.1;
     const windowEnd = currentTime + 0.8;
 
-    // Optimization: find if ANY note matches condition. 
-    // Since notes are usually sorted by time, we could optimize further, but .some() is likely fast enough for <10k notes total
     return track.notes.some(n =>
-      // Note starts within window OR Note matches current playback
       (n.time >= windowStart && n.time <= windowEnd) ||
       (n.time <= currentTime && n.time + n.duration >= currentTime)
     );
@@ -105,7 +91,7 @@ export function BottomTracksPanel({
 
                   <button
                     className="bottom-track-select"
-                    onClick={() => onSelectTrack(index)}
+                    onClick={() => resetTracks(index)}
                   >
                     <span className="bottom-track-index">{index + 1}</span>
                     <div className="bottom-track-info">
@@ -124,7 +110,7 @@ export function BottomTracksPanel({
                       className="bottom-track-mute"
                       onClick={(e) => {
                         e.stopPropagation();
-                        onToggleMute(index);
+                        toggleMute(index);
                       }}
                       title={isMuted ? t.unmute : t.mute}
                     >
@@ -135,7 +121,7 @@ export function BottomTracksPanel({
                       min="0"
                       max="100"
                       value={isMuted ? 0 : volume}
-                      onChange={(e) => onVolumeChange(index, parseInt(e.target.value))}
+                      onChange={(e) => setTrackVolume(index, parseInt(e.target.value))}
                       className="bottom-track-volume"
                       title={`${t.volume}: ${volume}%`}
                     />
@@ -146,7 +132,6 @@ export function BottomTracksPanel({
           </div>
         </div>
       )}
-
     </div>
   );
 }

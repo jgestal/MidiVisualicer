@@ -32,13 +32,13 @@ export function AppProviders({ children }: AppProvidersProps) {
         <ThemeProvider>
           <LibraryProvider>
             <MidiProvider>
-              <PlaybackProvider>
-                <TracksProvider>
+              <TracksProvider>
+                <PlaybackProvider>
                   <InstrumentProvider>
                     <VisualizationProvider>{children}</VisualizationProvider>
                   </InstrumentProvider>
-                </TracksProvider>
-              </PlaybackProvider>
+                </PlaybackProvider>
+              </TracksProvider>
             </MidiProvider>
           </LibraryProvider>
         </ThemeProvider>

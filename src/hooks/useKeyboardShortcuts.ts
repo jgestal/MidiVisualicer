@@ -3,50 +3,27 @@
  * Handles playback, navigation, transpose, and speed controls
  */
 import { useEffect, useCallback } from 'react';
-import type { ParsedMidi, PlaybackSpeed } from '../types/midi';
+import { usePlayback } from '@/features/player/context/PlaybackContext';
+import { useTracks } from '@/features/tracks/context/TracksContext';
+import { useInstrument } from '@/features/instruments/context/InstrumentContext';
+import { useMidi } from '@/features/library/context/MidiContext';
 
-interface UseKeyboardShortcutsOptions {
-  // Playback state
-  isPlaying: boolean;
-  currentTime: number;
-  parsedMidi: ParsedMidi | null;
+export function useKeyboardShortcuts(): void {
+  const { state: midiState } = useMidi();
+  const {
+    state: playbackState,
+    play,
+    pause,
+    seekTo,
+    setSpeed,
+  } = usePlayback();
+  const { state: tracksState, toggleMute } = useTracks();
+  const { state: instrumentState, setTranspose, toggleAutoTranspose } = useInstrument();
 
-  // Track state
-  selectedTrack: number;
-  mutedTracks: Set<number>;
-  trackVolumes: Map<number, number>;
-
-  // Transpose
-  transpose: number;
-
-  // Actions
-  play: (midi: ParsedMidi, mutedTracks: Set<number>, trackVolumes: Map<number, number>) => Promise<void>;
-  pause: () => void;
-  seekTo: (time: number) => void;
-  setSpeed: (speed: PlaybackSpeed) => void;
-  setTranspose: (semitones: number) => void;
-  setTrackMuted: (trackIndex: number, muted: boolean) => void;
-  toggleMute: (trackIndex: number) => void;
-  toggleAutoTranspose?: () => void;
-}
-
-export function useKeyboardShortcuts({
-  isPlaying,
-  currentTime,
-  parsedMidi,
-  selectedTrack,
-  mutedTracks,
-  trackVolumes,
-  transpose,
-  play,
-  pause,
-  seekTo,
-  setSpeed,
-  setTranspose,
-  setTrackMuted,
-  toggleMute,
-  toggleAutoTranspose,
-}: UseKeyboardShortcutsOptions): void {
+  const { isPlaying, currentTime, trackVolumes } = playbackState;
+  const { parsedMidi } = midiState;
+  const { selectedTrackIndex: selectedTrack, mutedTracks } = tracksState;
+  const { transpose } = instrumentState;
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     // Ignore if typing in an input
@@ -70,9 +47,8 @@ export function useKeyboardShortcuts({
 
       case 'KeyM':
         if (selectedTrack >= 0) {
-          const wasMuted = mutedTracks.has(selectedTrack);
-          setTrackMuted(selectedTrack, !wasMuted);
           toggleMute(selectedTrack);
+          // setTrackMuted is now handled automatically by PlaybackContext effect syncing with TracksContext
         }
         break;
 
@@ -141,7 +117,6 @@ export function useKeyboardShortcuts({
     seekTo,
     setSpeed,
     setTranspose,
-    setTrackMuted,
     toggleMute,
     toggleAutoTranspose,
   ]);

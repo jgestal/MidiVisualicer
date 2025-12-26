@@ -14,6 +14,7 @@ import {
 import * as Tone from 'tone';
 import type { ParsedMidi, MidiTrack, PlaybackSpeed } from '@/shared/types/midi';
 import { volumeToDb } from '@/utils/audioUtils';
+import { useTracks } from '@/features/tracks/context/TracksContext';
 
 // Context state
 interface PlaybackState {
@@ -27,6 +28,7 @@ interface PlaybackState {
   isLoopEnabled: boolean;
   isCountInEnabled: boolean;
   activeNotes: number[]; // MIDI note values currently playing
+  trackVolumes: Map<number, number>; // Map of track index to volume (0-100)
 }
 
 // Actions
@@ -41,7 +43,8 @@ type PlaybackAction =
   | { type: 'TOGGLE_LOOP' }
   | { type: 'CLEAR_LOOP' }
   | { type: 'TOGGLE_COUNT_IN' }
-  | { type: 'SET_ACTIVE_NOTES'; payload: number[] };
+  | { type: 'SET_ACTIVE_NOTES'; payload: number[] }
+  | { type: 'SET_TRACK_VOLUME'; payload: { trackIndex: number; volume: number } };
 
 // Initial state
 const initialState: PlaybackState = {
@@ -55,6 +58,7 @@ const initialState: PlaybackState = {
   isLoopEnabled: false,
   isCountInEnabled: false,
   activeNotes: [],
+  trackVolumes: new Map(),
 };
 
 // Reducer
@@ -99,6 +103,11 @@ function playbackReducer(state: PlaybackState, action: PlaybackAction): Playback
       // Only update if notes have changed to avoid unnecessary re-renders
       if (JSON.stringify(state.activeNotes) === JSON.stringify(action.payload)) return state;
       return { ...state, activeNotes: action.payload };
+    case 'SET_TRACK_VOLUME': {
+      const newVolumes = new Map(state.trackVolumes);
+      newVolumes.set(action.payload.trackIndex, action.payload.volume);
+      return { ...state, trackVolumes: newVolumes };
+    }
     default:
       return state;
   }
@@ -135,6 +144,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const isInitializedRef = useRef(false);
   const currentMidiRef = useRef<ParsedMidi | null>(null);
   const trackVolumesRef = useRef<Map<number, number>>(new Map());
+  const { state: tracksState, getEffectiveMutedTracks } = useTracks();
   const mutedTracksRef = useRef<Set<number>>(new Set());
   const loopStartRef = useRef<number | null>(null);
   const loopEndRef = useRef<number | null>(null);
@@ -159,6 +169,26 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     loopStartRef.current = state.loopStart;
     loopEndRef.current = state.loopEnd;
   }, [state.isLoopEnabled, state.loopStart, state.loopEnd]);
+
+  // Sync muted tracks from TracksContext
+  useEffect(() => {
+    if (!currentMidiRef.current) return;
+
+    const effectiveMuted = getEffectiveMutedTracks(currentMidiRef.current.tracks.length);
+    mutedTracksRef.current = effectiveMuted;
+
+    // Update synths in real-time
+    synthsRef.current.forEach((synth, index) => {
+      if (synth) {
+        if (effectiveMuted.has(index)) {
+          synth.volume.value = -Infinity;
+        } else {
+          const volume = trackVolumesRef.current.get(index) ?? 100;
+          synth.volume.value = volumeToDb(volume);
+        }
+      }
+    });
+  }, [tracksState.mutedTracks, tracksState.soloTrack, getEffectiveMutedTracks]);
 
   // Create synthesizers
   const createSynths = useCallback((trackCount: number) => {
@@ -207,14 +237,16 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const play = useCallback(
     async (
       midi: ParsedMidi,
-      mutedTracks: Set<number> = new Set(),
+      _mutedTracks?: Set<number>, // Kept for API compatibility but unused
       trackVolumes: Map<number, number> = new Map()
     ) => {
       await initialize();
 
       // Store refs for later use
       trackVolumesRef.current = trackVolumes;
-      mutedTracksRef.current = mutedTracks;
+
+      const effectiveMuted = getEffectiveMutedTracks(midi.tracks.length);
+      mutedTracksRef.current = effectiveMuted;
 
       // Limpiar eventos anteriores
       scheduledEventsRef.current.forEach((id) => Tone.Transport.clear(id));
@@ -237,7 +269,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 
       // Programar todas las pistas
       midi.tracks.forEach((track, index) => {
-        scheduleTrack(track, index, speed, mutedTracks.has(index));
+        scheduleTrack(track, index, speed, mutedTracksRef.current.has(index));
       });
 
       // Configurar transporte
@@ -471,26 +503,13 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     if (synth) {
       synth.volume.value = volumeToDb(volume);
     }
+    dispatch({ type: 'SET_TRACK_VOLUME', payload: { trackIndex, volume } });
   }, []);
 
   // Set track muted in real-time
-  const setTrackMuted = useCallback((trackIndex: number, muted: boolean) => {
-    if (muted) {
-      mutedTracksRef.current.add(trackIndex);
-    } else {
-      mutedTracksRef.current.delete(trackIndex);
-    }
-    const synth = synthsRef.current[trackIndex];
-    if (synth) {
-      // When muted, set volume to -Infinity (silent)
-      // When unmuted, restore the actual volume
-      if (muted) {
-        synth.volume.value = -Infinity;
-      } else {
-        const volume = trackVolumesRef.current.get(trackIndex) ?? 100;
-        synth.volume.value = volumeToDb(volume);
-      }
-    }
+  const setTrackMuted = useCallback((_trackIndex: number, _muted: boolean) => {
+    // This is now handled automatically by the effect syncing with TracksContext
+    // We keep the function for backward compatibility
   }, []);
 
   // Limpiar al desmontar

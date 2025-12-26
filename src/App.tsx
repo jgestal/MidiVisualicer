@@ -12,7 +12,7 @@
  * 5. Footer - Playback controls
  */
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { Music, X, ChevronDown } from 'lucide-react';
+import { Music } from 'lucide-react';
 
 // Context hooks
 import { useMidi } from './features/library/context/MidiContext';
@@ -35,17 +35,14 @@ import { Toolbar } from './components/layout/Toolbar';
 import { Footer } from './components/layout/Footer';
 import { BottomTracksPanel } from './components/layout/BottomTracksPanel';
 import { MainPanel } from './components/layout/MainPanel';
+import { PianoRollCollapsible } from './components/layout/PianoRollCollapsible';
+import { ModalManager } from './components/layout/ModalManager';
 import './components/layout/layout.css';
 
 // Feature components
 import { FileUploader } from './components/FileUploader';
-import { InstrumentSelector } from './components/InstrumentSelector';
-import { PianoRollView } from './components/PianoRollView';
 import { TablatureView } from './components/TablatureView';
 import { OSMDNotationView, type OSMDNotationViewRef } from './components/OSMDNotationView';
-import { MidiInfoModal } from './components/MidiInfoModal';
-import { AboutModal } from './components/AboutModal';
-import { HelpModal } from './components/HelpModal';
 
 // Config
 import { getAllInstruments } from './config/instruments';
@@ -67,17 +64,14 @@ function App() {
     setLoopEnd,
     toggleLoop,
     clearLoop,
-    setTrackVolume,
-    setTrackMuted,
     toggleCountIn,
   } = usePlayback();
-  const { state: tracksState, toggleMute, resetTracks } = useTracks();
+  const { state: tracksState, resetTracks } = useTracks();
   const { state: instrumentState, selectInstrument, setTranspose, toggleAutoTranspose } = useInstrument();
   const { t } = useI18n();
 
   // ===== UI STATE (via custom hook) =====
   const ui = useAppUI();
-  const [trackVolumes, setTrackVolumes] = useState<Map<number, number>>(new Map());
 
   // ===== MASTER VOLUME =====
   const { volume: masterVolume, isMuted: isMasterMuted, setVolume: handleVolumeChange, toggleMute: handleMasterMuteToggle } = useMasterVolume();
@@ -99,6 +93,7 @@ function App() {
   const mutedTracks = tracksState.mutedTracks;
   const selectedInstrumentId = instrumentState.selectedInstrumentId;
   const transpose = instrumentState.transpose;
+  const trackVolumes = playbackState.trackVolumes;
 
   // ===== SIMPLIFY STATE =====
   const [isSimplified, setIsSimplified] = useState(false);
@@ -135,23 +130,7 @@ function App() {
   }, [parsedMidi, resetTracks]);
 
   // Global Keyboard Shortcuts
-  useKeyboardShortcuts({
-    isPlaying: playbackState.isPlaying,
-    currentTime: playbackState.currentTime,
-    parsedMidi,
-    selectedTrack,
-    mutedTracks,
-    trackVolumes,
-    transpose,
-    play,
-    pause,
-    seekTo,
-    setSpeed,
-    setTranspose,
-    setTrackMuted,
-    toggleMute,
-    toggleAutoTranspose,
-  });
+  useKeyboardShortcuts();
 
   // Auto-transposición (via custom hook)
   const selectedInstrument = useMemo(() => getAllInstruments()[selectedInstrumentId], [selectedInstrumentId]);
@@ -174,8 +153,6 @@ function App() {
     notationViewRef.current?.exportToSVG();
   }, []);
 
-  // Sidebar effect removed
-
   // ===== HANDLERS =====
 
   const handleFileUpload = useCallback(
@@ -185,22 +162,11 @@ function App() {
     [loadMidiFile]
   );
 
-  // FileExplorer handler removed
-
-  const handleToggleMute = useCallback(
-    (trackIndex: number) => {
-      toggleMute(trackIndex);
-    },
-    [toggleMute]
-  );
-
   // Handle close - volver a pantalla de carga
   const handleClose = useCallback(() => {
     stop();
     clearMidi();
   }, [stop, clearMidi]);
-
-  // Export handlers now provided by useExport hook above
 
   // ===== RENDER =====
 
@@ -257,44 +223,26 @@ function App() {
         />
       )}
 
-      {/* LEFT SIDEBAR removed */}
-
       {/* MAIN CONTENT AREA */}
       {hasMidi ? (
         <>
           {/* Piano Roll Section */}
-          <div
-            className={`piano-roll-section ${!ui.showPianoRoll ? 'collapsed' : ''}`}
-            style={{ height: ui.showPianoRoll ? '180px' : 'auto' }}
-          >
-            {ui.showPianoRoll ? (
-              <PianoRollView
-                notes={selectedTrackNotes}
-                currentTime={playbackState.currentTime}
-                duration={parsedMidi?.duration || playbackState.duration}
-                isPlaying={playbackState.isPlaying}
-                loopStart={playbackState.loopStart}
-                loopEnd={playbackState.loopEnd}
-                transpose={transpose}
-                trackId={selectedTrack}
-                onSetLoopStart={setLoopStart}
-                onSetLoopEnd={setLoopEnd}
-                onSeek={seekTo}
-                onToggle={ui.hidePianoRollPanel}
-              />
-            ) : (
-              <button
-                className="piano-roll-collapsed-toggle"
-                onClick={ui.showPianoRollPanel}
-                title="Mostrar Piano Roll"
-              >
-                <span>
-                  🎹 Piano Roll
-                  <ChevronDown size={14} />
-                </span>
-              </button>
-            )}
-          </div>
+          <PianoRollCollapsible
+            showPianoRoll={ui.showPianoRoll}
+            notes={selectedTrackNotes}
+            currentTime={playbackState.currentTime}
+            duration={parsedMidi?.duration || playbackState.duration}
+            isPlaying={playbackState.isPlaying}
+            loopStart={playbackState.loopStart}
+            loopEnd={playbackState.loopEnd}
+            transpose={transpose}
+            trackId={selectedTrack}
+            onSetLoopStart={setLoopStart}
+            onSetLoopEnd={setLoopEnd}
+            onSeek={seekTo}
+            onShow={ui.showPianoRollPanel}
+            onHide={ui.hidePianoRollPanel}
+          />
 
           {/* Main Layout: Central Panel + Right Sidebar */}
           <div className="app-layout-content">
@@ -331,28 +279,7 @@ function App() {
           </div>
 
           {/* BOTTOM TRACKS PANEL */}
-          <BottomTracksPanel
-            tracks={parsedMidi.tracks}
-            selectedTrack={selectedTrack}
-            mutedTracks={mutedTracks}
-            trackVolumes={trackVolumes}
-            onSelectTrack={(idx) => resetTracks(idx)}
-            onToggleMute={(idx) => {
-              handleToggleMute(idx);
-              const wasMuted = mutedTracks.has(idx);
-              setTrackMuted(idx, !wasMuted);
-            }}
-            onVolumeChange={(idx, vol) => {
-              setTrackVolumes(prev => {
-                const newMap = new Map(prev);
-                newMap.set(idx, vol);
-                return newMap;
-              });
-              setTrackVolume(idx, vol);
-            }}
-            currentTime={playbackState.currentTime}
-            isPlaying={playbackState.isPlaying}
-          />
+          <BottomTracksPanel />
 
           {/* FOOTER - Player Controls */}
           <Footer
@@ -386,55 +313,13 @@ function App() {
         </div>
       )}
 
-      {/* INSTRUMENT MODAL */}
-      {ui.showInstrumentModal && (
-        <div
-          className="instrument-modal-overlay"
-          onClick={ui.closeInstrumentModal}
-        >
-          <div
-            className="instrument-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="instrument-modal-header">
-              <h2 className="instrument-modal-title">Seleccionar Instrumento</h2>
-              <button
-                className="instrument-modal-close"
-                onClick={ui.closeInstrumentModal}
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="instrument-modal-content">
-              <InstrumentSelector
-                selectedInstrument={selectedInstrumentId}
-                onSelectInstrument={(id: string) => {
-                  selectInstrument(id);
-                  ui.closeInstrumentModal();
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MIDI INFO MODAL */}
-      {ui.showInfoModal && parsedMidi && (
-        <MidiInfoModal
-          midi={parsedMidi}
-          onClose={ui.closeInfoModal}
-        />
-      )}
-
-      {/* ABOUT MODAL */}
-      {ui.showAboutModal && (
-        <AboutModal onClose={ui.closeAboutModal} />
-      )}
-
-      {/* HELP MODAL */}
-      {ui.showHelpModal && (
-        <HelpModal onClose={ui.closeHelpModal} />
-      )}
+      {/* MODALS */}
+      <ModalManager
+        ui={ui}
+        parsedMidi={parsedMidi}
+        selectedInstrumentId={selectedInstrumentId}
+        selectInstrument={selectInstrument}
+      />
     </div>
   );
 }
