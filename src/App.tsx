@@ -49,7 +49,7 @@ import { OSMDNotationView, type OSMDNotationViewRef } from './components/OSMDNot
 import { getAllInstruments } from './config/instruments';
 
 // Utils
-import { simplifyNotes } from './utils/simplifyNotes';
+import { simplifyNotes, type SimplificationStrategy } from './utils/simplifyNotes';
 
 function App() {
   // ===== CONTEXTOS =====
@@ -66,6 +66,9 @@ function App() {
     toggleLoop,
     clearLoop,
     toggleCountIn,
+    setCountInDuration,
+    toggleSpeedTrainer,
+    setSpeedTrainer,
   } = usePlayback();
   const { state: tracksState, resetTracks } = useTracks();
   const { state: instrumentState, selectInstrument, setTranspose, toggleAutoTranspose } = useInstrument();
@@ -84,6 +87,7 @@ function App() {
   const { isMetronomeEnabled, toggleMetronome } = useMetronome({
     bpm: midiState.parsedMidi?.bpm || 120,
     isPlaying: playbackState.isPlaying,
+    speed: playbackState.speed,
   });
 
   // ===== DERIVADOS =====
@@ -98,6 +102,7 @@ function App() {
 
   // ===== SIMPLIFY STATE =====
   const [isSimplified, setIsSimplified] = useState(false);
+  const [simplificationStrategy, setSimplificationStrategy] = useState<SimplificationStrategy>('TOP_NOTE');
 
   // ===== TABLATURE ZOOM =====
   const { zoom, zoomIn, zoomOut, resetZoom, canZoomIn, canZoomOut } = useTablatureZoom();
@@ -114,8 +119,8 @@ function App() {
 
     const allInstruments = getAllInstruments();
     const instrument = allInstruments[selectedInstrumentId];
-    return simplifyNotes(selectedTrackNotes, instrument);
-  }, [selectedTrackNotes, isSimplified, selectedInstrumentId]);
+    return simplifyNotes(selectedTrackNotes, instrument, simplificationStrategy);
+  }, [selectedTrackNotes, isSimplified, selectedInstrumentId, simplificationStrategy]);
 
   // Nombre del instrumento seleccionado
   const selectedInstrumentName = useMemo(() => {
@@ -216,12 +221,17 @@ function App() {
           onSetLoopEnd={setLoopEnd}
           onToggleLoop={toggleLoop}
           onClearLoop={clearLoop}
+          speedTrainer={playbackState.speedTrainer}
+          onToggleSpeedTrainer={toggleSpeedTrainer}
+          onSetSpeedTrainerIncrement={(inc) => setSpeedTrainer({ increment: inc })}
           selectedInstrumentName={selectedInstrumentName}
           onOpenInstrumentMenu={ui.openInstrumentModal}
           isMetronomeEnabled={isMetronomeEnabled}
           onToggleMetronome={toggleMetronome}
           isCountInEnabled={playbackState.isCountInEnabled}
+          countInDuration={playbackState.countInDuration}
           onToggleCountIn={toggleCountIn}
+          onSetCountInDuration={setCountInDuration}
           isAutoTransposeEnabled={instrumentState.autoTranspose}
           onToggleAutoTranspose={toggleAutoTranspose}
         />
@@ -256,6 +266,8 @@ function App() {
               onViewChange={ui.setActiveView}
               isSimplified={isSimplified}
               onToggleSimplify={() => setIsSimplified(!isSimplified)}
+              simplificationStrategy={simplificationStrategy}
+              onStrategyChange={setSimplificationStrategy}
               hasNotes={notesToDisplay.length > 0}
               zoom={zoom}
               onZoomIn={zoomIn}

@@ -310,7 +310,8 @@ export function TablatureView({
     lastScrollRef.current = now;
 
     const container = scrollContainerRef.current;
-    const lineHeight = instrument ? (instrument.strings.length * 22 + 40) : 150;
+    const baseLineHeight = instrument ? (instrument.strings.length * 22 + 40) : 150;
+    const lineHeight = baseLineHeight * zoom;
     // Position current line near the top (20% from top)
     const targetScrollTop = currentLineIndex * lineHeight - container.clientHeight * 0.2;
 
@@ -378,7 +379,11 @@ export function TablatureView({
   const notesOutOfRange = notes.length - notesInRange;
 
   return (
-    <div className="tab-container-multiline" ref={containerRef}>
+    <div
+      className="tab-container-multiline"
+      ref={containerRef}
+      style={{ '--tab-zoom': zoom } as React.CSSProperties}
+    >
       <div className="tab-scroll-vertical" ref={scrollContainerRef}>
         {lines.map((lineItems, lineIndex) => {
           // Only render lines in visible range

@@ -27,8 +27,15 @@ interface PlaybackState {
   loopEnd: number | null;
   isLoopEnabled: boolean;
   isCountInEnabled: boolean;
+  countInDuration: number; // seconds of count-in delay
   activeNotes: number[]; // MIDI note values currently playing
   trackVolumes: Map<number, number>; // Map of track index to volume (0-100)
+  speedTrainer: {
+    isEnabled: boolean;
+    startSpeed: PlaybackSpeed;
+    endSpeed: PlaybackSpeed;
+    increment: number;
+  };
 }
 
 // Actions
@@ -44,7 +51,11 @@ type PlaybackAction =
   | { type: 'CLEAR_LOOP' }
   | { type: 'TOGGLE_COUNT_IN' }
   | { type: 'SET_ACTIVE_NOTES'; payload: number[] }
-  | { type: 'SET_TRACK_VOLUME'; payload: { trackIndex: number; volume: number } };
+  | { type: 'SET_TRACK_VOLUME'; payload: { trackIndex: number; volume: number } }
+  | { type: 'TOGGLE_SPEED_TRAINER' }
+  | { type: 'SET_SPEED_TRAINER'; payload: Partial<PlaybackState['speedTrainer']> }
+  | { type: 'INCREMENT_SPEED' }
+  | { type: 'SET_COUNT_IN_DURATION'; payload: number };
 
 // Initial state
 const initialState: PlaybackState = {
@@ -57,8 +68,15 @@ const initialState: PlaybackState = {
   loopEnd: null,
   isLoopEnabled: false,
   isCountInEnabled: false,
+  countInDuration: 3, // 3 seconds default
   activeNotes: [],
   trackVolumes: new Map(),
+  speedTrainer: {
+    isEnabled: false,
+    startSpeed: 0.5,
+    endSpeed: 1.5, // Max 150% speed
+    increment: 0.05,
+  },
 };
 
 // Reducer
@@ -108,6 +126,24 @@ function playbackReducer(state: PlaybackState, action: PlaybackAction): Playback
       newVolumes.set(action.payload.trackIndex, action.payload.volume);
       return { ...state, trackVolumes: newVolumes };
     }
+    case 'TOGGLE_SPEED_TRAINER':
+      return {
+        ...state,
+        speedTrainer: { ...state.speedTrainer, isEnabled: !state.speedTrainer.isEnabled },
+        speed: !state.speedTrainer.isEnabled ? state.speedTrainer.startSpeed : state.speed,
+      };
+    case 'SET_SPEED_TRAINER':
+      return {
+        ...state,
+        speedTrainer: { ...state.speedTrainer, ...action.payload },
+      };
+    case 'INCREMENT_SPEED': {
+      if (!state.speedTrainer.isEnabled) return state;
+      const nextSpeed = Math.min(state.speedTrainer.endSpeed, state.speed + state.speedTrainer.increment);
+      return { ...state, speed: nextSpeed as PlaybackSpeed };
+    }
+    case 'SET_COUNT_IN_DURATION':
+      return { ...state, countInDuration: action.payload };
     default:
       return state;
   }
@@ -126,8 +162,11 @@ interface PlaybackContextType {
   toggleLoop: () => void;
   clearLoop: () => void;
   toggleCountIn: () => void;
+  setCountInDuration: (seconds: number) => void;
   setTrackVolume: (trackIndex: number, volume: number) => void;
   setTrackMuted: (trackIndex: number, muted: boolean) => void;
+  toggleSpeedTrainer: () => void;
+  setSpeedTrainer: (config: Partial<PlaybackState['speedTrainer']>) => void;
 }
 
 // Context
@@ -151,6 +190,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const isLoopEnabledRef = useRef(false);
   const countInTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isCountInEnabledRef = useRef(false);
+  const countInDurationRef = useRef(3); // Default 3 seconds
 
   // Initialize Tone.js
   const initialize = useCallback(async () => {
@@ -162,7 +202,8 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   // Sync refs with state (important for closures in callbacks)
   useEffect(() => {
     isCountInEnabledRef.current = state.isCountInEnabled;
-  }, [state.isCountInEnabled]);
+    countInDurationRef.current = state.countInDuration;
+  }, [state.isCountInEnabled, state.countInDuration]);
 
   useEffect(() => {
     isLoopEnabledRef.current = state.isLoopEnabled;
@@ -275,15 +316,19 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
       // Configurar transporte
       Tone.Transport.bpm.value = midi.bpm * speed;
 
-      // If paused, resume from where it left off
-      if (state.isPaused && pauseTimeRef.current > 0) {
-        Tone.Transport.seconds = pauseTimeRef.current / speed;
-      } else {
-        Tone.Transport.seconds = 0;
+      // Determine starting position - Loop takes priority over pause
+      let startTime = 0;
+      if (state.isLoopEnabled && state.loopStart !== null) {
+        // Loop enabled: ALWAYS start from loop start
+        startTime = state.loopStart;
+      } else if (state.isPaused && pauseTimeRef.current > 0) {
+        // Paused without loop: resume from pause position
+        startTime = pauseTimeRef.current;
       }
 
       // Function to start playback and animation
       const startPlayback = () => {
+        Tone.Transport.seconds = startTime / speed;
         Tone.Transport.start();
         dispatch({ type: 'PLAY', payload: { duration: adjustedDuration } });
         animationFrameRef.current = requestAnimationFrame(updateTime);
@@ -321,6 +366,38 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
             if (currentTime >= loopEndRef.current) {
               // Seek back to loop start
               const loopStartTime = loopStartRef.current;
+
+              // Increment speed if trainer is enabled
+              dispatch({ type: 'INCREMENT_SPEED' });
+
+              // If count-in is enabled, pause and play count-in before restarting
+              if (isCountInEnabledRef.current) {
+                Tone.Transport.pause();
+
+                const now = Tone.now();
+                const duration = countInDurationRef.current;
+                const clickSynth = new Tone.MembraneSynth({
+                  envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
+                }).toDestination();
+                clickSynth.volume.value = -10;
+
+                // Schedule clicks based on duration
+                for (let i = 0; i < duration; i++) {
+                  clickSynth.triggerAttackRelease("C4", "32n", now + i);
+                }
+
+                setTimeout(() => {
+                  clickSynth.dispose();
+                  Tone.Transport.seconds = loopStartTime / speed;
+                  pauseTimeRef.current = loopStartTime;
+                  dispatch({ type: 'SET_TIME', payload: loopStartTime });
+                  Tone.Transport.start();
+                  animationFrameRef.current = requestAnimationFrame(updateTime);
+                }, duration * 1000);
+
+                return;
+              }
+
               Tone.Transport.seconds = loopStartTime / speed;
               pauseTimeRef.current = loopStartTime;
               dispatch({ type: 'SET_TIME', payload: loopStartTime });
@@ -341,31 +418,32 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
       // Count-in logic (applies to both fresh start and resume from pause)
       if (isCountInEnabledRef.current) {
         const now = Tone.now();
+        const duration = countInDurationRef.current;
         // Create a simple click synth
         const clickSynth = new Tone.MembraneSynth({
           envelope: { attack: 0.001, decay: 0.1, sustain: 0, release: 0.1 }
         }).toDestination();
         clickSynth.volume.value = -10; // Slightly quieter
 
-        // Schedule 3 clicks
-        for (let i = 0; i < 3; i++) {
+        // Schedule clicks based on duration
+        for (let i = 0; i < duration; i++) {
           // Higher pitch for count-in
           clickSynth.triggerAttackRelease("C4", "32n", now + i);
         }
 
         // Cleanup synth after clicks
-        setTimeout(() => clickSynth.dispose(), 3500);
+        setTimeout(() => clickSynth.dispose(), (duration + 0.5) * 1000);
 
-        // Start transport after 3 seconds using setTimeout
+        // Start transport after count-in duration
         countInTimerRef.current = setTimeout(() => {
           startPlayback();
           countInTimerRef.current = null;
-        }, 3000);
+        }, duration * 1000);
       } else {
         startPlayback();
       }
     },
-    [initialize, createSynths, scheduleTrack, state.speed, state.isPaused]
+    [initialize, createSynths, scheduleTrack, state.speed, state.isPaused, state.isLoopEnabled, state.loopStart]
   );
 
   // Pause
@@ -454,11 +532,23 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 
       dispatch({ type: 'SET_LOOP_START', payload: newStart });
       dispatch({ type: 'SET_LOOP_END', payload: newEnd });
+
+      // Auto-enable loop when both points are set
+      if (!isLoopEnabledRef.current) {
+        isLoopEnabledRef.current = true;
+        dispatch({ type: 'TOGGLE_LOOP' });
+      }
       return;
     }
 
     loopStartRef.current = time;
     dispatch({ type: 'SET_LOOP_START', payload: time });
+
+    // Auto-enable loop when both points are set
+    if (time !== null && loopEndRef.current !== null && !isLoopEnabledRef.current) {
+      isLoopEnabledRef.current = true;
+      dispatch({ type: 'TOGGLE_LOOP' });
+    }
   }, []);
 
   const setLoopEnd = useCallback((time: number | null) => {
@@ -472,17 +562,38 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 
       dispatch({ type: 'SET_LOOP_START', payload: newStart });
       dispatch({ type: 'SET_LOOP_END', payload: newEnd });
+
+      // Auto-enable loop when both points are set
+      if (!isLoopEnabledRef.current) {
+        isLoopEnabledRef.current = true;
+        dispatch({ type: 'TOGGLE_LOOP' });
+      }
       return;
     }
 
     loopEndRef.current = time;
     dispatch({ type: 'SET_LOOP_END', payload: time });
+
+    // Auto-enable loop when both points are set
+    if (time !== null && loopStartRef.current !== null && !isLoopEnabledRef.current) {
+      isLoopEnabledRef.current = true;
+      dispatch({ type: 'TOGGLE_LOOP' });
+    }
   }, []);
 
   const toggleLoop = useCallback(() => {
-    isLoopEnabledRef.current = !isLoopEnabledRef.current;
+    const willBeEnabled = !isLoopEnabledRef.current;
+    isLoopEnabledRef.current = willBeEnabled;
     dispatch({ type: 'TOGGLE_LOOP' });
-  }, []);
+
+    // When enabling the loop, seek to loop start position
+    if (willBeEnabled && loopStartRef.current !== null) {
+      const loopStartTime = loopStartRef.current;
+      Tone.Transport.seconds = loopStartTime / state.speed;
+      pauseTimeRef.current = loopStartTime;
+      dispatch({ type: 'SET_TIME', payload: loopStartTime });
+    }
+  }, [state.speed]);
 
   const clearLoop = useCallback(() => {
     loopStartRef.current = null;
@@ -512,6 +623,19 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     // We keep the function for backward compatibility
   }, []);
 
+  const toggleSpeedTrainer = useCallback(() => {
+    dispatch({ type: 'TOGGLE_SPEED_TRAINER' });
+  }, []);
+
+  const setSpeedTrainer = useCallback((config: Partial<PlaybackState['speedTrainer']>) => {
+    dispatch({ type: 'SET_SPEED_TRAINER', payload: config });
+  }, []);
+
+  const setCountInDuration = useCallback((seconds: number) => {
+    countInDurationRef.current = seconds;
+    dispatch({ type: 'SET_COUNT_IN_DURATION', payload: seconds });
+  }, []);
+
   // Limpiar al desmontar
   useEffect(() => {
     return () => {
@@ -532,8 +656,11 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     toggleLoop,
     clearLoop,
     toggleCountIn,
+    setCountInDuration,
     setTrackVolume,
     setTrackMuted,
+    toggleSpeedTrainer,
+    setSpeedTrainer,
   };
 
   return <PlaybackContext.Provider value={value}>{children}</PlaybackContext.Provider>;

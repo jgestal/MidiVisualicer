@@ -2,9 +2,10 @@
  * MainPanel Component - Panel central con tabs
  * Muestra Tablatura (por defecto) o Partitura
  */
-import { Music2, FileText, Sparkles, ZoomIn, ZoomOut, Music } from 'lucide-react';
+import { Music2, FileText, Sparkles, ZoomIn, ZoomOut, Music, ChevronDown } from 'lucide-react';
 import { useI18n } from '../../shared/context/I18nContext';
 import { useChordDetection } from '../../hooks/useChordDetection';
+import { useState, useRef, useEffect } from 'react';
 import type { MidiNote } from '../../types/midi';
 
 interface MainPanelProps {
@@ -12,6 +13,8 @@ interface MainPanelProps {
     onViewChange: (view: 'tablature' | 'notation') => void;
     isSimplified: boolean;
     onToggleSimplify: () => void;
+    simplificationStrategy?: import('../../utils/simplifyNotes').SimplificationStrategy;
+    onStrategyChange?: (strategy: import('../../utils/simplifyNotes').SimplificationStrategy) => void;
     hasNotes: boolean; // To disable simplify when no notes
     children: React.ReactNode;
     // Zoom controls
@@ -31,6 +34,8 @@ export function MainPanel({
     onViewChange,
     isSimplified,
     onToggleSimplify,
+    simplificationStrategy = 'TOP_NOTE',
+    onStrategyChange,
     hasNotes,
     children,
     zoom = 1,
@@ -45,6 +50,32 @@ export function MainPanel({
     const { t } = useI18n();
     const { getCurrentChord } = useChordDetection({ notes });
     const currentChord = getCurrentChord(currentTime);
+    const [showStrategies, setShowStrategies] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setShowStrategies(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleToggleSimplify = () => {
+        if (!isSimplified) {
+            onToggleSimplify();
+            setShowStrategies(true);
+        } else {
+            // If already simplified, maybe just toggle the menu? 
+            // Or toggle off if clicked on the main part.
+            // Let's make it so clicking the sparkle toggles, and clicking the chevron opens menu.
+            onToggleSimplify();
+            setShowStrategies(false);
+        }
+    };
 
     return (
         <div className="main-panel">
@@ -105,16 +136,56 @@ export function MainPanel({
                     </div>
                 )}
 
-                {/* Simplify Button */}
-                <button
-                    className={`main-panel-tab simplify-btn ${isSimplified ? 'active' : ''}`}
-                    onClick={onToggleSimplify}
-                    disabled={!hasNotes}
-                    title={t.simplifyTooltip}
-                >
-                    <Sparkles size={14} />
-                    <span>{isSimplified ? t.simplified : t.simplify}</span>
-                </button>
+                <div className="main-panel-simplify-container" ref={menuRef}>
+                    <div className={`simplify-button-group ${isSimplified ? 'active' : ''}`}>
+                        <button
+                            className={`main-panel-tab simplify-btn ${isSimplified ? 'active' : ''}`}
+                            onClick={handleToggleSimplify}
+                            disabled={!hasNotes}
+                            title={t.simplifyTooltip}
+                        >
+                            <Sparkles size={14} />
+                            <span>{isSimplified && simplificationStrategy !== 'ALL_NOTES' ? t.simplified : t.simplify}</span>
+                        </button>
+
+                        {isSimplified && (
+                            <button
+                                className="simplify-chevron-btn"
+                                onClick={() => setShowStrategies(!showStrategies)}
+                                title={t.strategy}
+                            >
+                                <ChevronDown size={14} />
+                            </button>
+                        )}
+                    </div>
+
+                    {showStrategies && isSimplified && onStrategyChange && (
+                        <div className="strategy-popup">
+                            <div className="strategy-popup-header">
+                                <span>{t.strategy}</span>
+                            </div>
+                            <div className="strategy-options">
+                                {[
+                                    { id: 'TOP_NOTE', label: t.strategyMelody },
+                                    { id: 'BASS_ONLY', label: t.strategyBass },
+                                    { id: 'BASS_AND_MELODY', label: t.strategyBassMelody },
+                                    { id: 'ALL_NOTES', label: t.strategyAll }
+                                ].map((strat) => (
+                                    <button
+                                        key={strat.id}
+                                        className={simplificationStrategy === strat.id ? 'active' : ''}
+                                        onClick={() => {
+                                            onStrategyChange(strat.id as any);
+                                            setShowStrategies(false);
+                                        }}
+                                    >
+                                        {strat.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Content Area */}

@@ -34,7 +34,9 @@ interface ToolbarProps {
 
     // Delay / Count In
     isCountInEnabled?: boolean;
+    countInDuration?: number;
     onToggleCountIn?: () => void;
+    onSetCountInDuration?: (seconds: number) => void;
 
     isMetronomeEnabled?: boolean;
     onToggleMetronome?: () => void;
@@ -42,6 +44,16 @@ interface ToolbarProps {
     // Auto Transpose
     isAutoTransposeEnabled?: boolean;
     onToggleAutoTranspose?: () => void;
+
+    // Speed Trainer
+    speedTrainer: {
+        isEnabled: boolean;
+        startSpeed: number;
+        endSpeed: number;
+        increment: number;
+    };
+    onToggleSpeedTrainer: () => void;
+    onSetSpeedTrainerIncrement?: (increment: number) => void;
 }
 
 export function Toolbar({
@@ -63,9 +75,14 @@ export function Toolbar({
     isMetronomeEnabled = false,
     onToggleMetronome,
     isCountInEnabled = false,
+    countInDuration = 3,
     onToggleCountIn,
+    onSetCountInDuration,
     isAutoTransposeEnabled = true,
     onToggleAutoTranspose,
+    speedTrainer,
+    onToggleSpeedTrainer,
+    onSetSpeedTrainerIncrement,
 }: ToolbarProps) {
     const { t } = useI18n();
     const instrument = getAllInstruments()[instrumentId];
@@ -96,6 +113,9 @@ export function Toolbar({
                     onSetLoopEnd={onSetLoopEnd}
                     onToggleLoop={onToggleLoop}
                     onClearLoop={onClearLoop}
+                    speedTrainer={speedTrainer}
+                    onToggleSpeedTrainer={onToggleSpeedTrainer}
+                    onSetSpeedTrainerIncrement={onSetSpeedTrainerIncrement}
                 />
             </div>
 
@@ -130,16 +150,35 @@ export function Toolbar({
             {onToggleCountIn && (
                 <>
                     <div className="toolbar-divider" />
-                    <div className="toolbar-section">
+                    <div className="toolbar-section metronome-section">
                         <button
                             className={`metronome-btn ${isCountInEnabled ? 'active' : ''}`}
                             onClick={onToggleCountIn}
-                            title={t.countInDelay}
+                            title={isCountInEnabled ? 'Desactivar delay' : 'Activar delay'}
                         >
                             <Hourglass size={16} />
-                            <span>{t.countInDelay}</span>
+                            <span>Delay</span>
                             {isCountInEnabled && <span className="metronome-active-dot" />}
                         </button>
+                        <div className="transpose-controls" style={{ marginLeft: '8px' }}>
+                            <button
+                                onClick={() => onSetCountInDuration?.(Math.max(1, countInDuration - 1))}
+                                disabled={countInDuration <= 1}
+                                title="Reducir segundos"
+                            >
+                                −
+                            </button>
+                            <span className="transpose-value" style={{ color: '#22c55e' }}>
+                                {countInDuration}s
+                            </span>
+                            <button
+                                onClick={() => onSetCountInDuration?.(Math.min(10, countInDuration + 1))}
+                                disabled={countInDuration >= 10}
+                                title="Aumentar segundos"
+                            >
+                                +
+                            </button>
+                        </div>
                     </div>
                 </>
             )}

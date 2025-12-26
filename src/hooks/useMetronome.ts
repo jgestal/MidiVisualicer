@@ -8,6 +8,7 @@ import * as Tone from 'tone';
 interface UseMetronomeOptions {
   bpm: number;
   isPlaying: boolean;
+  speed?: number; // Playback speed multiplier
 }
 
 const METRONOME_KEY = 'midi-visualizer-metronome';
@@ -28,7 +29,7 @@ function saveMetronomeState(enabled: boolean): void {
   }
 }
 
-export function useMetronome({ bpm, isPlaying }: UseMetronomeOptions) {
+export function useMetronome({ bpm, isPlaying, speed = 1 }: UseMetronomeOptions) {
   const [isMetronomeEnabled, setIsMetronomeEnabled] = useState(loadMetronomeState);
   const synthRef = useRef<Tone.MembraneSynth | null>(null);
   const intervalRef = useRef<number | null>(null);
@@ -56,7 +57,7 @@ export function useMetronome({ bpm, isPlaying }: UseMetronomeOptions) {
     };
   }, []);
 
-  // Handle metronome clicks
+  // Handle metronome clicks - respects playback speed
   useEffect(() => {
     // Clear any existing interval
     if (intervalRef.current) {
@@ -65,7 +66,9 @@ export function useMetronome({ bpm, isPlaying }: UseMetronomeOptions) {
     }
 
     if (isMetronomeEnabled && isPlaying && synthRef.current) {
-      const intervalMs = (60 / bpm) * 1000;
+      // Adjust BPM based on playback speed
+      const effectiveBpm = bpm * speed;
+      const intervalMs = (60 / effectiveBpm) * 1000;
 
       // Start Tone.js context if needed
       if (Tone.context.state !== 'running') {
@@ -89,7 +92,7 @@ export function useMetronome({ bpm, isPlaying }: UseMetronomeOptions) {
         intervalRef.current = null;
       }
     };
-  }, [bpm, isPlaying, isMetronomeEnabled]);
+  }, [bpm, isPlaying, isMetronomeEnabled, speed]);
 
   const toggleMetronome = useCallback(async () => {
     // Ensure Tone.js is started (needs user interaction)

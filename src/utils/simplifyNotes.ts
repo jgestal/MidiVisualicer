@@ -2,7 +2,7 @@
  * Simplify Notes Utility
  * 
  * Provides functionality to simplify MIDI tracks for easier playability:
- * - Keeps only the highest note when multiple notes play simultaneously
+ * - Keeps only specific notes based on a strategy (e.g., highest, lowest, both)
  * - Optimizes fret positions to minimize hand movement on the fretboard
  * - Transposes notes intelligently to stay within comfortable playing range
  */
@@ -12,6 +12,8 @@ import type { InstrumentConfig } from '@/config/instruments';
 
 // Time tolerance for grouping simultaneous notes (in seconds)
 const SIMULTANEOUS_TOLERANCE = 0.05; // 50ms
+
+export type SimplificationStrategy = 'TOP_NOTE' | 'BASS_ONLY' | 'BASS_AND_MELODY' | 'ALL_NOTES';
 
 /**
  * Groups notes that occur at the same time (within tolerance)
@@ -43,39 +45,45 @@ function groupSimultaneousNotes(notes: MidiNote[]): MidiNote[][] {
 }
 
 /**
- * Keeps only the highest pitched note from a group of simultaneous notes
+ * Applies strategy to a group of simultaneous notes
  */
-function keepHighestNote(group: MidiNote[]): MidiNote {
-  return group.reduce((highest, note) =>
-    note.midi > highest.midi ? note : highest
-  );
+function applyStrategy(group: MidiNote[], strategy: SimplificationStrategy): MidiNote[] {
+  if (group.length <= 1 || strategy === 'ALL_NOTES') return group;
+
+  switch (strategy) {
+    case 'TOP_NOTE':
+      return [group.reduce((highest, note) => note.midi > highest.midi ? note : highest)];
+    case 'BASS_ONLY':
+      return [group.reduce((lowest, note) => note.midi < lowest.midi ? note : lowest)];
+    case 'BASS_AND_MELODY': {
+      const highest = group.reduce((h, n) => n.midi > h.midi ? n : h);
+      const lowest = group.reduce((l, n) => n.midi < l.midi ? n : l);
+      return highest.midi === lowest.midi ? [highest] : [lowest, highest];
+    }
+    default:
+      return [group.reduce((highest, note) => note.midi > highest.midi ? note : highest)];
+  }
 }
 
 /**
  * Calculates the optimal fret position for a note on a given instrument
- * Returns the string and fret that minimizes distance from the current position
  */
 function findOptimalPosition(
   midiNote: number,
   instrument: InstrumentConfig,
-  currentFret: number = 5 // Start around middle of the neck
+  currentFret: number = 5
 ): { stringIndex: number; fret: number } | null {
-  // Use the instrument's midiNotes array directly (already MIDI numbers)
   const stringMidis = instrument.midiNotes;
-
   let bestPosition: { stringIndex: number; fret: number } | null = null;
   let minDistance = Infinity;
 
+  // Search from highest string to lowest string (standard for melody)
   for (let stringIndex = 0; stringIndex < stringMidis.length; stringIndex++) {
     const openStringMidi = stringMidis[stringIndex];
     const fret = midiNote - openStringMidi;
 
-    // Check if this fret is valid for the instrument
     if (fret >= 0 && fret <= instrument.frets) {
       const distance = Math.abs(fret - currentFret);
-
-      // Prefer positions that are closer to current hand position
-      // Also slightly prefer higher strings (lower index) for melody
       const adjustedDistance = distance + stringIndex * 0.1;
 
       if (adjustedDistance < minDistance) {
@@ -89,54 +97,42 @@ function findOptimalPosition(
 }
 
 /**
- * Simplifies a track by keeping only the highest note at each time point
- * and ensuring all notes are within the instrument's range
+ * Simplifies a track based on the selected strategy
  */
 export function simplifyNotes(
   notes: MidiNote[],
-  instrument?: InstrumentConfig
+  instrument?: InstrumentConfig,
+  strategy: SimplificationStrategy = 'TOP_NOTE'
 ): MidiNote[] {
   if (notes.length === 0) return [];
 
   // Group simultaneous notes
   const groups = groupSimultaneousNotes(notes);
 
-  // Keep only the highest note from each group
-  const simplifiedNotes = groups.map(group => keepHighestNote(group));
+  // Apply strategy to each group and flatten
+  const simplifiedNotes = groups.flatMap(group => applyStrategy(group, strategy));
 
-  // If no instrument provided, just return the simplified notes
-  if (!instrument) {
-    return simplifiedNotes;
-  }
+  if (!instrument) return simplifiedNotes;
 
-  // Calculate instrument range using midiNotes array
   const stringMidis = instrument.midiNotes;
+  const lowestPossible = Math.min(...stringMidis);
+  const highestPossible = Math.max(...stringMidis) + instrument.frets;
 
-  const lowestNote = Math.min(...stringMidis);
-  const highestNote = Math.max(...stringMidis) + instrument.frets;
-
-  // Optimize fret positions to minimize hand movement
-  let currentFret = 5; // Start at middle position
+  let currentFret = 5;
   const optimizedNotes: MidiNote[] = [];
 
   for (const note of simplifiedNotes) {
     let adjustedMidi = note.midi;
 
-    // Transpose if out of range
-    while (adjustedMidi < lowestNote) {
-      adjustedMidi += 12; // Transpose up an octave
-    }
-    while (adjustedMidi > highestNote) {
-      adjustedMidi -= 12; // Transpose down an octave
-    }
+    // Intelligent transposition: keep it within instrument range
+    while (adjustedMidi < lowestPossible) adjustedMidi += 12;
+    while (adjustedMidi > highestPossible) adjustedMidi -= 12;
 
-    // Find optimal position
     const position = findOptimalPosition(adjustedMidi, instrument, currentFret);
     if (position) {
-      currentFret = position.fret; // Update current position for next note
+      currentFret = position.fret;
     }
 
-    // Create the adjusted note
     optimizedNotes.push({
       ...note,
       midi: adjustedMidi,
@@ -147,9 +143,6 @@ export function simplifyNotes(
   return optimizedNotes;
 }
 
-/**
- * Converts a MIDI number to a note name (e.g., 60 -> "C4")
- */
 function midiToNoteName(midi: number): string {
   const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
   const octave = Math.floor(midi / 12) - 1;
@@ -157,21 +150,12 @@ function midiToNoteName(midi: number): string {
   return `${noteNames[noteIndex]}${octave}`;
 }
 
-/**
- * Checks if simplification would reduce the number of notes
- */
 export function wouldSimplify(notes: MidiNote[]): boolean {
   if (notes.length === 0) return false;
-
   const groups = groupSimultaneousNotes(notes);
-  const hasChords = groups.some(group => group.length > 1);
-
-  return hasChords;
+  return groups.some(group => group.length > 1);
 }
 
-/**
- * Gets statistics about simplification
- */
 export function getSimplificationStats(notes: MidiNote[]): {
   originalCount: number;
   simplifiedCount: number;

@@ -126,16 +126,16 @@
 }
 
 .tab-label {
-    height: 22px;
+    height: calc(22px * var(--tab-zoom, 1));
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: monospace;
-    font-size: 12px;
+    font-size: calc(12px * var(--tab-zoom, 1));
     font-weight: 600;
     color: var(--color-text-on-elevated);
     border-right: 2px solid var(--color-border);
-    padding-right: 4px;
+    padding-right: calc(4px * var(--tab-zoom, 1));
 }
 
 .tab-notes-line {
@@ -147,9 +147,9 @@
 
 .tab-string-row {
     display: flex;
-    height: 22px;
+    height: calc(22px * var(--tab-zoom, 1));
     font-family: 'Fira Code', 'Consolas', monospace;
-    font-size: 12px;
+    font-size: calc(12px * var(--tab-zoom, 1));
     color: var(--color-text-muted);
     border-bottom: 1px solid var(--color-border);
 }
@@ -159,9 +159,9 @@
 }
 
 .tab-cell {
-    width: 28px;
-    /* CELL_WIDTH constant */
-    min-width: 28px;
+    width: calc(28px * var(--tab-zoom, 1));
+    /* CELL_WIDTH constant scaled */
+    min-width: calc(28px * var(--tab-zoom, 1));
     text-align: center;
     display: flex;
     align-items: center;
@@ -200,6 +200,8 @@
 .tab-empty {
     color: var(--color-text-muted);
     opacity: 0.3;
+    font-size: calc(12px * var(--tab-zoom, 1));
+    letter-spacing: -2px;
 }
 
 .tab-footer {

@@ -218,6 +218,16 @@ export const es = {
     pauseAfterBars: 'Pausar cada',
     bars: 'compases',
     detectedChords: 'Acordes detectados',
+    speedTrainer: 'Entrenador de Velocidad',
+    speedTrainerTooltip: 'Aumenta la velocidad automáticamente en cada repetición del bucle',
+    increment: 'Incremento',
+    startSpeed: 'Velocidad inicial',
+    endSpeed: 'Velocidad final',
+    strategy: 'Estrategia',
+    strategyMelody: 'Solo Melodía (Aguda)',
+    strategyBass: 'Solo Bajo (Grave)',
+    strategyBassMelody: 'Dúo (Bajo + Melodía)',
+    strategyAll: 'Acordes completos (Sin simplificar)',
 } as const;
 
 export type TranslationKeys = typeof es;

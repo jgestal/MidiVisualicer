@@ -58,7 +58,7 @@ export interface ChordInfo {
   duration: number;
 }
 
-export type PlaybackSpeed = 0.25 | 0.5 | 0.75 | 1.0;
+export type PlaybackSpeed = 0.25 | 0.5 | 0.75 | 1.0 | 1.25 | 1.5;
 
 export interface PlaybackState {
   isPlaying: boolean;
