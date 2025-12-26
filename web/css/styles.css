@@ -758,6 +758,38 @@ img {
 }
 
 /* ============================================
+   Section Contrast Utilities
+   ============================================ */
+.section-light {
+    background: linear-gradient(180deg, #12121a 0%, #0f0f16 100%);
+    position: relative;
+}
+
+.section-light::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.section-light::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.section-dark {
+    background: var(--color-bg-primary);
+}
+
+/* ============================================
    Section Headers
    ============================================ */
 .section-header {
@@ -774,8 +806,9 @@ img {
 .section-header p {
     color: var(--color-text-secondary);
     font-size: 1.125rem;
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
+    line-height: 1.7;
 }
 
 /* ============================================

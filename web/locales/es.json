@@ -43,8 +43,8 @@
         }
     },
     "whatIsTab": {
-        "title": "🎯 ¿Qué es la Tablatura? Tu Atajo para Tocar Música",
-        "subtitle": "La forma más fácil de aprender cualquier instrumento de cuerda — sin necesidad de saber leer partituras",
+        "title": "🎯 Aprende a Tocar HOY — Sin Saber Leer Música",
+        "subtitle": "La tablatura es el atajo que usan millones de músicos. Cada número te dice exactamente dónde poner los dedos. Así de simple.",
         "example": "Ejemplo: Melodía simple en guitarra",
         "benefits": {
             "numbers": {
@@ -52,16 +52,16 @@
                 "text": "Cada número indica en qué traste presionar. El \"0\" significa cuerda al aire. ¡Si sabes contar, sabes leer tablaturas!"
             },
             "strings": {
-                "title": "Líneas = Cuerdas",
-                "text": "Cada línea representa una cuerda de tu instrumento. La más alta es la cuerda más aguda (la más fina)."
+                "title": "Cualquier Instrumento",
+                "text": "Guitarra, bajo, ukelele, banjo, mandolina... La app se adapta automáticamente a tu instrumento y afinación."
             },
             "leftToRight": {
-                "title": "Izquierda a Derecha",
-                "text": "Lee como un libro: de izquierda a derecha. Los números alineados verticalmente se tocan a la vez (acorde)."
+                "title": "Digitación Óptima",
+                "text": "Nuestro algoritmo inteligente calcula las posiciones más cómodas para tus dedos, haciendo cada canción más fácil de tocar."
             },
             "fast": {
-                "title": "Aprende en Minutos",
-                "text": "Mientras aprender a leer partituras puede llevar meses, la tablatura se domina en minutos. ¡Estarás tocando canciones hoy mismo!"
+                "title": "Toca HOY Mismo",
+                "text": "Mientras aprender partituras lleva meses, la tablatura se domina en minutos. ¡Estarás tocando tu primera canción en cuestión de minutos!"
             }
         },
         "comparison": {
@@ -72,10 +72,10 @@
                 "item3": "No indica posición en el mástil"
             },
             "tab": {
-                "title": "✅ Tablatura",
-                "item1": "Aprende en 5 minutos",
+                "title": "✅ Tablatura con Midi Tab Pro",
+                "item1": "Empieza a tocar en 5 minutos",
                 "item2": "Solo necesitas saber contar",
-                "item3": "Posición exacta en el mástil"
+                "item3": "Digitación optimizada para tus dedos"
             }
         }
     },
