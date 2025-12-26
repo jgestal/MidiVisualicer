@@ -11,3 +11,4 @@ export { HelpModal } from './HelpModal';
 export { MidiInfoModal } from './MidiInfoModal';
 export { KeyboardShortcutsModal } from './KeyboardShortcutsModal';
 export { OSMDNotationView } from './OSMDNotationView';
+export { ChordDisplay } from './ChordDisplay';

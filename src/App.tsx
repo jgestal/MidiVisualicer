@@ -263,6 +263,8 @@ function App() {
               onResetZoom={resetZoom}
               canZoomIn={canZoomIn}
               canZoomOut={canZoomOut}
+              notes={notesToDisplay}
+              currentTime={playbackState.currentTime}
             >
               {ui.activeView === 'tablature' ? (
                 <TablatureView

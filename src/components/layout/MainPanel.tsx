@@ -2,8 +2,10 @@
  * MainPanel Component - Panel central con tabs
  * Muestra Tablatura (por defecto) o Partitura
  */
-import { Music2, FileText, Sparkles, ZoomIn, ZoomOut } from 'lucide-react';
+import { Music2, FileText, Sparkles, ZoomIn, ZoomOut, Music } from 'lucide-react';
 import { useI18n } from '../../shared/context/I18nContext';
+import { useChordDetection } from '../../hooks/useChordDetection';
+import type { MidiNote } from '../../types/midi';
 
 interface MainPanelProps {
     activeView: 'tablature' | 'notation';
@@ -19,6 +21,9 @@ interface MainPanelProps {
     onResetZoom?: () => void;
     canZoomIn?: boolean;
     canZoomOut?: boolean;
+    // Chord detection
+    notes?: MidiNote[];
+    currentTime?: number;
 }
 
 export function MainPanel({
@@ -34,8 +39,12 @@ export function MainPanel({
     onResetZoom,
     canZoomIn = true,
     canZoomOut = true,
+    notes = [],
+    currentTime = 0,
 }: MainPanelProps) {
     const { t } = useI18n();
+    const { getCurrentChord } = useChordDetection({ notes });
+    const currentChord = getCurrentChord(currentTime);
 
     return (
         <div className="main-panel">
@@ -55,6 +64,14 @@ export function MainPanel({
                     <FileText size={14} />
                     <span>{t.notation}</span>
                 </button>
+
+                {/* Current Chord Badge */}
+                {currentChord && (
+                    <div className="main-panel-chord-badge" title={t.detectedChords}>
+                        <Music size={12} />
+                        <span className="chord-name">{currentChord.name}</span>
+                    </div>
+                )}
 
                 {/* Spacer */}
                 <div style={{ flex: 1 }} />
@@ -103,6 +120,7 @@ export function MainPanel({
             {/* Content Area */}
             <div className="main-panel-content">
                 {children}
+
             </div>
         </div>
     );

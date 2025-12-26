@@ -14,3 +14,4 @@ export { useLocalStorage } from './useLocalStorage';
 export { useDragScroll } from './useDragScroll';
 export { useTablatureZoom } from './useTablatureZoom';
 export { useRecentFiles } from './useRecentFiles';
+export { useChordDetection } from './useChordDetection';
