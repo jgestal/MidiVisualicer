@@ -513,14 +513,16 @@ img {
 }
 
 .hero h1 {
-    font-size: clamp(3rem, 7vw, 5rem);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
     margin-bottom: 24px;
-    background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+    letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    letter-spacing: -0.03em;
-    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.8s ease-out;
 }
 
 .hero-subtitle {
@@ -711,11 +713,14 @@ img {
 }
 
 .midi-content h2 {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
     margin-bottom: 24px;
-    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+    color: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
 }
 
 .midi-content>p {
@@ -761,28 +766,10 @@ img {
    Section Contrast Utilities
    ============================================ */
 .section-light {
-    background: linear-gradient(180deg, #12121a 0%, #0f0f16 100%);
+    background: linear-gradient(180deg, #161625 0%, #0c0c14 100%);
     position: relative;
-}
-
-.section-light::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-}
-
-.section-light::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .section-dark {
@@ -794,21 +781,71 @@ img {
    ============================================ */
 .section-header {
     text-align: center;
-    margin-bottom: 64px;
+    margin-bottom: 72px;
 }
 
 .section-header h2 {
-    font-size: 2.75rem;
-    margin-bottom: 16px;
-    letter-spacing: -0.02em;
+    font-size: 3rem;
+    margin-bottom: 20px;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .section-header p {
-    color: var(--color-text-secondary);
+    color: #cbd5e1;
     font-size: 1.125rem;
     max-width: 700px;
     margin: 0 auto;
     line-height: 1.7;
+}
+
+/* ============================================
+   Store Buttons
+   ============================================ */
+.store-buttons {
+    display: flex;
+    gap: 16px;
+    margin: 40px 0;
+    justify-content: flex-start;
+}
+
+.store-buttons.central {
+    justify-content: center;
+    margin: 48px 0;
+}
+
+.store-button {
+    height: 48px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+}
+
+.store-button img {
+    height: 100%;
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.store-button:hover {
+    transform: translateY(-4px) scale(1.02);
+    filter: brightness(1.1);
+}
+
+@media (max-width: 768px) {
+    .store-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 }
 
 /* ============================================
@@ -1438,7 +1475,6 @@ img {
    ============================================ */
 .what-is-tab {
     padding: 120px 0;
-    background: linear-gradient(180deg, #0c0c14 0%, var(--color-bg-primary) 100%);
     position: relative;
     overflow: hidden;
 }
@@ -1511,17 +1547,16 @@ img {
 
 /* Terminal dots */
 .tab-example::after {
-    content: '● ● ●';
+    content: '';
     position: absolute;
-    top: 10px;
-    left: 16px;
-    font-size: 10px;
-    letter-spacing: 6px;
-    color: transparent;
-    text-shadow: 
-        0 0 0 #ff5f57,
-        18px 0 0 #ffbd2e,
-        36px 0 0 #28c840;
+    top: 13px;
+    left: 18px;
+    width: 10px;
+    height: 10px;
+    background: #ff5f57;
+    border-radius: 50%;
+    box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #28c840;
+    z-index: 2;
 }
 
 .tab-code {
