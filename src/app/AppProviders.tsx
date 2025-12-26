@@ -5,7 +5,7 @@
 import { ReactNode } from 'react';
 import { ThemeProvider } from '@/shared/context/ThemeContext';
 import { I18nProvider } from '@/shared/context/I18nContext';
-import { MidiProvider, LibraryProvider } from '@/features/library';
+import { MidiProvider } from '@/shared/context/MidiContext';
 import { PlaybackProvider } from '@/features/player/context/PlaybackContext';
 import { TracksProvider } from '@/features/tracks/context/TracksContext';
 import { InstrumentProvider } from '@/features/instruments/context/InstrumentContext';
@@ -30,17 +30,15 @@ export function AppProviders({ children }: AppProvidersProps) {
     <ErrorBoundary>
       <I18nProvider>
         <ThemeProvider>
-          <LibraryProvider>
-            <MidiProvider>
-              <TracksProvider>
-                <PlaybackProvider>
-                  <InstrumentProvider>
-                    <VisualizationProvider>{children}</VisualizationProvider>
-                  </InstrumentProvider>
-                </PlaybackProvider>
-              </TracksProvider>
-            </MidiProvider>
-          </LibraryProvider>
+          <MidiProvider>
+            <TracksProvider>
+              <PlaybackProvider>
+                <InstrumentProvider>
+                  <VisualizationProvider>{children}</VisualizationProvider>
+                </InstrumentProvider>
+              </PlaybackProvider>
+            </TracksProvider>
+          </MidiProvider>
         </ThemeProvider>
       </I18nProvider>
     </ErrorBoundary>
@@ -48,4 +46,3 @@ export function AppProviders({ children }: AppProvidersProps) {
 }
 
 export default AppProviders;
-

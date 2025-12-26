@@ -1,9 +1,13 @@
-export { PlayerControls } from './PlayerControls';
-export { TrackSelector } from './TrackSelector';
 export { InstrumentSelector } from './InstrumentSelector';
 export { FileUploader } from './FileUploader';
 export { TablatureView } from './TablatureView';
-export { FileExplorer, DEMO_FOLDERS } from './FileExplorer';
 export { PianoRollView } from './PianoRollView';
 export { LoopControls } from './LoopControls';
 export { TransposeControls } from './TransposeControls';
+export { ErrorBoundary } from './ErrorBoundary';
+export { ConfirmModal } from './ConfirmModal';
+export { AboutModal } from './AboutModal';
+export { HelpModal } from './HelpModal';
+export { MidiInfoModal } from './MidiInfoModal';
+export { KeyboardShortcutsModal } from './KeyboardShortcutsModal';
+export { OSMDNotationView } from './OSMDNotationView';

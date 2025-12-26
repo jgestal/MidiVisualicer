@@ -9,7 +9,7 @@ import { useI18n } from '../../shared/context/I18nContext';
 import { getInstrumentEmoji } from '../../utils/instrumentEmoji';
 import { useTracks } from '@/features/tracks/context/TracksContext';
 import { usePlayback } from '@/features/player/context/PlaybackContext';
-import { useMidi } from '@/features/library/context/MidiContext';
+import { useMidi } from '@/shared/context/MidiContext';
 import type { MidiTrack } from '../../types/midi';
 import './BottomTracksPanel.css';
 

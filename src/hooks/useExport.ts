@@ -63,7 +63,7 @@ export function useExport({ parsedMidi, selectedTrack, selectedInstrumentId }: U
 
         const tablature = generateTablatureText(track, selectedInstrumentId);
 
-        const printWindow = window.open('', '_blank');
+        const printWindow = window.open('', '_blank') as unknown as Window | null;
         if (printWindow) {
             printWindow.document.write(`
         <html>
@@ -116,6 +116,7 @@ export function useExport({ parsedMidi, selectedTrack, selectedInstrumentId }: U
             printWindow.document.close();
         }
     }, [parsedMidi, selectedTrack, selectedInstrumentId]);
+
 
     return {
         exportTablature,

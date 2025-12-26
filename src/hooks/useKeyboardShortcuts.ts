@@ -6,7 +6,7 @@ import { useEffect, useCallback } from 'react';
 import { usePlayback } from '@/features/player/context/PlaybackContext';
 import { useTracks } from '@/features/tracks/context/TracksContext';
 import { useInstrument } from '@/features/instruments/context/InstrumentContext';
-import { useMidi } from '@/features/library/context/MidiContext';
+import { useMidi } from '@/shared/context/MidiContext';
 
 export function useKeyboardShortcuts(): void {
   const { state: midiState } = useMidi();
