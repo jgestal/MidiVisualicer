@@ -1,0 +1,149 @@
+/**
+ * LoopControls.css - Estilos para los controles de loop A-B
+ */
+
+.loop-compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.loop-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  min-width: 70px;
+}
+
+.loop-points {
+  display: flex;
+  gap: 4px;
+}
+
+.loop-points button {
+  padding: 4px 8px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-family: monospace;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s);
+}
+
+.loop-points button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-on-hover);
+}
+
+.loop-points button.active {
+  background: var(--color-accent-primary);
+  color: var(--color-text-on-accent);
+  border-color: transparent;
+}
+
+.loop-toggle, .loop-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s);
+}
+
+.loop-toggle:hover, .loop-clear:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-on-hover);
+}
+
+.loop-toggle:disabled, .loop-clear:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.loop-toggle.enabled {
+  background: var(--color-accent-primary);
+  color: var(--color-text-on-accent);
+  border-color: transparent;
+}
+
+.speed-trainer-section {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.speed-trainer-container {
+  position: relative;
+}
+
+.speed-trainer-popup {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 140px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideUpFade 0.15s ease-out;
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.speed-trainer-popup-title {
+  padding: 4px 12px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+}
+
+.speed-trainer-popup-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.speed-trainer-popup-item:hover {
+  background: var(--color-bg-hover);
+}
+
+.speed-trainer-popup-item.selected {
+  color: var(--color-accent-primary);
+  font-weight: 600;
+}
+
+.speed-trainer-popup-item.active {
+  color: var(--color-success, #4ade80);
+}
+
+.speed-trainer-popup-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 4px 0;
+}

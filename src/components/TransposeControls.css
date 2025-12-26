@@ -1,0 +1,148 @@
+/**
+ * TransposeControls.css - Estilos para los controles de transposición
+ */
+
+.transpose-compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.transpose-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.transpose-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.transpose-controls button {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s);
+}
+
+.transpose-controls button:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-on-hover);
+}
+
+.transpose-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.transpose-value {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.transpose-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.transpose-actions button {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s);
+}
+
+.transpose-actions button:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-on-hover);
+}
+
+.transpose-actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-auto {
+  background: var(--color-bg-tertiary) !important;
+  color: var(--color-text-secondary) !important;
+  border-color: var(--color-border) !important;
+  transition: all 0.2s ease;
+}
+
+.btn-auto.active {
+  background: var(--color-accent-primary) !important;
+  color: var(--color-text-on-accent) !important;
+  border-color: transparent !important;
+}
+
+.transpose-bar {
+  width: 40px;
+  height: 4px;
+  background: var(--color-bg-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.transpose-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.2s;
+}
+
+.transpose-percent {
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 30px;
+  text-align: right;
+}
+
+.transpose-history {
+  display: flex;
+  gap: 2px;
+}
+
+.transpose-history button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s);
+}
+
+.transpose-history button:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-on-hover);
+}
+
+.transpose-history button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
