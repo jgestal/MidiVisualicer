@@ -192,18 +192,7 @@
             this.translations = {};
             this.languages = [
                 { code: 'es', flag: '🇪🇸', name: 'Español' },
-                { code: 'en', flag: '🇬🇧', name: 'English' },
-                { code: 'pt', flag: '🇵🇹', name: 'Português' },
-                { code: 'fr', flag: '🇫🇷', name: 'Français' },
-                { code: 'de', flag: '🇩🇪', name: 'Deutsch' },
-                { code: 'it', flag: '🇮🇹', name: 'Italiano' },
-                { code: 'zh', flag: '🇨🇳', name: '中文' },
-                { code: 'ja', flag: '🇯🇵', name: '日本語' },
-                { code: 'ru', flag: '🇷🇺', name: 'Русский' },
-                { code: 'ko', flag: '🇰🇷', name: '한국어' },
-                { code: 'hi', flag: '🇮🇳', name: 'हिन्दी' },
-                { code: 'ar', flag: '🇸🇦', name: 'العربية' },
-                { code: 'bn', flag: '🇧🇩', name: 'বাংলা' }
+                { code: 'en', flag: '🇬🇧', name: 'English' }
             ];
 
             this.init();

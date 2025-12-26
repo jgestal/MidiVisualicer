@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "description": "The ultimate MIDI to tab converter. Transform any song into guitar, bass, or ukulele tablature instantly. One-time purchase, no subscriptions.",
+    "keywords": "midi to tab, midi converter guitar, bass tablature, ukulele tabs, learn guitar free, music software",
+    "ogTitle": "Midi Tab Pro - Your music in tablature instantly",
+    "ogDescription": "Convert any MIDI into professional tablature. The perfect tool for musicians of all levels.",
+    "title": "Midi Tab Pro | The professional standard for MIDI to Tab"
+  },
+  "nav": {
+    "features": "Why choose us",
+    "howItWorks": "How it works",
+    "cta": "Get started"
+  },
+  "hero": {
+    "badge": "💻 Available on official Mac and Windows stores",
+    "title": "Play every song you've ever dreamed of",
+    "subtitle": "The professional standard for converting MIDI to tablature automatically. Stop searching for impossible sheet music.",
+    "description": "Import any MIDI file and get perfect tablature with the most comfortable fingering for your fingers. Designed to simplify your learning journey.",
+    "startBtn": "View in store",
+    "demoBtn": "See how it works",
+    "appStore": "Download on Mac App Store",
+    "microsoftStore": "Download on Microsoft Store",
+    "note": "✓ One-time payment · ✓ Lifetime license · ✓ No subscriptions",
+    "screenshots": {
+      "tablature": "📸 High-precision tablature",
+      "notation": "📸 Integrated musical notation",
+      "pianoroll": "📸 Interactive piano roll",
+      "instruments": "📸 Supports +10 instruments"
+    }
+  },
+  "benefits": {
+    "title": "🎵 A universe of music at your fingertips",
+    "description": "There are millions of free MIDI files online. Download your favorites and we'll convert them in minutes.",
+    "genres": {
+      "games": "🎮 Video games",
+      "soundtracks": "🎬 Soundtracks",
+      "classical": "🎻 Classical music",
+      "rock": "🎸 Rock & Metal",
+      "jazz": "🎷 Jazz & Blues",
+      "pop": "🎹 Pop & Indie",
+      "world": "🌍 World music",
+      "tv": "📺 Anime & Series"
+    }
+  },
+  "whatIsTab": {
+    "title": "🎯 Start playing today (even if you can't read music)",
+    "subtitle": "Tablature is the visual shortcut used by professionals. If you can count, you can play.",
+    "example": "Example: Classical melody on guitar",
+    "benefits": {
+      "numbers": {
+        "title": "Only numbers",
+        "text": "Indicates the exact fret. '0' is an open string. It's impossible to get lost!"
+      },
+      "strings": {
+        "title": "For your instrument",
+        "text": "Automatically adapts to guitar, bass, ukulele, and more stringed instruments."
+      },
+      "leftToRight": {
+        "title": "Smart fingering",
+        "text": "Our algorithm finds the easiest position so your fingers don't suffer."
+      }
+    }
+  },
+  "features": {
+    "title": "Designed for your musical success",
+    "subtitle": "Tools that accelerate your progress and make practice fun.",
+    "cards": {
+      "simplify": {
+        "title": "Simplify mode",
+        "text": "Too complex? Reduce chords and keep the essence to learn faster."
+      },
+      "smartTabs": {
+        "title": "Smart fingering",
+        "text": "Automatic neck optimization for smooth and effortless playing."
+      },
+      "instruments": {
+        "title": "Multi-instrument",
+        "text": "From 5-string bass to soprano ukulele. All in one application."
+      },
+      "loop": {
+        "title": "A-B loop",
+        "text": "Select a difficult passage and repeat it until it's perfect."
+      },
+      "speed": {
+        "title": "Variable speed",
+        "text": "Lower the tempo without changing the pitch. Ideal for mastering solos in slow motion."
+      },
+      "themes": {
+        "title": "Premium aesthetics",
+        "text": "Over 30 visual themes. Choose the one that best suits your practice style."
+      }
+    }
+  },
+  "howItWorks": {
+    "title": "Three steps to master your song",
+    "subtitle": "From file to your fingers in less than a minute.",
+    "steps": {
+      "step1": {
+        "title": "1. Import MIDI",
+        "text": "Drag and drop any .mid or .midi file directly into the application."
+      },
+      "step2": {
+        "title": "2. Configure your view",
+        "text": "Choose your instrument, adjust the visual theme, and activate simplify mode if needed."
+      },
+      "step3": {
+        "title": "3. Start playing!",
+        "text": "Use the loop and speed tools to practice like a pro."
+      }
+    }
+  },
+  "cta": {
+    "title": "Take your music to the next level",
+    "subtitle": "Join thousands of musicians already learning with Midi Tab Pro.",
+    "appStore": "Available on Mac App Store",
+    "microsoftStore": "Available on Microsoft Store",
+    "note": "✓ Single payment · ✓ Free updates · ✓ Priority support"
+  },
+  "footer": {
+    "copyright": "© 2024 Midi Tab Pro. Your music, your rules.",
+    "privacy": "Privacy",
+    "contact": "Contact"
+  }
+}

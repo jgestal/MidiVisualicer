@@ -763,49 +763,40 @@ img {
 }
 
 /* ============================================
-   Section Contrast Utilities
-   ============================================ */
-.section-light {
-    background: linear-gradient(180deg, #161625 0%, #0c0c14 100%);
-    position: relative;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.section-dark {
-    background: var(--color-bg-primary);
-}
-
-/* ============================================
-   Section Headers
+   Section Headers & Utilities
    ============================================ */
 .section-header {
     text-align: center;
-    margin-bottom: 72px;
+    margin-bottom: 64px;
 }
 
 .section-header h2 {
-    font-size: 3rem;
-    margin-bottom: 20px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 16px;
     letter-spacing: -0.03em;
     color: #ffffff;
-    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     display: table;
-    margin-left: auto;
-    margin-right: auto;
-    text-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin: 0 auto;
 }
 
 .section-header p {
-    color: #cbd5e1;
+    color: #94a3b8;
     font-size: 1.125rem;
-    max-width: 700px;
+    max-width: 600px;
     margin: 0 auto;
-    line-height: 1.7;
+    line-height: 1.6;
 }
+
+.section-light {
+    background: linear-gradient(180deg, #12121e 0%, #0a0a0f 100%);
+    border-top: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
 
 /* ============================================
    Store Buttons
@@ -1532,7 +1523,7 @@ img {
         0 25px 50px -12px rgba(0, 0, 0, 0.8),
         0 0 60px rgba(99, 102, 241, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    animation: glow 4s ease-in-out infinite;
+    position: relative;
 }
 
 /* Terminal window header */
@@ -1542,10 +1533,9 @@ img {
     height: 36px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    position: relative;
 }
 
-/* Terminal dots */
+/* Terminal dots - precisely aligned */
 .tab-example::after {
     content: '';
     position: absolute;
@@ -1555,7 +1545,7 @@ img {
     height: 10px;
     background: #ff5f57;
     border-radius: 50%;
-    box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #28c840;
+    box-shadow: 18px 0 0 #ffbd2e, 36px 0 0 #28c840;
     z-index: 2;
 }
 
