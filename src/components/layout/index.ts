@@ -1,5 +1,5 @@
 /**
- * Layout Components - Nuevos componentes de layout para MIDI Visualizer
+ * Layout Components - Nuevos componentes de layout para Midi Tab Pro
  * Estructura: Header → Toolbar → PianoRoll → Main (Central + Right Sidebar) → Footer
  */
 

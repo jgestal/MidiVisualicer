@@ -1,5 +1,5 @@
 /**
- * MIDI Visualizer - Main App Component
+ * Midi Tab Pro - Main App Component
  * 
  * Layout:
  * 1. Header - Title bar with controls

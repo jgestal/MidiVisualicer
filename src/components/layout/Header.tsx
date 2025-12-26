@@ -142,7 +142,7 @@ export function Header({
 
                     <div className="header-brand">
                         <Music size={20} className="header-logo" />
-                        <span className="header-title">Midi Visualizer <span className="title-pro">Pro</span></span>
+                        <span className="header-title">Midi Tab <span className="title-pro">Pro</span></span>
                     </div>
 
                     {hasMidi && fileName && (

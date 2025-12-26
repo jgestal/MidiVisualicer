@@ -377,9 +377,9 @@ export function midiNotesToMusicXML(
     <work-title>${escapeXML(title)}</work-title>
   </work>
   <identification>
-    <creator type="composer">MIDI Visualizer</creator>
+    <creator type="composer">Midi Tab Pro</creator>
     <encoding>
-      <software>MIDI Visualizer</software>
+      <software>Midi Tab Pro</software>
       <encoding-date>${new Date().toISOString().split('T')[0]}</encoding-date>
     </encoding>
   </identification>

@@ -1,4 +1,4 @@
-# 🎹 MIDI Visualizer & Tablature Studio
+# 🎹 Midi Tab Pro
 
 Una potente aplicación web interactiva para visualizar archivos MIDI, diseñada especialmente para músicos que desean practicar con tablaturas, piano roll y partituras de forma fluida y personalizada.
 
