@@ -1,0 +1,77 @@
+# Recursos Requeridos (requerido.txt)
+
+Este archivo documenta los recursos que faltan para completar la landing page de **Midi Tab Pro**.
+
+> **IMPORTANTE**: Por favor, añade las imágenes en `web/images/` y actualiza el ID del vídeo en `index.html`.
+
+---
+
+## 1. IMÁGENES ESENCIALES
+
+### Favicon e Iconos
+| Archivo | Tamaño | Descripción |
+|---------|--------|-------------|
+| favicon.png | 32x32 px | Favicon del navegador |
+| favicon-192.png | 192x192 px | Icono para Android |
+| favicon-512.png | 512x512 px | Icono para PWA |
+| apple-touch-icon.png | 180x180 px | Icono para iOS |
+
+### Open Graph (Redes Sociales)
+| Archivo | Tamaño | Descripción |
+|---------|--------|-------------|
+| og-image.png | 1200x630 px | Imagen para compartir en redes sociales (Fondo oscuro) |
+
+---
+
+## 2. CARRUSEL DE CAPTURAS (Hero)
+
+Estas imágenes son **prioritarias** ya que son lo primero que ve el usuario. Deben ser capturas reales de la app con el **Tema Oscuro** activo.
+
+| Archivo | Tamaño Ideal | Descripción |
+|---------|--------------|-------------|
+| screenshot-tablature.png | 1920x1080 | Vista principal de Tablatura |
+| screenshot-notation.png | 1920x1080 | Vista de Partitura (Notation) |
+| screenshot-pianoroll.png | 1920x1080 | Vista de Piano Roll |
+| screenshot-instruments.png | 1920x1080 | Captura mostrando el menú de instrumentos |
+
+---
+
+## 3. SECCIÓN "CÓMO FUNCIONA"
+
+Ilustraciones para los 3 pasos.
+
+| Archivo | Tamaño Ideal | Descripción |
+|---------|--------------|-------------|
+| step-1-upload.png | 800x600 | Arrastrando un archivo MIDI a la app |
+| step-2-instrument.png | 800x600 | Seleccionando instrumento (Zoom al selector) |
+| step-3-export.png | 800x600 | Exportando PDF o Tab (Zoom al menú) |
+
+---
+
+## 4. VÍDEO DEMO (YouTube)
+
+Necesitamos un vídeo corto (minuto y medio) demostrando la app.
+
+1. Sube el vídeo a YouTube.
+2. Abre `web/index.html`.
+3. Busca `<!-- VIDEO_ID_AQUI -->`.
+4. Pon tu ID de vídeo.
+
+
+---
+
+## NOTAS ADICIONALES
+
+### Optimización de imágenes:
+- Usa WebP si es posible para mejor compresión
+- Comprime las PNGs con herramientas como TinyPNG
+- Las capturas del carrusel deben ser de alta calidad (son lo primero que ven los usuarios)
+
+### Placeholder actuales:
+- Las imágenes que faltan muestran un emoji como placeholder
+- El sitio funciona sin las imágenes, pero se verá incompleto
+
+### Colores para diseño de OG Image:
+- Fondo: #0a0a0f (casi negro)
+- Acento: #6366f1 → #8b5cf6 (gradiente violeta)
+- Texto: #f8fafc (blanco)
