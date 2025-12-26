@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { InstrumentSelector } from '../InstrumentSelector';
 import { MidiInfoModal } from '../MidiInfoModal';
@@ -30,7 +31,7 @@ export function ModalManager({
     return (
         <>
             {/* INSTRUMENT MODAL */}
-            {ui.showInstrumentModal && (
+            {ui.showInstrumentModal && createPortal(
                 <div
                     className="instrument-modal-overlay"
                     onClick={ui.closeInstrumentModal}
@@ -58,7 +59,8 @@ export function ModalManager({
                             />
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* MIDI INFO MODAL */}

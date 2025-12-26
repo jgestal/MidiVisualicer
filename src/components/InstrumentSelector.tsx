@@ -8,6 +8,7 @@ import { useState, useMemo } from 'react';
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 import { InstrumentEditor } from '@/features/instruments/components/InstrumentEditor';
 import { useAllInstruments, useInstrument, type InstrumentConfig } from '@/features/instruments';
+import ConfirmModal from './ConfirmModal';
 import './InstrumentSelector.css';
 
 interface InstrumentSelectorProps {
@@ -21,6 +22,10 @@ export function InstrumentSelector({
 }: InstrumentSelectorProps) {
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingInstrument, setEditingInstrument] = useState<InstrumentConfig | null>(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState<{ isOpen: boolean; id: string }>({
+    isOpen: false,
+    id: '',
+  });
 
   // Obtener instrumentos del contexto
   const instrumentsMap = useAllInstruments();
@@ -37,12 +42,16 @@ export function InstrumentSelector({
 
   const handleDelete = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (confirm('¿Eliminar este instrumento personalizado?')) {
-      deleteCustomInstrument(id);
-      if (selectedInstrument === id) {
-        onSelectInstrument('guitar');
-      }
+    setShowConfirmDelete({ isOpen: true, id });
+  };
+
+  const confirmDelete = () => {
+    const id = showConfirmDelete.id;
+    deleteCustomInstrument(id);
+    if (selectedInstrument === id) {
+      onSelectInstrument('guitar');
     }
+    setShowConfirmDelete({ isOpen: false, id: '' });
   };
 
   const handleEdit = (e: React.MouseEvent, inst: InstrumentConfig) => {
@@ -150,11 +159,19 @@ export function InstrumentSelector({
         onDelete={
           editingInstrument?.isCustom
             ? (id) => {
-              deleteCustomInstrument(id);
-              if (selectedInstrument === id) onSelectInstrument('guitar');
+              setShowConfirmDelete({ isOpen: true, id });
             }
             : undefined
         }
+      />
+
+      <ConfirmModal
+        isOpen={showConfirmDelete.isOpen}
+        onClose={() => setShowConfirmDelete({ ...showConfirmDelete, isOpen: false })}
+        onConfirm={confirmDelete}
+        title="Eliminar instrumento"
+        message="¿Estás seguro de que deseas eliminar este instrumento personalizado? Se perderán todas sus configuraciones."
+        preventClose={true}
       />
 
     </div>

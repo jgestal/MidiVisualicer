@@ -9,21 +9,20 @@ import { useState, useMemo } from 'react';
 import {
     Music,
     ArrowLeft,
-    Download,
-    SlidersHorizontal,
-    ChevronUp,
-    ChevronDown,
     Info,
-    FileDown,
-    ListMusic,
-    Printer,
     HelpCircle,
-    FileCode,
-    FileText,
-    FileImage,
     Palette,
     Keyboard,
+    Settings2,
+    FileDown,
+    ListMusic,
+    Download,
+    FileText,
+    FileCode,
+    FileImage,
+    Printer
 } from 'lucide-react';
+import ConfirmModal from '../ConfirmModal';
 import KeyboardShortcutsModal from '../KeyboardShortcutsModal';
 import { useTheme } from '../../shared/context/ThemeContext';
 import { useI18n, LANGUAGES, type Language } from '../../shared/context/I18nContext';
@@ -83,6 +82,7 @@ export function Header({
     const [showLangMenu, setShowLangMenu] = useState(false);
     const [showThemeMenu, setShowThemeMenu] = useState(false);
     const [showShortcuts, setShowShortcuts] = useState(false);
+    const [showConfirmBack, setShowConfirmBack] = useState(false);
 
     // Group themes by category for the menu
     const themesByCategory = useMemo(() => {
@@ -94,7 +94,9 @@ export function Header({
 
     // Handler for back button with confirmation
     const handleBackClick = () => {
-        if (window.confirm(t.confirmClose || '¿Salir y cerrar el archivo MIDI actual?')) {
+        if (hasMidi) {
+            setShowConfirmBack(true);
+        } else {
             onClose();
         }
     };
@@ -124,181 +126,175 @@ export function Header({
     );
 
     return (
-        <header className="app-header">
-            {/* Left Section */}
-            <div className="header-left">
-                {/* Back button - only visible when MIDI is loaded */}
-                {hasMidi && (
+        <>
+            <header className="app-header">
+                {/* Left Section */}
+                <div className="header-left">
                     <button
                         className="header-btn header-back-btn"
                         onClick={handleBackClick}
-                        title={t.back}
+                        title={t.back || 'Atrás'}
                     >
                         <ArrowLeft size={18} />
                     </button>
-                )}
 
-                <div className="header-brand">
-                    <Music size={20} className="header-logo" />
-                    <span className="header-title">Midi Tab Pro</span>
-                </div>
-
-                {hasMidi && fileName && (
-                    <div className="header-file-info">
-                        <span className="header-filename" title={fileName}>{fileName}</span>
-                        {tempo && <span className="header-tempo">{tempo.toFixed(1)} BPM</span>}
-                        {timeSignature && <span className="header-time-sig">{timeSignature}</span>}
-
-                        {/* Info button */}
-                        <button
-                            className="header-btn header-info-btn"
-                            onClick={onShowInfo}
-                            title={t.midiInfo}
-                        >
-                            <Info size={14} />
-                        </button>
+                    <div className="header-brand">
+                        <Music size={20} className="header-logo" />
+                        <span className="header-title">Midi Visualizer <span className="title-pro">Pro</span></span>
                     </div>
-                )}
-            </div>
 
-            {/* Right Section */}
-            <div className="header-right">
-                {hasMidi && (
-                    <>
-                        {/* Toggle Toolbar (Transpose + Loop) */}
-                        <button
-                            className={`header-btn header-toggle-btn ${showToolbar ? 'active' : ''}`}
-                            onClick={onToggleToolbar}
-                            title={t.toggleToolbar}
-                        >
-                            <SlidersHorizontal size={16} />
-                            {showToolbar ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                        </button>
-
-                        <div className="header-divider" />
-
-                        {/* Export Dropdown */}
-                        <div className="header-export-dropdown">
-                            <button
-                                className="header-btn header-export-btn"
-                                onClick={() => setShowExportMenu(!showExportMenu)}
-                                title={t.export}
-                            >
-                                <FileDown size={16} />
-                                <span>{t.export}</span>
-                                <ChevronDown size={14} />
-                            </button>
-
-                            {showExportMenu && (
-                                <div className="header-export-menu">
-                                    <div className="export-menu-title">{t.exportAs}</div>
-                                    <button onClick={() => { onExportTxt(); setShowExportMenu(false); }}>
-                                        <ListMusic size={14} /> {t.cifrado}
-                                    </button>
-                                    <button onClick={() => { onExportTab(); setShowExportMenu(false); }}>
-                                        <Download size={14} /> {t.exportTablature}
-                                    </button>
-                                    {onExportWord && (
-                                        <button onClick={() => { onExportWord(); setShowExportMenu(false); }}>
-                                            <FileText size={14} /> {t.word}
-                                        </button>
-                                    )}
-                                    {onExportMusicXML && (
-                                        <button onClick={() => { onExportMusicXML(); setShowExportMenu(false); }}>
-                                            <FileCode size={14} /> {t.musicxml}
-                                        </button>
-                                    )}
-                                    {onExportSheetSVG && (
-                                        <button onClick={() => { onExportSheetSVG(); setShowExportMenu(false); }}>
-                                            <FileImage size={14} /> {t.sheetSvg || 'Partitura (SVG)'}
-                                        </button>
-                                    )}
-                                    <div className="export-menu-divider" />
-                                    <button onClick={() => { onExportPdf(); setShowExportMenu(false); }}>
-                                        <Printer size={14} /> {t.printPdf}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="header-divider" />
-                    </>
-                )}
-
-                {/* Language Selector */}
-                <div className="header-lang-dropdown">
-                    <button
-                        className="header-btn header-lang-btn"
-                        onClick={() => setShowLangMenu(!showLangMenu)}
-                        title={t.language}
-                    >
-                        <span className="lang-flag-only">{LANGUAGES[language].flag}</span>
-                    </button>
-
-                    {showLangMenu && (
-                        <div className="header-lang-menu">
-                            {(Object.entries(LANGUAGES) as [Language, typeof LANGUAGES[Language]][]).map(([code, lang]) => (
-                                <button
-                                    key={code}
-                                    className={`lang-option ${language === code ? 'active' : ''}`}
-                                    onClick={() => { setLanguage(code); setShowLangMenu(false); }}
-                                >
-                                    <span className="lang-flag">{lang.flag}</span>
-                                    <span>{lang.nativeName}</span>
-                                </button>
-                            ))}
+                    {hasMidi && fileName && (
+                        <div className="header-file-info">
+                            <span className="header-filename" title={fileName}>{fileName}</span>
+                            {tempo && <span className="header-tempo">{Math.round(tempo)} BPM</span>}
+                            {timeSignature && <span className="header-time-sig">{timeSignature}</span>}
                         </div>
                     )}
                 </div>
 
-                {/* Keyboard Shortcuts Button */}
-                <button
-                    className="header-btn header-shortcuts-btn"
-                    onClick={() => setShowShortcuts(true)}
-                    title={t.keyboardShortcuts || 'Keyboard Shortcuts'}
-                >
-                    <Keyboard size={18} />
-                </button>
+                {/* Right Section */}
+                <div className="header-right">
+                    {hasMidi && (
+                        <>
+                            {/* Info button */}
+                            <button
+                                className="header-btn"
+                                onClick={onShowInfo}
+                                title={t.midiInfo || 'Información MIDI'}
+                            >
+                                <Info size={18} />
+                            </button>
 
-                {/* Help Button */}
-                <button
-                    className="header-btn header-help-btn"
-                    onClick={onShowHelp}
-                    title={t.help}
-                >
-                    <HelpCircle size={18} />
-                </button>
+                            {/* Export Dropdown */}
+                            <div className="header-menu-container">
+                                <button
+                                    className="header-btn"
+                                    onClick={() => setShowExportMenu(!showExportMenu)}
+                                    title={t.export || 'Exportar'}
+                                >
+                                    <FileDown size={18} />
+                                </button>
+                                {showExportMenu && (
+                                    <div className="header-dropdown export-dropdown">
+                                        <div className="dropdown-title">{t.exportAs || 'Exportar como'}</div>
+                                        <button onClick={() => { onExportTxt(); setShowExportMenu(false); }}>
+                                            <ListMusic size={14} /> {t.cifrado || 'Cifrado'}
+                                        </button>
+                                        <button onClick={() => { onExportTab(); setShowExportMenu(false); }}>
+                                            <Download size={14} /> {t.exportTablature || 'Tablatura'}
+                                        </button>
+                                        {onExportWord && (
+                                            <button onClick={() => { onExportWord(); setShowExportMenu(false); }}>
+                                                <FileText size={14} /> {t.word || 'Word'}
+                                            </button>
+                                        )}
+                                        {onExportMusicXML && (
+                                            <button onClick={() => { onExportMusicXML(); setShowExportMenu(false); }}>
+                                                <FileCode size={14} /> {t.musicxml || 'MusicXML'}
+                                            </button>
+                                        )}
+                                        {onExportSheetSVG && (
+                                            <button onClick={() => { onExportSheetSVG(); setShowExportMenu(false); }}>
+                                                <FileImage size={14} /> {t.sheetSvg || 'Partitura (SVG)'}
+                                            </button>
+                                        )}
+                                        <div className="dropdown-divider" />
+                                        <button onClick={() => { onExportPdf(); setShowExportMenu(false); }}>
+                                            <Printer size={14} /> {t.printPdf || 'Imprimir PDF'}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
 
-                {/* About Button */}
-                <button
-                    className="header-btn header-about-btn"
-                    onClick={onShowAbout}
-                    title={t.about}
-                >
-                    <Info size={18} />
-                </button>
+                            <div className="header-divider" />
 
-                {/* Theme Selector Dropdown */}
-                <div className="header-theme-dropdown">
-                    <button
-                        className="header-btn header-theme-btn"
-                        onClick={() => setShowThemeMenu(!showThemeMenu)}
-                        title={t.darkMode?.replace(' mode', '') || 'Theme'}
-                    >
-                        <Palette size={18} />
+                            {/* Toggle Toolbar */}
+                            <button
+                                className={`header-btn header-toggle-btn ${showToolbar ? 'active' : ''}`}
+                                onClick={onToggleToolbar}
+                                title={showToolbar ? t.hideToolbar : t.showToolbar}
+                            >
+                                <Settings2 size={18} />
+                            </button>
+
+                            <div className="header-divider" />
+                        </>
+                    )}
+
+                    {/* Language Menu */}
+                    <div className="header-menu-container">
+                        <button
+                            className="header-btn header-lang-btn"
+                            onClick={() => { setShowLangMenu(!showLangMenu); setShowThemeMenu(false); }}
+                            title={t.language || 'Idioma'}
+                        >
+                            <span className="lang-flag-current">{LANGUAGES[language].flag}</span>
+                        </button>
+                        {showLangMenu && (
+                            <div className="header-dropdown lang-dropdown">
+                                {Object.entries(LANGUAGES).map(([code, config]) => (
+                                    <button
+                                        key={code}
+                                        className={`dropdown-item ${language === code ? 'active' : ''}`}
+                                        onClick={() => { setLanguage(code as Language); setShowLangMenu(false); }}
+                                    >
+                                        <span className="lang-flag">{config.flag}</span>
+                                        <span className="lang-name">{config.nativeName}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Theme Menu */}
+                    <div className="header-menu-container">
+                        <button
+                            className="header-btn"
+                            onClick={() => { setShowThemeMenu(!showThemeMenu); setShowLangMenu(false); }}
+                            title={t.darkMode || 'Tema'}
+                        >
+                            <Palette size={18} />
+                        </button>
+                        {showThemeMenu && <ThemeMenu />}
+                    </div>
+
+                    <div className="header-divider" />
+
+                    {/* Help Button */}
+                    <button className="header-btn" onClick={onShowHelp} title={t.help || 'Ayuda'}>
+                        <HelpCircle size={18} />
                     </button>
 
-                    {showThemeMenu && <ThemeMenu />}
-                </div>
-            </div>
+                    {/* Shortcuts Button */}
+                    <button className="header-btn" onClick={() => setShowShortcuts(true)} title={t.keyboardShortcuts || 'Atajos'}>
+                        <Keyboard size={18} />
+                    </button>
 
-            {/* Keyboard Shortcuts Modal */}
-            {showShortcuts && (
-                <KeyboardShortcutsModal onClose={() => setShowShortcuts(false)} />
-            )}
-        </header>
+                    {/* About Button */}
+                    <button className="header-btn" onClick={onShowAbout} title={t.about || 'Acerca de'}>
+                        <Info size={18} />
+                    </button>
+                </div>
+
+                {/* Keyboard Shortcuts Modal */}
+                {showShortcuts && (
+                    <KeyboardShortcutsModal onClose={() => setShowShortcuts(false)} />
+                )}
+            </header>
+
+            {/* Custom Confirm Modal for Back action */}
+            <ConfirmModal
+                isOpen={showConfirmBack}
+                onClose={() => setShowConfirmBack(false)}
+                onConfirm={onClose}
+                title={t.confirm || 'Confirmar'}
+                message={t.confirmClose || '¿Estás seguro de que deseas cerrar el archivo MIDI actual?'}
+                confirmText={t.close || 'Cerrar'}
+                cancelText={t.cancel || 'Cancelar'}
+                preventClose={true} // Add this prop
+            />
+        </>
     );
 }
 
 export default Header;
-

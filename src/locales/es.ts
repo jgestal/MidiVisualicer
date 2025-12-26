@@ -187,6 +187,7 @@ export const es = {
     selectTemplate: 'Seleccionar plantilla',
     saveInstrument: 'Guardar instrumento',
     cancel: 'Cancelar',
+    confirm: 'Confirmar',
 
     // Errors
     error: 'Error',

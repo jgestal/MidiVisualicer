@@ -198,4 +198,9 @@ export const ar = {
     discoMode: 'Disco 70s mode',
     solarpunkMode: 'Solarpunk mode',
     lcarsMode: 'LCARS (Star Trek) mode',
-} as const;
+    walkmanMode: 'Modo Sony Walkman',
+    ipodMode: 'Modo iPod Classic',
+    snesMode: 'Modo Super Nintendo',
+    auto: 'Sistema (Auto)',
+    confirm: 'Confirm',
+}as const;

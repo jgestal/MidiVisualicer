@@ -5,6 +5,7 @@
 import { useState, useCallback } from 'react';
 import { Music2, Search, Upload, Trash2, Clock, Package, FolderOpen, X } from 'lucide-react';
 import { useLibrary, LibraryItem } from '@/features/library';
+import ConfirmModal from '@/components/ConfirmModal';
 import './LibraryExplorer.css';
 
 interface LibraryExplorerProps {
@@ -28,6 +29,10 @@ export function LibraryExplorer({ selectedItem, onSelectItem, onLoadMidi }: Libr
   } = useLibrary();
 
   const [isDragging, setIsDragging] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<{ isOpen: boolean; item: LibraryItem | null }>({
+    isOpen: false,
+    item: null,
+  });
 
   // Manejar clic en un item
   const handleItemClick = useCallback(
@@ -52,12 +57,19 @@ export function LibraryExplorer({ selectedItem, onSelectItem, onLoadMidi }: Libr
   const handleDelete = useCallback(
     async (e: React.MouseEvent, item: LibraryItem) => {
       e.stopPropagation();
-      if (item.isStored && confirm(`¿Eliminar "${item.name}" de la biblioteca?`)) {
-        await deleteFile(item.id);
+      if (item.isStored) {
+        setShowDeleteConfirm({ isOpen: true, item });
       }
     },
-    [deleteFile]
+    []
   );
+
+  const confirmDelete = async () => {
+    if (showDeleteConfirm.item) {
+      await deleteFile(showDeleteConfirm.item.id);
+      setShowDeleteConfirm({ isOpen: false, item: null });
+    }
+  };
 
   // Manejar drop de archivos
   const handleDrop = useCallback(
@@ -245,6 +257,15 @@ export function LibraryExplorer({ selectedItem, onSelectItem, onLoadMidi }: Libr
           </button>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showDeleteConfirm.isOpen}
+        onClose={() => setShowDeleteConfirm({ isOpen: false, item: null })}
+        onConfirm={confirmDelete}
+        title="Eliminar archivo"
+        message={`¿Estás seguro de que deseas eliminar "${showDeleteConfirm.item?.name}"? Esta acción no se puede deshacer.`}
+        preventClose={true}
+      />
     </div>
   );
 }

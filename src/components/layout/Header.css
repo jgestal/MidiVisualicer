@@ -118,6 +118,11 @@
     line-height: 1;
 }
 
+.lang-flag-current {
+    font-size: 22px;
+    line-height: 1;
+}
+
 .header-lang-menu {
     position: absolute;
     top: 100%;
@@ -256,4 +261,110 @@
     background: var(--color-success);
     border-radius: 50%;
     animation: pulse 0.5s ease-in-out infinite;
+}
+
+/* Header Menu Container */
+.header-menu-container {
+    position: relative;
+}
+
+.header-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    min-width: 160px;
+    overflow: hidden;
+}
+
+.header-dropdown.lang-dropdown {
+    min-width: 180px;
+}
+
+.header-dropdown.export-dropdown {
+    min-width: 180px;
+}
+
+.dropdown-title {
+    padding: 8px 14px 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 4px 0;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-on-hover);
+}
+
+.dropdown-item.active {
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--color-accent-primary);
+}
+
+.lang-flag {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.lang-name {
+    font-weight: 500;
+}
+
+/* Export dropdown button styling */
+.header-dropdown button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    font-size: 13px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+
+.header-dropdown button:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-on-hover);
+}
+
+/* Title Pro styling */
+.title-pro {
+    background: var(--color-accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
 }

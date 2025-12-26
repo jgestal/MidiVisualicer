@@ -7,6 +7,7 @@ import { X, Plus, Trash2, Music2, Save, AlertCircle, ChevronUp, ChevronDown, Cop
 import { noteToMidi, midiToNote } from '@/config/instruments';
 import type { InstrumentConfig } from '@/config/instruments';
 import { useAllInstruments } from '@/features/instruments';
+import ConfirmModal from '@/components/ConfirmModal';
 import './InstrumentEditor.css';
 
 // Opciones de iconos disponibles
@@ -93,6 +94,7 @@ export function InstrumentEditor({
 
   const [errors, setErrors] = useState<string[]>([]);
   const [showTemplates, setShowTemplates] = useState(!instrument); // Show templates for new instruments
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const isEditing = !!instrument;
 
@@ -487,12 +489,7 @@ export function InstrumentEditor({
           {isEditing && onDelete && instrument && (
             <button
               className="delete-btn"
-              onClick={() => {
-                if (confirm('¿Eliminar este instrumento?')) {
-                  onDelete(instrument.id);
-                  onClose();
-                }
-              }}
+              onClick={() => setShowDeleteConfirm(true)}
             >
               <Trash2 size={16} />
               Eliminar
@@ -510,6 +507,21 @@ export function InstrumentEditor({
           </div>
         </div>
       </div>
+
+      {isEditing && onDelete && instrument && (
+        <ConfirmModal
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={() => {
+            onDelete(instrument.id);
+            onClose();
+            setShowDeleteConfirm(false);
+          }}
+          title="Eliminar instrumento"
+          message={`¿Estás seguro de que deseas eliminar "${instrument.nameEs}"?`}
+          preventClose={true}
+        />
+      )}
     </div>
   );
 }

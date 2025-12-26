@@ -185,6 +185,7 @@ export const en = {
     selectTemplate: 'Select template',
     saveInstrument: 'Save instrument',
     cancel: 'Cancel',
+    confirm: 'Confirm',
 
     // Errors
     error: 'Error',
@@ -200,4 +201,5 @@ export const en = {
     word: 'Word / Doc (.doc)',
     musicxml: 'MusicXML (GP/MuseScore)',
     printPdf: 'Print / PDF',
-} as const;
+    auto: 'Sistema (Auto)',
+}as const;

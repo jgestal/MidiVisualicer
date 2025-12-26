@@ -198,4 +198,9 @@ export const en_us = {
   word: 'Word / Doc (.doc)',
   musicxml: 'MusicXML (GP/MuseScore)',
   printPdf: 'Print / PDF',
-} as const;
+    walkmanMode: 'Modo Sony Walkman',
+    ipodMode: 'Modo iPod Classic',
+    snesMode: 'Modo Super Nintendo',
+    auto: 'Sistema (Auto)',
+    confirm: 'Confirm',
+}as const;
