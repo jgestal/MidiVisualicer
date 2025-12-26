@@ -201,5 +201,20 @@ export const en = {
     word: 'Word / Doc (.doc)',
     musicxml: 'MusicXML (GP/MuseScore)',
     printPdf: 'Print / PDF',
-    auto: 'Sistema (Auto)',
-}as const;
+    auto: 'System (Auto)',
+
+    // New features
+    bar: 'Bar',
+    copyLine: 'Copy line',
+    zoom: 'Zoom',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+    resetZoom: 'Reset zoom',
+    recentFiles: 'Recent files',
+    noRecentFiles: 'No recent files',
+    clearRecent: 'Clear history',
+    practiceMode: 'Practice mode',
+    pauseAfterBars: 'Pause every',
+    bars: 'bars',
+    detectedChords: 'Detected chords',
+} as const;

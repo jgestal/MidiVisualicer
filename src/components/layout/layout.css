@@ -271,6 +271,49 @@
     cursor: not-allowed;
 }
 
+/* Zoom Controls */
+.main-panel-zoom {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-right: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.main-panel-tab.zoom-btn {
+    padding: 6px 10px;
+    margin: 0;
+    border-bottom: none;
+    border-radius: 0;
+    min-width: auto;
+}
+
+.main-panel-tab.zoom-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.main-panel-tab.zoom-level {
+    padding: 6px 12px;
+    margin: 0;
+    border-bottom: none;
+    border-radius: 0;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 50px;
+    text-align: center;
+    background: var(--color-bg-tertiary);
+    border-left: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+}
+
+.main-panel-tab.zoom-level:hover {
+    background: var(--color-bg-hover);
+}
+
 .main-panel-content {
     flex: 1;
     overflow: auto;

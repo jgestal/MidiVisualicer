@@ -28,6 +28,7 @@ import { useExport } from './hooks/useExport';
 import { useAutoTranspose } from './hooks/useAutoTranspose';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useMasterVolume } from './hooks/useMasterVolume';
+import { useTablatureZoom } from './hooks/useTablatureZoom';
 
 // Layout components
 import { Header } from './components/layout/Header';
@@ -97,6 +98,9 @@ function App() {
 
   // ===== SIMPLIFY STATE =====
   const [isSimplified, setIsSimplified] = useState(false);
+
+  // ===== TABLATURE ZOOM =====
+  const { zoom, zoomIn, zoomOut, resetZoom, canZoomIn, canZoomOut } = useTablatureZoom();
 
   // Notas de la pista seleccionada
   const selectedTrackNotes = useMemo(() => {
@@ -253,6 +257,12 @@ function App() {
               isSimplified={isSimplified}
               onToggleSimplify={() => setIsSimplified(!isSimplified)}
               hasNotes={notesToDisplay.length > 0}
+              zoom={zoom}
+              onZoomIn={zoomIn}
+              onZoomOut={zoomOut}
+              onResetZoom={resetZoom}
+              canZoomIn={canZoomIn}
+              canZoomOut={canZoomOut}
             >
               {ui.activeView === 'tablature' ? (
                 <TablatureView
@@ -262,6 +272,9 @@ function App() {
                   currentTime={playbackState.currentTime}
                   isPlaying={playbackState.isPlaying}
                   onSeek={seekTo}
+                  zoom={zoom}
+                  bpm={parsedMidi?.bpm || 120}
+                  timeSignature={parsedMidi?.timeSignature || { numerator: 4, denominator: 4 }}
                 />
               ) : (
                 <OSMDNotationView
@@ -276,6 +289,7 @@ function App() {
                 />
               )}
             </MainPanel>
+
           </div>
 
           {/* BOTTOM TRACKS PANEL */}

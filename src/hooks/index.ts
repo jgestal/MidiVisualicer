@@ -12,3 +12,5 @@ export { useKeyboardShortcuts } from './useKeyboardShortcuts';
 export { useMasterVolume } from './useMasterVolume';
 export { useLocalStorage } from './useLocalStorage';
 export { useDragScroll } from './useDragScroll';
+export { useTablatureZoom } from './useTablatureZoom';
+export { useRecentFiles } from './useRecentFiles';

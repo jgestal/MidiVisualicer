@@ -19,6 +19,9 @@ interface TablatureViewProps {
   isPlaying: boolean;
   transpose?: number;
   onSeek?: (time: number) => void;
+  zoom?: number;
+  bpm?: number;
+  timeSignature?: { numerator: number; denominator: number };
 }
 
 interface TabNote {
@@ -41,12 +44,25 @@ export function TablatureView({
   isPlaying,
   transpose = 0,
   onSeek,
+  zoom = 1,
+  bpm = 120,
+  timeSignature = { numerator: 4, denominator: 4 },
 }: TablatureViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
   const instrument = useMemo(() => getAllInstruments()[instrumentId], [instrumentId]);
   const { t } = useI18n();
+
+  // Apply zoom to cell width
+  const scaledCellWidth = CELL_WIDTH * zoom;
+
+  // Calculate bar duration in seconds
+  const barDuration = useMemo(() => {
+    const beatsPerBar = timeSignature.numerator;
+    const secondsPerBeat = 60 / bpm;
+    return beatsPerBar * secondsPerBeat;
+  }, [bpm, timeSignature.numerator]);
 
   // Measure container width on resize
   useEffect(() => {
@@ -67,8 +83,8 @@ export function TablatureView({
   // Calculate how many cells fit per line
   const cellsPerLine = useMemo(() => {
     const availableWidth = containerWidth - MARGIN_LEFT - 20; // padding
-    return Math.max(10, Math.floor(availableWidth / CELL_WIDTH));
-  }, [containerWidth]);
+    return Math.max(10, Math.floor(availableWidth / scaledCellWidth));
+  }, [containerWidth, scaledCellWidth]);
 
   // Convert MIDI notes to tablature positions and group by time slots
   const { tabNotes, timeSlots } = useMemo(() => {
@@ -387,14 +403,20 @@ export function TablatureView({
             isUpcomingLine && 'upcoming',
           ].filter(Boolean).join(' ');
 
+          // Calculate bar number from start time
+          const startTimeSeconds = startNote ? startNote.time : 0;
+          const barNumber = Math.floor(startTimeSeconds / barDuration) + 1;
+
           return (
             <div key={lineIndex} className={lineClasses}>
               <div className="tab-line-header">
-                <span className="tab-line-time">{lineStartTime}s</span>
+                <span className="tab-line-bar" title={`${lineStartTime}s`}>
+                  {t.bar || 'Compás'} {barNumber}
+                </span>
                 <button
                   className="tab-copy-btn"
                   onClick={() => handleCopyLine(lineIndex)}
-                  title="Copiar esta línea de tablatura"
+                  title={t.copyLine || 'Copiar esta línea de tablatura'}
                 >
                   📋
                 </button>

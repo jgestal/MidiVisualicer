@@ -203,6 +203,21 @@ export const es = {
     word: 'Word / Doc (.doc)',
     musicxml: 'MusicXML (GP/MuseScore)',
     printPdf: 'Imprimir / PDF',
+
+    // New features
+    bar: 'Compás',
+    copyLine: 'Copiar línea',
+    zoom: 'Zoom',
+    zoomIn: 'Acercar',
+    zoomOut: 'Alejar',
+    resetZoom: 'Restablecer zoom',
+    recentFiles: 'Archivos recientes',
+    noRecentFiles: 'No hay archivos recientes',
+    clearRecent: 'Limpiar historial',
+    practiceMode: 'Modo práctica',
+    pauseAfterBars: 'Pausar cada',
+    bars: 'compases',
+    detectedChords: 'Acordes detectados',
 } as const;
 
 export type TranslationKeys = typeof es;
