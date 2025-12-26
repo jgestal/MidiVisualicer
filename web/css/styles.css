@@ -1489,31 +1489,12 @@ img {
 }
 
 /* Decorative gradient orbs */
-.what-is-tab::before {
-    content: '';
-    position: absolute;
-    top: 20%;
-    left: -10%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(60px);
-    pointer-events: none;
+/* Decorative orbs removed for better contrast with parallax background */
+.what-is-tab::before,
+.what-is-tab::after {
+    display: none;
 }
 
-.what-is-tab::after {
-    content: '';
-    position: absolute;
-    bottom: 10%;
-    right: -5%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(50px);
-    pointer-events: none;
-}
 
 .tab-explanation {
     display: flex;
@@ -1861,6 +1842,62 @@ img {
     background-size: 32px 32px;
     opacity: 0.5;
     pointer-events: none;
+}
+
+/* ============================================
+   Parallax & Visual Effects
+   ============================================ */
+.parallax-section {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+}
+
+.parallax-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Darker overlays for better text readability */
+.overlay-dark::before {
+    background: linear-gradient(135deg, rgba(8, 8, 12, 0.95) 0%, rgba(10, 10, 15, 0.9) 100%);
+    backdrop-filter: blur(3px);
+}
+
+.overlay-gradient::before {
+    background: linear-gradient(135deg, rgba(10, 10, 15, 0.95) 0%, rgba(99, 102, 241, 0.3) 100%);
+}
+
+.parallax-section h1,
+.parallax-section h2,
+.parallax-section p,
+.parallax-section .hero-badge {
+    color: #ffffff !important;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.95);
+    position: relative;
+    z-index: 2;
+    /* Force remove any gradient text effects */
+    background: none !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+}
+
+.parallax-section p.hero-subtitle,
+.parallax-section p.what-is-tab-subtitle,
+.parallax-section p.cta-subtitle {
+    font-weight: 500;
+    opacity: 1 !important;
+    color: #ffffff !important;
 }
 
 .emoji-fix {
