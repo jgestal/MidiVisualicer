@@ -145,7 +145,7 @@ export function Header({
 
                 {hasMidi && fileName && (
                     <div className="header-file-info">
-                        <span className="header-filename">{fileName}</span>
+                        <span className="header-filename" title={fileName}>{fileName}</span>
                         {tempo && <span className="header-tempo">{tempo.toFixed(1)} BPM</span>}
                         {timeSignature && <span className="header-time-sig">{timeSignature}</span>}
 

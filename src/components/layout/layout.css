@@ -42,12 +42,16 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex: 1;
+    min-width: 0;
+    /* Allow shrinking if needed */
 }
 
 .header-right {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
 }
 
 .header-btn {
@@ -96,17 +100,20 @@
 .header-file-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     margin-left: 16px;
     padding-left: 16px;
     border-left: 1px solid var(--color-border);
+    flex: 1;
+    min-width: 0;
 }
 
 .header-filename {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     color: var(--color-text-primary);
-    max-width: 300px;
+    max-width: 50vw;
+    /* Use up to 50% of screen width */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -120,6 +127,7 @@
     border-radius: var(--radius-sm);
     color: var(--color-text-muted);
     font-family: var(--font-mono);
+    white-space: nowrap;
 }
 
 .header-instrument-btn {
@@ -375,7 +383,8 @@
 
 .track-item:hover {
     background: var(--color-bg-hover);
-    color: var(--color-text-on-hover); /* Ensure text stays readable on hover backgrounds */
+    color: var(--color-text-on-hover);
+    /* Ensure text stays readable on hover backgrounds */
 }
 
 /* Specific fix for track index on hover */
@@ -680,7 +689,8 @@
     border: 2px solid var(--color-bg);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     transition: transform 0.15s ease;
-    margin-top: -5px; /* Center thumb vertically on track */
+    margin-top: -5px;
+    /* Center thumb vertically on track */
 }
 
 .footer-volume-slider::-webkit-slider-thumb:hover {
@@ -847,7 +857,8 @@
     text-align: center;
     animation: fadeIn 0.8s ease-out;
     position: relative;
-    z-index: 1; /* Low z-index to stay below header menus */
+    z-index: 1;
+    /* Low z-index to stay below header menus */
 }
 
 .empty-state-icon {
