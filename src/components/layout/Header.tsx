@@ -130,13 +130,15 @@ export function Header({
             <header className="app-header">
                 {/* Left Section */}
                 <div className="header-left">
-                    <button
-                        className="header-btn header-back-btn"
-                        onClick={handleBackClick}
-                        title={t.back || 'Atrás'}
-                    >
-                        <ArrowLeft size={18} />
-                    </button>
+                    {hasMidi && (
+                        <button
+                            className="header-btn header-back-btn"
+                            onClick={handleBackClick}
+                            title={t.back || 'Atrás'}
+                        >
+                            <ArrowLeft size={18} />
+                        </button>
+                    )}
 
                     <div className="header-brand">
                         <Music size={20} className="header-logo" />
