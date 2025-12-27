@@ -7,6 +7,7 @@ import TransposeControls from '../TransposeControls';
 import LoopControls from '../LoopControls';
 import { useI18n } from '../../shared/context/I18nContext';
 import { getAllInstruments } from '../../config/instruments';
+import { ACCENT_SUCCESS } from '../../shared/constants/colors';
 import type { MidiNote } from '../../types/midi';
 import './Toolbar.css';
 
@@ -168,7 +169,7 @@ export function Toolbar({
                             >
                                 −
                             </button>
-                            <span className="transpose-value" style={{ color: '#22c55e' }}>
+                            <span className="transpose-value" style={{ color: ACCENT_SUCCESS }}>
                                 {countInDuration}s
                             </span>
                             <button

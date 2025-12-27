@@ -6,13 +6,13 @@ import { useRef, useEffect, useMemo } from 'react';
 import { ChevronUp } from 'lucide-react';
 import { usePianoRollScroll } from '../hooks/usePianoRollScroll';
 import { midiToOctave } from '../utils/midiUtils';
+import { PIANO_ROLL, ACCENT_PRIMARY } from '../shared/constants/colors';
 import type { MidiNote } from '../types/midi';
 import './PianoRollView.css';
 
-// Constants
+// Layout constants
 const NOTE_HEIGHT = 6;
 const PIXELS_PER_SECOND = 80;
-const PLAYHEAD_COLOR = '#6366f1';
 const LEFT_MARGIN = 30;
 
 interface PianoRollViewProps {
@@ -109,7 +109,7 @@ export function PianoRollView({
       if (!isCurrent) return;
 
       // Clear canvas
-      ctx.fillStyle = '#0a0a0f';
+      ctx.fillStyle = PIANO_ROLL.BACKGROUND;
       ctx.fillRect(0, 0, currentWidth, currentHeight);
 
       // Draw note grid
@@ -117,12 +117,12 @@ export function PianoRollView({
         const y = (currentNoteRange.max - midi) * NOTE_HEIGHT + 15;
         const isBlackKey = [1, 3, 6, 8, 10].includes(midi % 12);
 
-        ctx.fillStyle = isBlackKey ? '#15151f' : '#1a1a25';
+        ctx.fillStyle = isBlackKey ? PIANO_ROLL.BLACK_KEY_BG : PIANO_ROLL.WHITE_KEY_BG;
         ctx.fillRect(0, y, currentWidth, NOTE_HEIGHT);
 
         // C note labels
         if (midi % 12 === 0) {
-          ctx.fillStyle = '#b0b0c0';
+          ctx.fillStyle = PIANO_ROLL.KEY_LABEL;
           ctx.font = '9px Inter, sans-serif';
           ctx.fillText(`C${midiToOctave(midi)}`, 2, y + NOTE_HEIGHT - 1);
         }
@@ -131,14 +131,14 @@ export function PianoRollView({
       // Draw time markers
       for (let t = 0; t <= duration; t += 2) {
         const x = t * PIXELS_PER_SECOND + LEFT_MARGIN;
-        ctx.strokeStyle = '#2a2a3a';
+        ctx.strokeStyle = PIANO_ROLL.GRID_LINE;
         ctx.lineWidth = 0.5;
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, currentHeight);
         ctx.stroke();
 
-        ctx.fillStyle = '#a0a0b0';
+        ctx.fillStyle = PIANO_ROLL.NOTE_LABEL;
         ctx.font = '9px Inter, sans-serif';
         ctx.fillText(`${t}s`, x + 2, 10);
       }
@@ -148,10 +148,10 @@ export function PianoRollView({
         const loopX1 = loopStart * PIXELS_PER_SECOND + LEFT_MARGIN;
         const loopX2 = loopEnd * PIXELS_PER_SECOND + LEFT_MARGIN;
 
-        ctx.fillStyle = 'rgba(99, 102, 241, 0.15)';
+        ctx.fillStyle = PIANO_ROLL.LOOP_REGION;
         ctx.fillRect(loopX1, 0, loopX2 - loopX1, currentHeight);
 
-        ctx.strokeStyle = '#6366f1';
+        ctx.strokeStyle = ACCENT_PRIMARY;
         ctx.lineWidth = 2;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
@@ -191,7 +191,7 @@ export function PianoRollView({
       const hoverInfo = hoverInfoRef.current;
       if (hoverInfo.active && hoverInfo.isCtrl) {
         const hoverX = hoverInfo.time * PIXELS_PER_SECOND + LEFT_MARGIN;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.strokeStyle = PIANO_ROLL.LOOP_BOUNDARY;
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
@@ -203,7 +203,7 @@ export function PianoRollView({
 
       // Draw playhead
       const playheadX = playTime * PIXELS_PER_SECOND + LEFT_MARGIN;
-      ctx.strokeStyle = PLAYHEAD_COLOR;
+      ctx.strokeStyle = PIANO_ROLL.PLAYHEAD;
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(playheadX, 0);
@@ -211,7 +211,7 @@ export function PianoRollView({
       ctx.stroke();
 
       // Playhead triangle
-      ctx.fillStyle = PLAYHEAD_COLOR;
+      ctx.fillStyle = PIANO_ROLL.PLAYHEAD;
       ctx.beginPath();
       ctx.moveTo(playheadX - 6, 0);
       ctx.lineTo(playheadX + 6, 0);

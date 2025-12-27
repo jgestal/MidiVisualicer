@@ -5,6 +5,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { ArrowUp, ArrowDown, RotateCcw, Wand2, ChevronLeft, ChevronRight, Music } from 'lucide-react';
 import { getAllInstruments } from '../config/instruments';
 import { useI18n } from '../shared/context/I18nContext';
+import { getRangeColor } from '../shared/constants/colors';
 import type { MidiNote } from '../types/midi';
 import './TransposeControls.css';
 
@@ -90,8 +91,7 @@ export function TransposeControls({
 
   if (!instrument) return null;
 
-  const rangeColor =
-    inRangePercent >= 90 ? '#22c55e' : inRangePercent >= 70 ? '#f59e0b' : '#ef4444';
+  const rangeColor = getRangeColor(inRangePercent);
 
   return (
     <div className="transpose-compact">

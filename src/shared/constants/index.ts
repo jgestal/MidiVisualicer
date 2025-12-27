@@ -7,3 +7,5 @@ export * from './gmInstruments';
 export * from './tablature';
 export * from './audio';
 export * from './notation';
+export * from './colors';
+export * from './layout';

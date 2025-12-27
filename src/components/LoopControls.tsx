@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Repeat, X, Settings } from 'lucide-react';
 import { formatDuration } from '../utils/timeUtils';
 import { SpeedTrainerModal } from './SpeedTrainerModal';
+import { ACCENT_SUCCESS } from '../shared/constants/colors';
 import './LoopControls.css';
 
 interface LoopControlsProps {
@@ -102,7 +103,7 @@ export function LoopControls({
 
         {/* Show current increment when active */}
         {speedTrainer.isEnabled && (
-          <span className="transpose-value" style={{ color: '#22c55e', marginLeft: '4px' }}>
+          <span className="transpose-value" style={{ color: ACCENT_SUCCESS, marginLeft: '4px' }}>
             +{Math.round(speedTrainer.increment * 100)}%
           </span>
         )}
