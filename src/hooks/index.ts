@@ -17,3 +17,5 @@ export { useRecentFiles } from './useRecentFiles';
 export { useChordDetection } from './useChordDetection';
 export { useNotesDisplay } from './useNotesDisplay';
 export { usePlaybackControls } from './usePlaybackControls';
+export { usePracticeStats } from './usePracticeStats';
+export { useBookmarks } from './useBookmarks';
