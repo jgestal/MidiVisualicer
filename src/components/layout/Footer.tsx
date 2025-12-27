@@ -66,6 +66,7 @@ export function Footer({
                     onClick={() => onSeek(0)}
                     disabled={disabled}
                     title={t.restart}
+                    aria-label={t.restart}
                 >
                     <RotateCcw size={16} />
                 </button>
@@ -75,6 +76,7 @@ export function Footer({
                     onClick={() => onSeek(Math.max(0, currentTime - 5))}
                     disabled={disabled}
                     title={t.rewind5s}
+                    aria-label={t.rewind5s}
                 >
                     <SkipBack size={18} />
                 </button>
@@ -85,6 +87,7 @@ export function Footer({
                         onClick={onPause}
                         disabled={disabled}
                         title={t.pause}
+                        aria-label={t.pause}
                     >
                         <Pause size={22} />
                     </button>
@@ -94,6 +97,7 @@ export function Footer({
                         onClick={onPlay}
                         disabled={disabled}
                         title={t.play}
+                        aria-label={t.play}
                     >
                         <Play size={22} style={{ marginLeft: 2 }} />
                     </button>
@@ -104,6 +108,7 @@ export function Footer({
                     onClick={onStop}
                     disabled={disabled}
                     title={t.stop}
+                    aria-label={t.stop}
                 >
                     <Square size={16} />
                 </button>
@@ -113,6 +118,7 @@ export function Footer({
                     onClick={() => onSeek(Math.min(duration, currentTime + 5))}
                     disabled={disabled}
                     title={t.forward5s}
+                    aria-label={t.forward5s}
                 >
                     <SkipForward size={18} />
                 </button>

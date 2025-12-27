@@ -1,10 +1,27 @@
+import { lazy, Suspense } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
-import { InstrumentSelector } from '../InstrumentSelector';
-import { MidiInfoModal } from '../MidiInfoModal';
-import { AboutModal } from '../AboutModal';
-import { HelpModal } from '../HelpModal';
+import { X, Loader2 } from 'lucide-react';
 import type { ParsedMidi } from '@/shared/types/midi';
+
+// Lazy load modal components
+const InstrumentSelector = lazy(() => import('../InstrumentSelector').then(m => ({ default: m.InstrumentSelector })));
+const MidiInfoModal = lazy(() => import('../MidiInfoModal').then(m => ({ default: m.MidiInfoModal })));
+const AboutModal = lazy(() => import('../AboutModal').then(m => ({ default: m.AboutModal })));
+const HelpModal = lazy(() => import('../HelpModal').then(m => ({ default: m.HelpModal })));
+
+// Loading fallback for modals
+const ModalLoading = () => (
+    <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px',
+        color: 'var(--color-text-muted)'
+    }}>
+        <Loader2 size={20} style={{ animation: 'spin 1s linear infinite', marginRight: 8 }} />
+        <span>Loading...</span>
+    </div>
+);
 
 interface ModalManagerProps {
     ui: {
@@ -50,13 +67,15 @@ export function ModalManager({
                             </button>
                         </div>
                         <div className="instrument-modal-content">
-                            <InstrumentSelector
-                                selectedInstrument={selectedInstrumentId}
-                                onSelectInstrument={(id: string) => {
-                                    selectInstrument(id);
-                                    ui.closeInstrumentModal();
-                                }}
-                            />
+                            <Suspense fallback={<ModalLoading />}>
+                                <InstrumentSelector
+                                    selectedInstrument={selectedInstrumentId}
+                                    onSelectInstrument={(id: string) => {
+                                        selectInstrument(id);
+                                        ui.closeInstrumentModal();
+                                    }}
+                                />
+                            </Suspense>
                         </div>
                     </div>
                 </div>,
@@ -65,20 +84,26 @@ export function ModalManager({
 
             {/* MIDI INFO MODAL */}
             {ui.showInfoModal && parsedMidi && (
-                <MidiInfoModal
-                    midi={parsedMidi}
-                    onClose={ui.closeInfoModal}
-                />
+                <Suspense fallback={null}>
+                    <MidiInfoModal
+                        midi={parsedMidi}
+                        onClose={ui.closeInfoModal}
+                    />
+                </Suspense>
             )}
 
             {/* ABOUT MODAL */}
             {ui.showAboutModal && (
-                <AboutModal onClose={ui.closeAboutModal} />
+                <Suspense fallback={null}>
+                    <AboutModal onClose={ui.closeAboutModal} />
+                </Suspense>
             )}
 
             {/* HELP MODAL */}
             {ui.showHelpModal && (
-                <HelpModal onClose={ui.closeHelpModal} />
+                <Suspense fallback={null}>
+                    <HelpModal onClose={ui.closeHelpModal} />
+                </Suspense>
             )}
         </>
     );

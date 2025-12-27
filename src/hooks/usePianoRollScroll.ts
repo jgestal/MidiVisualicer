@@ -1,7 +1,7 @@
-    /**
- * Custom hook for Piano Roll scroll and interaction
- * Handles auto-scroll during playback, drag-to-pan, and click-to-seek
- */
+/**
+* Custom hook for Piano Roll scroll and interaction
+* Handles auto-scroll during playback, drag-to-pan, and click-to-seek
+*/
 import { useRef, useEffect, useCallback } from 'react';
 
 interface UsePianoRollScrollOptions {
@@ -44,25 +44,42 @@ export function usePianoRollScroll({
     const lastSeekTimeRef = useRef(currentTime);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-    // Auto-scroll during playback (lerp interpolation)
+    // Auto-scroll during playback using RAF for smooth animation
     useEffect(() => {
-        if (!isPlaying || !containerRef.current) return;
+        if (!isPlaying) return;
 
-        const container = containerRef.current;
-        const playheadX = currentTime * pixelsPerSecond + leftMargin;
-        const containerWidth = container.clientWidth;
+        let animationId: number;
 
-        // Target: playhead at 50% from left (center)
-        const targetScrollLeft = playheadX - containerWidth * 0.5;
-        const currentScroll = container.scrollLeft;
-        const diff = targetScrollLeft - currentScroll;
+        const animate = () => {
+            if (!containerRef.current) {
+                animationId = requestAnimationFrame(animate);
+                return;
+            }
 
-        if (Math.abs(diff) > 5) {
-            // Smoothing factor: 0.1 = smooth, continuous movement
-            const newScroll = currentScroll + diff * 0.1;
-            container.scrollLeft = Math.max(0, newScroll);
-        }
-    });
+            const container = containerRef.current;
+            const playheadX = currentTime * pixelsPerSecond + leftMargin;
+            const containerWidth = container.clientWidth;
+
+            // Target: playhead at 50% from left (center)
+            const targetScrollLeft = playheadX - containerWidth * 0.5;
+            const currentScroll = container.scrollLeft;
+            const diff = targetScrollLeft - currentScroll;
+
+            if (Math.abs(diff) > 5) {
+                // Smoothing factor: 0.1 = smooth, continuous movement
+                const newScroll = currentScroll + diff * 0.1;
+                container.scrollLeft = Math.max(0, newScroll);
+            }
+
+            animationId = requestAnimationFrame(animate);
+        };
+
+        animationId = requestAnimationFrame(animate);
+
+        return () => {
+            cancelAnimationFrame(animationId);
+        };
+    }, [isPlaying, currentTime, pixelsPerSecond, leftMargin]);
 
     // Scroll animation on seek (when not playing)
     useEffect(() => {

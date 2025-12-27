@@ -11,8 +11,8 @@
  *    - Right Sidebar - MIDI tracks (collapsible)
  * 5. Footer - Playback controls
  */
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { Music } from 'lucide-react';
+import { useState, useCallback, useMemo, useEffect, useRef, lazy, Suspense } from 'react';
+import { Music, Loader2 } from 'lucide-react';
 
 // Context hooks
 import { useMidi } from './shared/context/MidiContext';
@@ -43,7 +43,10 @@ import './components/layout/layout.css';
 // Feature components
 import { FileUploader } from './components/FileUploader';
 import { TablatureView } from './components/TablatureView';
-import { OSMDNotationView, type OSMDNotationViewRef } from './components/OSMDNotationView';
+
+// Lazy load heavy components
+const OSMDNotationView = lazy(() => import('./components/OSMDNotationView').then(m => ({ default: m.OSMDNotationView })));
+import type { OSMDNotationViewRef } from './components/OSMDNotationView';
 
 // Config
 import { getAllInstruments } from './config/instruments';
@@ -291,16 +294,23 @@ function App() {
                   timeSignature={parsedMidi?.timeSignature || { numerator: 4, denominator: 4 }}
                 />
               ) : (
-                <OSMDNotationView
-                  ref={notationViewRef}
-                  notes={notesToDisplay}
-                  currentTime={playbackState.currentTime}
-                  isPlaying={playbackState.isPlaying}
-                  duration={parsedMidi?.duration || playbackState.duration}
-                  bpm={parsedMidi?.header?.tempos?.[0]?.bpm || 120}
-                  trackName={parsedMidi?.tracks[selectedTrack]?.name}
-                  onSeek={seekTo}
-                />
+                <Suspense fallback={
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 8 }}>
+                    <Loader2 size={24} className="animate-spin" style={{ animation: 'spin 1s linear infinite' }} />
+                    <span>Loading sheet music...</span>
+                  </div>
+                }>
+                  <OSMDNotationView
+                    ref={notationViewRef}
+                    notes={notesToDisplay}
+                    currentTime={playbackState.currentTime}
+                    isPlaying={playbackState.isPlaying}
+                    duration={parsedMidi?.duration || playbackState.duration}
+                    bpm={parsedMidi?.header?.tempos?.[0]?.bpm || 120}
+                    trackName={parsedMidi?.tracks[selectedTrack]?.name}
+                    onSeek={seekTo}
+                  />
+                </Suspense>
               )}
             </MainPanel>
 
