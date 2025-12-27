@@ -1,8 +1,10 @@
 /**
  * Custom hook for managing App-level UI state
  * Separates UI concerns from business logic in App.tsx
+ * 
+ * Refactored with DRY pattern using createModalControls helper
  */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 
 export interface AppUIState {
@@ -14,6 +16,9 @@ export interface AppUIState {
     showAboutModal: boolean;
     showHelpModal: boolean;
 }
+
+// Modal key type for type safety
+type ModalKey = 'showInstrumentModal' | 'showInfoModal' | 'showAboutModal' | 'showHelpModal';
 
 const initialState: AppUIState = {
     showToolbar: true,
@@ -30,8 +35,14 @@ export function useAppUI() {
     const [showToolbar, setShowToolbar] = useLocalStorage('ui_showToolbar', true);
     const [showPianoRoll, setShowPianoRoll] = useLocalStorage('ui_showPianoRoll', true);
 
-    // Transient state (reset on refresh usually, but could also be persisted if desired)
+    // Transient state
     const [state, setState] = useState<AppUIState>(initialState);
+
+    // DRY helper for modal controls
+    const createModalControls = useCallback((key: ModalKey) => ({
+        open: () => setState(prev => ({ ...prev, [key]: true })),
+        close: () => setState(prev => ({ ...prev, [key]: false })),
+    }), []);
 
     // Panel toggles
     const toggleToolbar = useCallback(() => {
@@ -55,38 +66,11 @@ export function useAppUI() {
         setState(prev => ({ ...prev, activeView: view }));
     }, []);
 
-    // Modal controls
-    const openInstrumentModal = useCallback(() => {
-        setState(prev => ({ ...prev, showInstrumentModal: true }));
-    }, []);
-
-    const closeInstrumentModal = useCallback(() => {
-        setState(prev => ({ ...prev, showInstrumentModal: false }));
-    }, []);
-
-    const openInfoModal = useCallback(() => {
-        setState(prev => ({ ...prev, showInfoModal: true }));
-    }, []);
-
-    const closeInfoModal = useCallback(() => {
-        setState(prev => ({ ...prev, showInfoModal: false }));
-    }, []);
-
-    const openAboutModal = useCallback(() => {
-        setState(prev => ({ ...prev, showAboutModal: true }));
-    }, []);
-
-    const closeAboutModal = useCallback(() => {
-        setState(prev => ({ ...prev, showAboutModal: false }));
-    }, []);
-
-    const openHelpModal = useCallback(() => {
-        setState(prev => ({ ...prev, showHelpModal: true }));
-    }, []);
-
-    const closeHelpModal = useCallback(() => {
-        setState(prev => ({ ...prev, showHelpModal: false }));
-    }, []);
+    // Modal controls using DRY helper
+    const instrumentModal = useMemo(() => createModalControls('showInstrumentModal'), [createModalControls]);
+    const infoModal = useMemo(() => createModalControls('showInfoModal'), [createModalControls]);
+    const aboutModal = useMemo(() => createModalControls('showAboutModal'), [createModalControls]);
+    const helpModal = useMemo(() => createModalControls('showHelpModal'), [createModalControls]);
 
     return {
         // Combined State
@@ -101,14 +85,14 @@ export function useAppUI() {
         hidePianoRollPanel,
         setActiveView,
 
-        // Modal actions
-        openInstrumentModal,
-        closeInstrumentModal,
-        openInfoModal,
-        closeInfoModal,
-        openAboutModal,
-        closeAboutModal,
-        openHelpModal,
-        closeHelpModal,
+        // Modal actions (backward compatible API)
+        openInstrumentModal: instrumentModal.open,
+        closeInstrumentModal: instrumentModal.close,
+        openInfoModal: infoModal.open,
+        closeInfoModal: infoModal.close,
+        openAboutModal: aboutModal.open,
+        closeAboutModal: aboutModal.close,
+        openHelpModal: helpModal.open,
+        closeHelpModal: helpModal.close,
     };
 }

@@ -15,3 +15,5 @@ export { useDragScroll } from './useDragScroll';
 export { useTablatureZoom } from './useTablatureZoom';
 export { useRecentFiles } from './useRecentFiles';
 export { useChordDetection } from './useChordDetection';
+export { useNotesDisplay } from './useNotesDisplay';
+export { usePlaybackControls } from './usePlaybackControls';
