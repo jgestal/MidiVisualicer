@@ -1,69 +1,91 @@
 {
   "meta": {
-    "description": "The ultimate MIDI to tab converter. Transform any song into guitar, bass, or ukulele tablature instantly. One-time purchase, no subscriptions.",
-    "keywords": "midi to tab, midi converter guitar, bass tablature, ukulele tabs, learn guitar free, music software",
-    "ogTitle": "Midi Tab Pro - Your music in tablature instantly",
-    "ogDescription": "Convert any MIDI into professional tablature. The perfect tool for musicians of all levels.",
-    "title": "Midi Tab Pro | The professional standard for MIDI to Tab"
+    "description": "The ultimate MIDI to tablature converter. Transform any song into guitar, bass, or ukulele music instantly. One-time payment, no subscriptions.",
+    "keywords": "midi to tabs, midi guitar converter, bass tablature, ukulele tabs, learn guitar free, music software",
+    "ogTitle": "Midi Tab Pro - Your music as tablature instantly",
+    "ogDescription": "Convert any MIDI to professional tablature. The perfect tool for musicians of all levels.",
+    "title": "Midi Tab Pro | Professional MIDI to Tablature Standard"
   },
   "nav": {
-    "features": "Why choose us",
-    "howItWorks": "How it works",
-    "cta": "Get started"
+    "features": "Why Choose Us",
+    "howItWorks": "How It Works",
+    "cta": "Get Started"
   },
   "hero": {
-    "badge": "💻 Available on official Mac and Windows stores",
-    "title": "Play every song you've ever dreamed of",
-    "subtitle": "The professional standard for converting MIDI to tablature automatically. Stop searching for impossible sheet music.",
-    "description": "Import any MIDI file and get perfect tablature with the most comfortable fingering for your fingers. Designed to simplify your learning journey.",
-    "startBtn": "View in store",
-    "demoBtn": "See how it works",
+    "badge": "💻 Available on Mac App Store and Microsoft Store",
+    "title": "Play all the songs you've always dreamed of",
+    "subtitle": "The professional standard for automatically converting MIDI to tablature. Stop searching for impossible sheet music.",
+    "description": "Import any MIDI file and get perfect tablature with the most comfortable fingering for your hands. Designed to simplify your learning.",
+    "startBtn": "View in Store",
+    "demoBtn": "See How It Works",
     "appStore": "Download on Mac App Store",
     "microsoftStore": "Download on Microsoft Store",
     "note": "✓ One-time payment · ✓ Lifetime license · ✓ No subscriptions",
     "screenshots": {
       "tablature": "📸 High-precision tablature",
-      "notation": "📸 Integrated musical notation",
+      "notation": "📸 Integrated sheet music",
       "pianoroll": "📸 Interactive piano roll",
-      "instruments": "📸 Supports +10 instruments"
+      "instruments": "📸 Compatible with 10+ instruments"
     }
   },
   "benefits": {
     "title": "🎵 A universe of music at your fingertips",
-    "description": "There are millions of free MIDI files online. Download your favorites and we'll convert them in minutes.",
+    "description": "There are millions of free MIDI files on the internet. Download your favorites and we'll convert them in minutes.",
     "genres": {
-      "games": "🎮 Video games",
+      "games": "🎮 Video Games",
       "soundtracks": "🎬 Soundtracks",
-      "classical": "🎻 Classical music",
+      "classical": "🎻 Classical Music",
       "rock": "🎸 Rock & Metal",
       "jazz": "🎷 Jazz & Blues",
       "pop": "🎹 Pop & Indie",
-      "world": "🌍 World music",
-      "tv": "📺 Anime & Series"
+      "world": "🌍 World Music",
+      "tv": "📺 Anime & TV Shows"
     }
   },
   "whatIsTab": {
     "title": "🎯 Start playing today (even if you can't read music)",
-    "subtitle": "Tablature is the visual shortcut used by professionals. If you can count, you can play.",
-    "example": "Example: Classical melody on guitar",
+    "subtitle": "Tablature is the visual shortcut that professionals use. If you can count, you can play.",
+    "example": "Example: Classic melody on guitar",
     "benefits": {
       "numbers": {
-        "title": "Only numbers",
-        "text": "Indicates the exact fret. '0' is an open string. It's impossible to get lost!"
+        "title": "Just numbers",
+        "text": "Shows the exact fret. '0' means open string. Impossible to get lost!"
       },
       "strings": {
         "title": "For your instrument",
-        "text": "Automatically adapts to guitar, bass, ukulele, and more stringed instruments."
+        "text": "Adapts to guitar, bass, ukulele and more string instruments automatically."
       },
       "leftToRight": {
         "title": "Smart fingering",
-        "text": "Our algorithm finds the easiest position so your fingers don't suffer."
+        "text": "Our algorithm finds the easiest position so your fingers don't struggle."
+      },
+      "speed": {
+        "title": "Fast results",
+        "text": "Start playing your favorite songs in minutes, not months."
+      }
+    }
+  },
+  "speedTraining": {
+    "title": "🚀 Improve your speed progressively",
+    "subtitle": "The speed trainer helps you play faster every day",
+    "benefits": {
+      "incremental": {
+        "title": "Auto increment",
+        "text": "Every time you master a loop, speed automatically increases by +5%"
+      },
+      "loop": {
+        "title": "Practice in loop",
+        "text": "Select the difficult section and repeat it until you master it completely"
+      },
+      "progress": {
+        "title": "Visible progress",
+        "text": "See how you improve from 50% to original tempo and beyond"
       }
     }
   },
   "features": {
     "title": "Designed for your musical success",
-    "subtitle": "Tools that accelerate your progress and make practice fun.",
+    "subtitle": "Tools that accelerate your progress and make practicing fun.",
     "cards": {
       "simplify": {
         "title": "Simplify mode",
@@ -71,19 +93,19 @@
       },
       "smartTabs": {
         "title": "Smart fingering",
-        "text": "Automatic neck optimization for smooth and effortless playing."
+        "text": "Automatic fretboard optimization for smooth, effortless playing."
       },
       "instruments": {
         "title": "Multi-instrument",
-        "text": "From 5-string bass to soprano ukulele. All in one application."
+        "text": "From 5-string bass to soprano ukulele. All in one app."
       },
       "loop": {
-        "title": "A-B loop",
-        "text": "Select a difficult passage and repeat it until it's perfect."
+        "title": "A-B Loop",
+        "text": "Select a difficult section and repeat it until it's perfect."
       },
       "speed": {
         "title": "Variable speed",
-        "text": "Lower the tempo without changing the pitch. Ideal for mastering solos in slow motion."
+        "text": "Slow down the tempo without changing pitch. Ideal for mastering solos in slow motion."
       },
       "themes": {
         "title": "Premium aesthetics",
@@ -96,16 +118,16 @@
     "subtitle": "From file to your fingers in less than a minute.",
     "steps": {
       "step1": {
-        "title": "1. Import MIDI",
-        "text": "Drag and drop any .mid or .midi file directly into the application."
+        "title": "1. Import the MIDI",
+        "text": "Drag and drop any .mid or .midi file directly into the app."
       },
       "step2": {
         "title": "2. Configure your view",
-        "text": "Choose your instrument, adjust the visual theme, and activate simplify mode if needed."
+        "text": "Choose your instrument, adjust the visual theme and enable simplify mode if needed."
       },
       "step3": {
         "title": "3. Start playing!",
-        "text": "Use the loop and speed tools to practice like a pro."
+        "text": "Use loop and speed tools to practice like a professional."
       }
     }
   },
@@ -114,7 +136,7 @@
     "subtitle": "Join thousands of musicians already learning with Midi Tab Pro.",
     "appStore": "Available on Mac App Store",
     "microsoftStore": "Available on Microsoft Store",
-    "note": "✓ Single payment · ✓ Free updates · ✓ Priority support"
+    "note": "✓ One-time payment · ✓ Free updates · ✓ Priority support"
   },
   "footer": {
     "copyright": "© 2024 Midi Tab Pro. Your music, your rules.",

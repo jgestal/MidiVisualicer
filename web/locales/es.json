@@ -58,6 +58,28 @@
             "leftToRight": {
                 "title": "Digitación inteligente",
                 "text": "Nuestro algoritmo busca la posición más fácil para que tus dedos no sufran."
+            },
+            "speed": {
+                "title": "Resultados rápidos",
+                "text": "Empieza a tocar tus canciones favoritas en minutos, no en meses."
+            }
+        }
+    },
+    "speedTraining": {
+        "title": "🚀 Mejora tu velocidad progresivamente",
+        "subtitle": "El entrenador de velocidad te ayuda a tocar más rápido cada día",
+        "benefits": {
+            "incremental": {
+                "title": "Incremento automático",
+                "text": "Cada vez que dominas un bucle, la velocidad sube automáticamente +5%"
+            },
+            "loop": {
+                "title": "Practica en bucle",
+                "text": "Selecciona la sección difícil y repítela hasta dominarla por completo"
+            },
+            "progress": {
+                "title": "Progreso visible",
+                "text": "Ve cómo mejoras de 50% a tempo original y más allá"
             }
         }
     },
