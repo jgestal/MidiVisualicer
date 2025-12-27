@@ -9,6 +9,13 @@ import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import { getAllInstruments, getOptimalPosition, midiToNoteName } from '../config/instruments';
 import { useI18n } from '../shared/context/I18nContext';
 import { CELL_WIDTH, MARGIN_LEFT, CHORD_TIME_TOLERANCE } from '../shared/constants/tablature';
+import {
+  PAUSE_THRESHOLD_SECONDS,
+  SCROLL_THROTTLE_MS,
+  VIRTUALIZATION_LINES_BEFORE,
+  VIRTUALIZATION_LINES_AFTER,
+  MIN_CELLS_PER_LINE,
+} from '../shared/constants/performance';
 import type { MidiNote } from '../types/midi';
 import './TablatureView.css';
 
@@ -33,9 +40,6 @@ interface TabNote {
   noteName: string;
   slotIndex: number;
 }
-
-const PAUSE_THRESHOLD_SECONDS = 0.5; // Gap to show pause
-const SCROLL_THROTTLE_MS = 100;
 
 export function TablatureView({
   notes,
@@ -83,7 +87,7 @@ export function TablatureView({
   // Calculate how many cells fit per line
   const cellsPerLine = useMemo(() => {
     const availableWidth = containerWidth - MARGIN_LEFT - 20; // padding
-    return Math.max(10, Math.floor(availableWidth / scaledCellWidth));
+    return Math.max(MIN_CELLS_PER_LINE, Math.floor(availableWidth / scaledCellWidth));
   }, [containerWidth, scaledCellWidth]);
 
   // Convert MIDI notes to tablature positions and group by time slots
@@ -290,12 +294,11 @@ export function TablatureView({
   }, [lines, scrollSlotIndex]);
 
   // Teleprompter mode: show only current line + a few before/after
-  const LINES_BEFORE = 1;  // Show 1 line before current for context
-  const LINES_AFTER = 3;   // Show 3 lines after current
+  // Uses constants from performance.ts
 
   const visibleLineRange = useMemo(() => {
-    const startLine = Math.max(0, currentLineIndex - LINES_BEFORE);
-    const endLine = Math.min(lines.length - 1, currentLineIndex + LINES_AFTER);
+    const startLine = Math.max(0, currentLineIndex - VIRTUALIZATION_LINES_BEFORE);
+    const endLine = Math.min(lines.length - 1, currentLineIndex + VIRTUALIZATION_LINES_AFTER);
     return { start: startLine, end: endLine };
   }, [currentLineIndex, lines.length]);
 
