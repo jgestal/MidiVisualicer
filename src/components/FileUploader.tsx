@@ -131,7 +131,7 @@ export function FileUploader({ onFileSelect, isLoading, compact = false }: FileU
 
         <div className="uploader-content">
           <div className="icon-wrapper">
-            {isDragging ? <Upload size={40} /> : <Music size={40} />}
+            {isDragging ? <Upload size={48} /> : <Music size={48} />}
           </div>
 
           <div className="uploader-text">
@@ -139,8 +139,8 @@ export function FileUploader({ onFileSelect, isLoading, compact = false }: FileU
           </div>
 
           <div className="uploader-hint">
-            <FileAudio size={14} style={{ display: 'inline', marginRight: 4 }} />
-            {t.supportsMidi}
+            <FileAudio size={16} />
+            <span>{t.supportsMidi}</span>
           </div>
         </div>
 
