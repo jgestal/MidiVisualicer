@@ -15,6 +15,13 @@ import * as Tone from 'tone';
 import type { ParsedMidi, MidiTrack, PlaybackSpeed } from '@/shared/types/midi';
 import { volumeToDb } from '@/utils/audioUtils';
 import { useTracks } from '@/features/tracks/context/TracksContext';
+import {
+  AUDIO_LOOKAHEAD_SECONDS,
+  AUDIO_MAX_POLYPHONY,
+  AUDIO_ENVELOPE_RELEASE,
+  AUDIO_LATENCY_HINT,
+  ACTIVE_NOTES_THROTTLE_MS,
+} from '@/shared/constants/performance';
 
 // Context state
 interface PlaybackState {
@@ -199,11 +206,11 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 
     // Increase lookahead for better scheduling at slow speeds
     // Default is 0.1s which can cause issues at 0.25x speed
-    Tone.getContext().lookAhead = 0.2;
+    Tone.getContext().lookAhead = AUDIO_LOOKAHEAD_SECONDS;
 
     // Set latency hint for better performance
     // 'playback' prioritizes smooth playback over low latency
-    Tone.getContext().latencyHint = 'playback';
+    Tone.getContext().latencyHint = AUDIO_LATENCY_HINT;
 
     isInitializedRef.current = true;
   }, []);
@@ -252,12 +259,12 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
           attack: 0.02,
           decay: 0.1,
           sustain: 0.3,
-          release: 0.4, // Reduced from 0.8 to free voices faster
+          release: AUDIO_ENVELOPE_RELEASE, // Reduced from 0.8 to free voices faster
         },
       });
 
-      // Set maximum polyphony to handle slow playback (128 voices should be plenty)
-      synth.maxPolyphony = 128;
+      // Set maximum polyphony to handle slow playback
+      synth.maxPolyphony = AUDIO_MAX_POLYPHONY;
 
       // Connect to destination
       synth.toDestination();
@@ -356,9 +363,8 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
         }, adjustedDuration);
       };
 
-      // Throttled active notes calculation (every 50ms instead of every frame)
+      // Throttled active notes calculation (using constant from performance.ts)
       let lastActiveNotesUpdate = 0;
-      const ACTIVE_NOTES_THROTTLE_MS = 50;
 
       // Update time function - optimized for performance
       const updateTime = () => {

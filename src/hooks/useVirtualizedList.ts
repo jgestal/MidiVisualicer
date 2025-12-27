@@ -68,7 +68,7 @@ export function useVirtualizedList<T>({
     const total = items.length * itemHeight;
 
     if (items.length === 0) {
-      return { startIndex: 0, endIndex: 0, totalHeight: 0 };
+      return { startIndex: 0, endIndex: -1, totalHeight: 0 };
     }
 
     // Calculate visible range
@@ -84,6 +84,10 @@ export function useVirtualizedList<T>({
 
   // Build virtual items with stable positioning
   const virtualItems = useMemo(() => {
+    if (items.length === 0 || endIndex < 0) {
+      return [];
+    }
+
     const result: VirtualizedItem<T>[] = [];
 
     for (let i = startIndex; i <= endIndex; i++) {
