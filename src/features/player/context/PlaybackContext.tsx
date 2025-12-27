@@ -19,7 +19,6 @@ import {
   AUDIO_LOOKAHEAD_SECONDS,
   AUDIO_MAX_POLYPHONY,
   AUDIO_ENVELOPE_RELEASE,
-  AUDIO_LATENCY_HINT,
   ACTIVE_NOTES_THROTTLE_MS,
 } from '@/shared/constants/performance';
 
@@ -202,17 +201,21 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   // Initialize Tone.js with optimized settings for slow playback
   const initialize = useCallback(async () => {
     if (isInitializedRef.current) return;
+    console.log('[PlaybackContext] Initializing Tone.js...');
     await Tone.start();
+    console.log('[PlaybackContext] Tone.js started');
 
     // Increase lookahead for better scheduling at slow speeds
     // Default is 0.1s which can cause issues at 0.25x speed
     Tone.getContext().lookAhead = AUDIO_LOOKAHEAD_SECONDS;
+    console.log('[PlaybackContext] lookAhead set to', AUDIO_LOOKAHEAD_SECONDS);
 
-    // Set latency hint for better performance
-    // 'playback' prioritizes smooth playback over low latency
-    Tone.getContext().latencyHint = AUDIO_LATENCY_HINT;
+    // Note: latencyHint cannot be changed after context creation
+    // Removed this line as it may cause issues in some browsers
+    // Tone.getContext().latencyHint = AUDIO_LATENCY_HINT;
 
     isInitializedRef.current = true;
+    console.log('[PlaybackContext] Initialization complete');
   }, []);
 
   // Sync refs with state (important for closures in callbacks)
