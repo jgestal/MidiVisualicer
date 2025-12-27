@@ -192,10 +192,19 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const isCountInEnabledRef = useRef(false);
   const countInDurationRef = useRef(3); // Default 3 seconds
 
-  // Initialize Tone.js
+  // Initialize Tone.js with optimized settings for slow playback
   const initialize = useCallback(async () => {
     if (isInitializedRef.current) return;
     await Tone.start();
+
+    // Increase lookahead for better scheduling at slow speeds
+    // Default is 0.1s which can cause issues at 0.25x speed
+    Tone.getContext().lookAhead = 0.2;
+
+    // Set latency hint for better performance
+    // 'playback' prioritizes smooth playback over low latency
+    Tone.getContext().latencyHint = 'playback';
+
     isInitializedRef.current = true;
   }, []);
 
@@ -231,19 +240,27 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     });
   }, [tracksState.mutedTracks, tracksState.soloTrack, getEffectiveMutedTracks]);
 
-  // Create synthesizers
+  // Create synthesizers with enough polyphony for slow speeds
   const createSynths = useCallback((trackCount: number) => {
     synthsRef.current.forEach((synth) => synth.dispose());
     synthsRef.current = Array.from({ length: trackCount }, (_, index) => {
+      // Increase maxPolyphony to handle slow speeds where notes overlap more
+      // At 0.25x speed, notes last 4x longer = 4x more simultaneous notes
       const synth = new Tone.PolySynth(Tone.Synth, {
         oscillator: { type: 'triangle' },
         envelope: {
           attack: 0.02,
           decay: 0.1,
           sustain: 0.3,
-          release: 0.8,
+          release: 0.4, // Reduced from 0.8 to free voices faster
         },
-      }).toDestination();
+      });
+
+      // Set maximum polyphony to handle slow playback (128 voices should be plenty)
+      synth.maxPolyphony = 128;
+
+      // Connect to destination
+      synth.toDestination();
 
       // Apply initial volume from trackVolumes or default
       const volume = trackVolumesRef.current.get(index) ?? 100;
@@ -339,27 +356,38 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
         }, adjustedDuration);
       };
 
-      // Update time function
+      // Throttled active notes calculation (every 50ms instead of every frame)
+      let lastActiveNotesUpdate = 0;
+      const ACTIVE_NOTES_THROTTLE_MS = 50;
+
+      // Update time function - optimized for performance
       const updateTime = () => {
         if (Tone.Transport.state === 'started') {
           const currentTime = Tone.Transport.seconds * speed;
           dispatch({ type: 'SET_TIME', payload: currentTime });
 
-          // Calculate active notes for chord detection
-          const activeNotes: number[] = [];
-          if (midi) {
-            midi.tracks.forEach((track, trackIdx) => {
-              if (!mutedTracksRef.current.has(trackIdx)) {
-                // Find notes active at current time
-                track.notes.forEach(note => {
-                  if (currentTime >= note.time && currentTime <= note.time + note.duration) {
-                    activeNotes.push(note.midi);
-                  }
-                });
-              }
-            });
+          // Throttled active notes calculation to reduce CPU usage
+          const now = performance.now();
+          if (now - lastActiveNotesUpdate >= ACTIVE_NOTES_THROTTLE_MS) {
+            lastActiveNotesUpdate = now;
+
+            // Calculate active notes for chord detection
+            const activeNotes: number[] = [];
+            if (midi) {
+              midi.tracks.forEach((track, trackIdx) => {
+                if (!mutedTracksRef.current.has(trackIdx)) {
+                  // Find notes active at current time
+                  track.notes.forEach(note => {
+                    if (currentTime >= note.time && currentTime <= note.time + note.duration) {
+                      activeNotes.push(note.midi);
+                    }
+                  });
+                }
+              });
+            }
+            dispatch({ type: 'SET_ACTIVE_NOTES', payload: activeNotes });
           }
-          dispatch({ type: 'SET_ACTIVE_NOTES', payload: activeNotes });
+
 
           // Check for loop end
           if (isLoopEnabledRef.current && loopEndRef.current !== null && loopStartRef.current !== null) {
