@@ -22,3 +22,4 @@ export { useBookmarks } from './useBookmarks';
 export { useAudioScheduler } from './useAudioScheduler';
 export { useThrottledPlaybackUpdates } from './useThrottledPlaybackUpdates';
 export { useMidiParserWorker } from './useMidiParserWorker';
+export { useVirtualizedList, useLineVirtualization } from './useVirtualizedList';
